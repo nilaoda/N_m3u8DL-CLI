@@ -18,6 +18,7 @@ N_m3u8DL-CLI.exe <URL> [OPTIONS]
     --muxSetJson File       使用外部json文件定义混流选项
     --enableDelAfterDone    开启下载后删除临时文件夹的功能
     --enableMuxFastStart    开启混流mp4的FastStart特性
+    --enableBinaryMerge     开启二进制合并分片
 
 ```
 附录：一个典型的混流Json文件应该长这个样子：
