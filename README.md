@@ -20,6 +20,7 @@ N_m3u8DL-CLI.exe <URL|JSON> [OPTIONS]
     --enableMuxFastStart    开启混流mp4的FastStart特性
     --enableBinaryMerge     开启二进制合并分片
     --enableParseOnly       开启仅解析模式(程序只进行到meta.json)
+    --disableDateInfo       关闭混流中的日期写入
 
 ```
 附录：一个典型的混流Json文件应该长这个样子：
