@@ -15,6 +15,7 @@ N_m3u8DL-CLI.exe <URL|JSON> [OPTIONS]
     --maxThreads Thread     设定程序的最大线程数(默认为32)
     --minThreads Thread     设定程序的最小线程数(默认为16)
     --retryCount Count      设定程序的重试次数(默认为15)
+    --timeOut    Sec        设定程序网络请求的超时时间(单位为秒，默认为10秒)
     --muxSetJson File       使用外部json文件定义混流选项
     --enableDelAfterDone    开启下载后删除临时文件夹的功能
     --enableMuxFastStart    开启混流mp4的FastStart特性
