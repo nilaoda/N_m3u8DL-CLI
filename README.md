@@ -47,3 +47,14 @@ N_m3u8DL-CLI.exe <URL|JSON> [OPTIONS]
 URL输入框可接受txt文件路径或文件夹拖入以进行批量下载：
 txt文件格式为每行一个m3u8地址；
 文件夹内存在若干m3u8文件。
+## JS获取腾讯视频、优酷m3u8
+```
+javascript:prompt(videoPlayer.getData()._videoData.title,Array.reverse(Array.from(videoPlayer.getData()._playlistData.stream))[0].m3u8_url);
+```  
+
+![录屏](https://i.loli.net/2019/06/11/5cff32193455f17147.gif)
+```
+javascript:prompt(PLAYER._DownloadMonitor.context.dataset.title,PLAYER._DownloadMonitor.context.dataset.currentVideoUrl);
+``` 
+
+![录屏](https://i.loli.net/2019/06/11/5cff3233336d339889.gif)
