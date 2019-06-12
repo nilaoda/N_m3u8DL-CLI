@@ -56,3 +56,7 @@ javascript:prompt(videoPlayer.getData()._videoData.title,Array.reverse(Array.fro
 ```
 javascript:prompt(PLAYER._DownloadMonitor.context.dataset.title,PLAYER._DownloadMonitor.context.dataset.currentVideoUrl);
 ``` 
+爱奇艺
+```
+javascript:var info=playerObject._player._core._movieinfo.originalData.data.program.video;info.forEach(function(item,index){if(item._selected){var blob=new Blob([item.m3u8],{type:"text/plain"});var url=URL.createObjectURL(blob);var title=(document.title.indexOf('-')!=-1?document.title.substring(0,document.title.indexOf('-')):document.title.replace(/\s/,''))+"_"+item.scrsz+"_"+(item.code==2?"H264":"H265")+"_"+document.getElementsByClassName("iqp-time-dur")[0].innerText.replace(/:/,".")+"_"+(item.vsize/1024/1024).toFixed(2)+"MB.m3u8";/*nilaoda*/var aLink=document.createElement("a");aLink.href=url;aLink.download=title;aLink.style.display="none";var event;if(window.MouseEvent){event=new MouseEvent("click")}else{event=document.createEvent("MouseEvents");event.initMouseEvent("click",true,false,window,0,0,0,0,0,false,false,false,false,0,null)}aLink.dispatchEvent(event)}});
+```
