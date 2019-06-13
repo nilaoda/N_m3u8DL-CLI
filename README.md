@@ -54,7 +54,7 @@ javascript:prompt(videoPlayer.getData()._videoData.title,Array.reverse(Array.fro
 ```  
 优酷
 ```
-javascript:prompt(PLAYER._DownloadMonitor.context.dataset.title,PLAYER._DownloadMonitor.context.dataset.currentVideoUrl);
+javascript:var url;var size=0;Array.from(videoPlayer.getData()._playlistData.stream).forEach(function(element,index,array){if(element.audio_lang==videoPlayer.getConfig().language&&element.size>size){url=element.m3u8_url;size=element.size}});/*nilaoda*/prompt(videoPlayer.getData()._videoData.title+"_"+videoPlayer.getConfig().language+"_"+(size/1024/1024).toFixed(2)+"MB",url);
 ``` 
 爱奇艺
 ```
