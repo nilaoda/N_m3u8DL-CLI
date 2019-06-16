@@ -1,5 +1,5 @@
 # N_m3u8DL-CLI
-一个m3u8下载器
+一个m3u8下载器，下载地址：https://github.com/nilaoda/N_m3u8DL-CLI/releases
 ## WindowsXP用户须知
 请自行解决可参考[这个](https://www.smartftp.com/zh-tw/support/kb/2754)或升级到Windows7以上，否则无法下载一些使用了TLS1.2的服务器资源
 ## 基本用法
