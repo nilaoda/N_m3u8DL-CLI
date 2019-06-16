@@ -1,5 +1,7 @@
 # N_m3u8DL-CLI
 一个m3u8下载器
+## WindowsXP用户须知
+请自行解决可参考[这个](https://www.smartftp.com/zh-tw/support/kb/2754)或升级到Windows7以上，否则无法下载一些使用了TLS1.2的服务器资源
 ## 基本用法
 双击exe，然后输入m3u8链接或拖入m3u8文件或拖入本程序生成的json文件按下回车键。  
 ![录制](https://i.loli.net/2019/06/11/5cff1dbc4e32955427.gif)
