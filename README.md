@@ -50,6 +50,8 @@ URL输入框可接受txt文件路径或文件夹拖入以进行批量下载：
 txt文件格式为每行一个m3u8地址；
 文件夹内存在若干m3u8文件。
 ## Javascript获取m3u8
+HTML说明链接：[点我打开](http://htmlpreview.github.io/?https://github.com/nilaoda/N_m3u8DL-CLI/blob/master/JS.html)
+
 腾讯视频
 ```
 javascript:prompt(videoPlayer.getData()._videoData.title,Array.reverse(Array.from(videoPlayer.getData()._playlistData.stream))[0].m3u8_url);
