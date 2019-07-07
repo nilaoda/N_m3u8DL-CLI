@@ -49,7 +49,7 @@ N_m3u8DL-CLI.exe <URL|JSON> [OPTIONS]
 URL输入框可接受txt文件路径或文件夹拖入以进行批量下载：
 txt文件格式为每行一个m3u8地址；
 文件夹内存在若干m3u8文件。
-## JS获取腾讯视频、优酷m3u8
+## Javascript获取m3u8
 腾讯视频
 ```
 javascript:prompt(videoPlayer.getData()._videoData.title,Array.reverse(Array.from(videoPlayer.getData()._playlistData.stream))[0].m3u8_url);
@@ -65,4 +65,8 @@ javascript:try{var info=playerObject._player._core._movieinfo.originalData.data.
 芒果
 ```
 javascript:prompt(MGTVPlayer.VIDEOINFO.title,MGTVPlayer.player.cms.sourceInfo.info);
+```
+搜狐视频
+```
+javascript:var dur=document.getElementsByClassName('x-time-duration')[0].innerText;var ti=document.getElementById('vinfobox').getElementsByTagName("h2")[0].innerText;var dfn=document.getElementsByClassName('x-resolution-btn')[0].innerText;var content='#EXTM3U\n';_player.p2pkernel.dispatchUrlArr.forEach(function(item,index){var url=item['0'];$.ajaxSettings.async=false;$.get(url,function(data,status){content+='#EXTINF:0\n'+data['servers'][0]['url']+'\n'});$.ajaxSettings.async=true});content+='#EXT-X-ENDLIST';var blob=new Blob([content],{type:"text/plain"});var url=URL.createObjectURL(blob);var aLink=document.createElement("a");aLink.href=url;aLink.download=ti+'_'+dfn+'_'+dur.replace(/:/,'.')+'.m3u8';/*nilaoda*/aLink.style.display="none";var event;if(window.MouseEvent){event=new MouseEvent("click")}else{event=document.createEvent("MouseEvents");event.initMouseEvent("click",true,false,window,0,0,0,0,0,false,false,false,false,0,null)}aLink.dispatchEvent(event)
 ```
