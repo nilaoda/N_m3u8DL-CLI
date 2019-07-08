@@ -11,4 +11,4 @@
 # N_m3u8DL-CLI
 一个m3u8下载器，下载地址：https://github.com/nilaoda/N_m3u8DL-CLI/releases
 # 用户文档
-
+https://nilaoda.github.io/N_m3u8DL-CLI/
