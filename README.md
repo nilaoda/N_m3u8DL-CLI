@@ -8,11 +8,30 @@
 ╚═╝  ╚═══╝╚══════╝╚═╝     ╚═╝╚═════╝  ╚═════╝  ╚════╝ ╚═════╝ ╚══════╝  ╚═════╝╚══════╝╚═╝
                                                                                           
 ```
+
 # N_m3u8DL-CLI
-一个m3u8下载器，下载地址：https://github.com/nilaoda/N_m3u8DL-CLI/releases  
+一个**可靠的**m3u8下载器，下载地址：https://github.com/nilaoda/N_m3u8DL-CLI/releases  
+
+支持下载m3u8链接或文件为`mp4`或`ts`格式，并提供丰富的命令行选项。
+  * 支持`AES-128`加密自动解密
+  * 支持多线程下载
+  * 支持断点续传
+  * 支持`Master List`
+  * 支持直播流录制(`BETA`)
+  * 支持腾讯、爱奇艺、优酷的`杜比视界m3u8`下载
+  * 支持自定义`HTTP Headers`
+  * 支持自动合并 (二进制合并或使用ffmpeg合并)
+  * 支持选择下载`m3u8`中的指定时间段/分片内容
+  * 支持下载路径为网络驱动器的情况
+  * 支持下载外挂字幕轨道、音频轨道
+  * 支持仅合并为音频
+  * 自动使用系统代理（可禁止）
+  * 针对国内视频网站`m3u8`进行了优化
+  * 提供SimpleG简易的`GUI`生成常用参数
 
 
-![直接使用.gif](https://nilaoda.github.io/N_m3u8DL-CLI/source/images/%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8.gif)  
+
+![运行截图](https://nilaoda.github.io/N_m3u8DL-CLI/source/images/%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8.gif)  
 
 # 命令行选项
 ```
