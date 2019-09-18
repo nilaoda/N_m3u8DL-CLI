@@ -17,6 +17,7 @@
 支持下载m3u8链接或文件为`mp4`或`ts`格式，并提供丰富的命令行选项。
   * 支持`AES-128`加密自动解密
   * 支持多线程下载
+  * 支持下载限速
   * 支持断点续传
   * 支持`Master List`
   * 支持直播流录制(`BETA`)
@@ -50,6 +51,7 @@ N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]
     --muxSetJson File           使用外部json文件定义混流选项
     --downloadRange Range       仅下载视频的一部分分片或长度
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
+    --maxSpeed   Number         设置下载速度上限(单位为KB/s)
     --enableDelAfterDone        开启下载后删除临时文件夹的功能
     --enableMuxFastStart        开启混流mp4的FastStart特性
     --enableBinaryMerge         开启二进制合并分片
