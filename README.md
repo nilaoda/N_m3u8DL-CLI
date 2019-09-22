@@ -8,8 +8,8 @@
 ╚═╝  ╚═══╝╚══════╝╚═╝     ╚═╝╚═════╝  ╚═════╝  ╚════╝ ╚═════╝ ╚══════╝  ╚═════╝╚══════╝╚═╝
                                                                                           
 ```
-# 跨平台
-通过`.NET Core`实现跨平台，支持Linux、Windows，项目地址：https://github.com/nilaoda/N_m3u8DL-CLI_Core
+# 关于跨平台
+本项目已通过`.NET Core`实现跨平台，支持Linux、Windows，请移步：https://github.com/nilaoda/N_m3u8DL-CLI_Core
 
 # N_m3u8DL-CLI
 一个**简单易用的**m3u8下载器，下载地址：https://github.com/nilaoda/N_m3u8DL-CLI/releases  
