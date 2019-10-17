@@ -197,6 +197,8 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2019年10月5日
     ///   - N_m3u8DL-CLI.args.txt
     ///   - 细节优化
+    /// 2019年10月18日
+    ///   - 去掉了优酷DRM设备参数更改
     /// </summary>
     /// 
 
@@ -482,7 +484,7 @@ namespace N_m3u8DL_CLI.NetCore
 
 
                 //优酷DRM设备更改
-                if (testurl.Contains("playlist/m3u8"))
+                /*if (testurl.Contains("playlist/m3u8"))
                 {
                     string drm_type = Global.GetQueryString("drm_type", testurl);
                     string drm_device = Global.GetQueryString("drm_device", testurl);
@@ -494,7 +496,7 @@ namespace N_m3u8DL_CLI.NetCore
                     {
                         testurl = testurl.Replace("drm_device=" + drm_device, "drm_device=11");
                     }
-                }
+                }*/
                 string m3u8Content = string.Empty;
                 bool isVOD = true;
 
