@@ -27,6 +27,8 @@ namespace N_m3u8DL_CLI
         private string m3u8Url = string.Empty;
         private string downDir = string.Empty;
         private string downName = string.Empty;
+        private string keyFile = string.Empty;
+        private string keyBase64 = string.Empty;
         private long bestBandwidth = 0;
         private string bestUrl = string.Empty;
         private string bestUrlAudio = string.Empty;
@@ -57,6 +59,8 @@ namespace N_m3u8DL_CLI
         public static bool DelAd { get => delAd; set => delAd = value; }
         public static string DurStart { get => durStart; set => durStart = value; }
         public static string DurEnd { get => durEnd; set => durEnd = value; }
+        public string KeyFile { get => keyFile; set => keyFile = value; }
+        public string KeyBase64 { get => keyBase64; set => keyBase64 = value; }
 
         public void Parse()
         {
@@ -110,10 +114,28 @@ namespace N_m3u8DL_CLI
 
             //如果BaseUrl为空则截取字符串充当
             if (BaseUrl == "")
-                BaseUrl = GetBaseUrl(M3u8Url, headers);
+            {
+                if (new Regex("#YUMING\\|(.*)").IsMatch(m3u8Content))
+                    BaseUrl = new Regex("#YUMING\\|(.*)").Match(m3u8Content).Groups[1].Value;
+                else
+                    BaseUrl = GetBaseUrl(M3u8Url, headers);
+            }
 
             LOGGER.WriteLine("Parsing Content");
             LOGGER.PrintLine("解析m3u8内容");
+
+            if (!string.IsNullOrEmpty(keyBase64))
+            {
+                string line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{keyBase64}\"";
+                m3u8CurrentKey = ParseKey(line);
+            }
+            if (!string.IsNullOrEmpty(keyFile))
+            {
+                Uri u = new Uri(keyFile);
+                string line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"{u.ToString()}\"";
+                m3u8CurrentKey = ParseKey(line);
+            }
+
             //逐行分析
             using (StringReader sr = new StringReader(m3u8Content))
             {
@@ -192,7 +214,7 @@ namespace N_m3u8DL_CLI
                     else if (line.StartsWith(HLSTags.ext_x_version)) ;
                     else if (line.StartsWith(HLSTags.ext_x_allow_cache)) ;
                     //解析KEY
-                    else if (line.StartsWith(HLSTags.ext_x_key))
+                    else if (line.StartsWith(HLSTags.ext_x_key) && string.IsNullOrEmpty(keyFile) && string.IsNullOrEmpty(keyBase64)) 
                     {
                         m3u8CurrentKey = ParseKey(line);
                         //存储为上一行的key信息
