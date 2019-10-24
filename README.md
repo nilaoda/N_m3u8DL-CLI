@@ -41,7 +41,7 @@
 
 # 命令行选项
 ```
-N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]  
+N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]  
 
     --workDir    Directory      设定程序工作目录
     --saveName   Filename       设定存储文件名(不包括后缀)
@@ -52,6 +52,8 @@ N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]
     --retryCount Count          设定程序的重试次数(默认为15)
     --timeOut    Sec            设定程序网络请求的超时时间(单位为秒，默认为10秒)
     --muxSetJson File           使用外部json文件定义混流选项
+    --useKeyFile File           使用外部16字节文件定义AES-128解密KEY
+    --useKeyBase64 Base64String 使用Base64字符串定义AES-128解密KEY
     --downloadRange Range       仅下载视频的一部分分片或长度
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
@@ -63,6 +65,7 @@ N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]
     --disableDateInfo           关闭混流中的日期写入
     --noMerge                   禁用自动合并
     --noProxy                   不自动使用系统代理
+    --disableIntegrityCheck     不检测分片数量是否完整
 ```
 
 # 用户文档
