@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.4.0";
-        static string nowDate = "20191024";
+        static string nowVer = "2.4.1";
+        static string nowDate = "20191130";
         public static void WriteInit()
         {
             Console.Clear();
@@ -100,7 +100,8 @@ namespace N_m3u8DL_CLI
                 if (url.Contains("pcvideo") && url.Contains(".titan.mgtv.com"))
                 {
                     webRequest.UserAgent = "";
-                    webRequest.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
+                    if (!url.Contains("/internettv/"))
+                        webRequest.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
                     webRequest.Headers.Add("Cookie", "MQGUID");
                 }
                 //添加headers
@@ -482,7 +483,8 @@ namespace N_m3u8DL_CLI
                 else if (url.Contains("pcvideo") && url.Contains(".titan.mgtv.com"))
                 {
                     request.UserAgent = "";
-                    request.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
+                    if (!url.Contains("/internettv/"))
+                        request.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
                     request.Headers.Add("Cookie", "MQGUID");
                 }
                 else
