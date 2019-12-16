@@ -203,6 +203,10 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 增加disableIntegrityCheck选项
     /// 2019年10月24日
     ///   - 捕获Ctrl+C退出，移动光标到正确位置
+    /// 2019年11月30日
+    ///   - 完善芒果TV请求头的自动添加
+    /// 2019年12月16日
+    ///   - 处理文件名特殊字符
     /// </summary>
     /// 
 
@@ -392,7 +396,7 @@ namespace N_m3u8DL_CLI.NetCore
                 }
                 if (arguments.Has("--saveName"))
                 {
-                    fileName = arguments.Get("--saveName").Next;
+                    fileName = Global.GetValidFileName(arguments.Get("--saveName").Next);
                 }
                 if (arguments.Has("--useKeyFile"))
                 {
