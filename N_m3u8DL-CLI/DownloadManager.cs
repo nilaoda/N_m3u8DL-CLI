@@ -152,6 +152,7 @@ namespace N_m3u8DL_CLI
             //开始调用下载
             LOGGER.WriteLine("Start Downloading");
             LOGGER.PrintLine("开始下载文件", LOGGER.Warning);
+
             //下载MAP文件（若有）
             try
             {
@@ -225,6 +226,8 @@ namespace N_m3u8DL_CLI
             if (Global.HadReadInfo == false)
             {
                 string href = DownDir + "\\Part_" + 0.ToString(partsPadZero) + "\\" + firstSeg["index"].Value<int>().ToString(segsPadZero) + ".ts";
+                if (File.Exists(DownDir + "\\!MAP.ts"))
+                    href = DownDir + "\\!MAP.ts";
                 Global.GzipHandler(href);
                 bool flag = false;
                 foreach (string ss in (string[])Global.GetVideoInfo(href).ToArray(typeof(string)))
@@ -521,7 +524,7 @@ namespace N_m3u8DL_CLI
 
                     FFmpeg.OutPutPath = Path.Combine(Directory.GetParent(DownDir).FullName, DownName);
                     FFmpeg.ReportFile = driverName + "\\:" + exePath.Remove(0, exePath.IndexOf(':') + 1).Replace("\\", "/") + "/Logs/" + Path.GetFileNameWithoutExtension(LOGGER.LOGFILE) + fflogName;
-
+                    
                     //合并分段
                     LOGGER.PrintLine("合并分段中...");
                     for (int i = 0; i < PartsCount; i++)

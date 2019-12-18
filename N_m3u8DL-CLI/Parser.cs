@@ -279,7 +279,8 @@ namespace N_m3u8DL_CLI
                     //m3u8主体结束
                     else if (line.StartsWith(HLSTags.ext_x_endlist))
                     {
-                        parts.Add(segments);
+                        if (segments.Count > 0)
+                            parts.Add(segments);
                         segments = new JArray();
                         isEndlist = true;
                     }
