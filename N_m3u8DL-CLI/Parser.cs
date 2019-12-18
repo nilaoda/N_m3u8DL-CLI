@@ -48,6 +48,8 @@ namespace N_m3u8DL_CLI
         private static string durEnd = "";
         //是否自动清除优酷广告分片
         private static bool delAd = true;
+        //标记是否已清除优酷广告分片
+        private static bool hasAd = false;
 
         public string BaseUrl { get => baseUrl; set => baseUrl = value; }
         public string M3u8Url { get => m3u8Url; set => m3u8Url = value; }
@@ -202,7 +204,16 @@ namespace N_m3u8DL_CLI
                     //解析不连续标记，需要单独合并（timestamp不同）
                     else if (line.StartsWith(HLSTags.ext_x_discontinuity))
                     {
-                        if (segments.Count > 1)
+                        //修复优酷去除广告后的遗留问题
+                        if (hasAd && parts.Count > 0)
+                        {
+                            segments = (JArray)parts[parts.Count - 1];
+                            parts.RemoveAt(parts.Count - 1);
+                            hasAd = false;
+                            continue; 
+                        }
+                        //常规情况的#EXT-X-DISCONTINUITY标记，新建part
+                        if (!hasAd && segments.Count > 1) 
                         {
                             parts.Add(segments);
                             segments = new JArray();
@@ -309,10 +320,20 @@ namespace N_m3u8DL_CLI
                         segments.Add(segInfo);
                         segInfo = new JObject();
                         //优酷的广告分段则清除此分片
-                        if (DelAd && segUrl.Contains("ccode") && segUrl.Contains("/ad/") && segUrl.Contains("duration"))
+                        //需要注意，遇到广告说明程序对上文的#EXT-X-DISCONTINUITY做出的动作是不必要的，
+                        //其实上下文是同一种编码，需要恢复到原先的part上
+                        if (DelAd && segUrl.Contains("ccode=") && segUrl.Contains("/ad/") && segUrl.Contains("duration="))
                         {
                             segments.RemoveAt(segments.Count - 1);
                             segIndex--;
+                            hasAd = true;
+                        }
+                        //优酷广告(4K分辨率测试)
+                        if (DelAd && segUrl.Contains("ccode=0902") && segUrl.Contains("duration="))
+                        {
+                            segments.RemoveAt(segments.Count - 1);
+                            segIndex--;
+                            hasAd = true;
                         }
                         expectSegment = false;
                     }

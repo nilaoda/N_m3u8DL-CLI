@@ -573,7 +573,7 @@ namespace N_m3u8DL_CLI
                                 FFmpeg.Merge(Global.GetFiles(DownDir, ".ts"), MuxFormat, MuxFastStart);
                             else
                             {
-                                JObject json = JObject.Parse(MuxSetJson);
+                                JObject json = JObject.Parse(File.ReadAllText(MuxSetJson, Encoding.UTF8));
                                 string muxFormat = json["muxFormat"].Value<string>();
                                 bool fastStart = Convert.ToBoolean(json["fastStart"].Value<string>());
                                 string poster = json["poster"].Value<string>();

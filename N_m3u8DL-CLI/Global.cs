@@ -30,7 +30,7 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.4.3";
+        static string nowVer = "2.4.4";
         static string nowDate = "20191218";
         public static void WriteInit()
         {
@@ -58,7 +58,10 @@ namespace N_m3u8DL_CLI
                         //尝试下载新版本(去码云)
                         string url = $"https://gitee.com/nilaoda/N_m3u8DL-CLI/raw/master/N_m3u8DL-CLI_v{latestVer}.exe";
                         if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe")))
+                        {
+                            Console.Title = $"检测到更新，版本：{latestVer}! 新版下载成功，请您自行替换";
                             return;
+                        }
                         HttpDownloadFile(url, Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe"));
                         if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe")))
                             Console.Title = $"检测到更新，版本：{latestVer}! 新版下载成功，请您自行替换";
