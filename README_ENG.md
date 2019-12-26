@@ -17,7 +17,7 @@ Supports:
   * `Dolby Vision` from IQiYi, YouKu, Tencent
   * Customize HTTP headers
   * Auto merge clips(Binary or ffmpeg)
-  * Customize save clip by time code or index
+  * Select save clip by `time code` or `index`
   * Network driver on Windows OS
   * Alternative audio/video track
   * Mux without video track
