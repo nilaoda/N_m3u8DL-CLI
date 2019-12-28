@@ -5,7 +5,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -242,9 +244,17 @@ namespace N_m3u8DL_CLI.NetCore
             return false;
         }
 
+        private static bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+            return true;
+        }
+
+
         static void Main(string[] args)
         {
             SetConsoleCtrlHandler(cancelHandler, true);
+            ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
+
             try
             {
                 //goto httplitsen;
