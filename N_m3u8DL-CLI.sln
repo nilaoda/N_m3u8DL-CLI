@@ -1,11 +1,9 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.27703.2000
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "N_m3u8DL-CLI", "N_m3u8DL-CLI\N_m3u8DL-CLI.csproj", "{4FB61439-B738-46AC-B3AF-2BF72150D057}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GUI-MainWindow", "GUI-MainWindow\GUI-MainWindow.csproj", "{FE91DB43-1F1F-4119-B808-A7F4795BB4D0}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +15,6 @@ Global
 		{4FB61439-B738-46AC-B3AF-2BF72150D057}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FB61439-B738-46AC-B3AF-2BF72150D057}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FB61439-B738-46AC-B3AF-2BF72150D057}.Release|Any CPU.Build.0 = Release|Any CPU
-		{FE91DB43-1F1F-4119-B808-A7F4795BB4D0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{FE91DB43-1F1F-4119-B808-A7F4795BB4D0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{FE91DB43-1F1F-4119-B808-A7F4795BB4D0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{FE91DB43-1F1F-4119-B808-A7F4795BB4D0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
