@@ -410,7 +410,7 @@ namespace N_m3u8DL_CLI
                                 foreach (string s in Global.GetFiles(DownDir + "\\Part_0", ".ts"))
                                 {
                                     //跳过有MAP的情况
-                                    if (!File.Exists(DownDir + "\\Part_0\\!MAP.ts") && !FFmpeg.CheckMPEGTS(s))
+                                    if (!isVTT && !File.Exists(DownDir + "\\Part_0\\!MAP.ts") && !FFmpeg.CheckMPEGTS(s))
                                     {
                                         //转换
                                         LOGGER.PrintLine("将文件转换到 MPEG-TS 封装：" + Path.GetFileName(s));
@@ -558,7 +558,7 @@ namespace N_m3u8DL_CLI
                             foreach (string s in Global.GetFiles(DownDir, ".ts"))
                             {
                                 //跳过有MAP的情况
-                                if (!File.Exists(DownDir + "\\!MAP.ts") && !FFmpeg.CheckMPEGTS(s))
+                                if (!isVTT && !File.Exists(DownDir + "\\!MAP.ts") && !FFmpeg.CheckMPEGTS(s))
                                 {
                                     //转换
                                     LOGGER.PrintLine("将文件转换到 MPEG-TS 封装：" + Path.GetFileName(s));
