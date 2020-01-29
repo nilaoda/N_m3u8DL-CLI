@@ -111,6 +111,9 @@ namespace N_m3u8DL_CLI
             if (m3u8Content.Contains("qiqiuyun.net/") || m3u8Content.Contains("aliyunedu.net/") || m3u8Content.Contains("qncdn.edusoho.net/")) //气球云
                 isQiQiuYun = true;
 
+            if (M3u8Url.Contains("tlivecloud-playback-cdn.ysp.cctv.cn") && M3u8Url.Contains("endtime="))
+                isEndlist = true;
+
             //输出m3u8文件
             File.WriteAllText(m3u8SavePath, m3u8Content);
 
@@ -210,10 +213,10 @@ namespace N_m3u8DL_CLI
                             segments = (JArray)parts[parts.Count - 1];
                             parts.RemoveAt(parts.Count - 1);
                             hasAd = false;
-                            continue; 
+                            continue;
                         }
                         //常规情况的#EXT-X-DISCONTINUITY标记，新建part
-                        if (!hasAd && segments.Count > 1) 
+                        if (!hasAd && segments.Count > 1)
                         {
                             parts.Add(segments);
                             segments = new JArray();
@@ -225,7 +228,7 @@ namespace N_m3u8DL_CLI
                     else if (line.StartsWith(HLSTags.ext_x_version)) ;
                     else if (line.StartsWith(HLSTags.ext_x_allow_cache)) ;
                     //解析KEY
-                    else if (line.StartsWith(HLSTags.ext_x_key) && string.IsNullOrEmpty(keyFile) && string.IsNullOrEmpty(keyBase64)) 
+                    else if (line.StartsWith(HLSTags.ext_x_key) && string.IsNullOrEmpty(keyFile) && string.IsNullOrEmpty(keyBase64))
                     {
                         m3u8CurrentKey = ParseKey(line);
                         //存储为上一行的key信息
@@ -276,7 +279,10 @@ namespace N_m3u8DL_CLI
                         if (Global.GetTagAttribute(line, "TYPE") == "AUDIO")
                             MEDIA_AUDIO.Add(Global.GetTagAttribute(line, "GROUP-ID"), CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI")));
                         if (Global.GetTagAttribute(line, "TYPE") == "SUBTITLES")
-                            MEDIA_SUB.Add(Global.GetTagAttribute(line, "GROUP-ID"), CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI")));
+                        {
+                            if (!MEDIA_SUB.ContainsKey(Global.GetTagAttribute(line, "GROUP-ID")))
+                                MEDIA_SUB.Add(Global.GetTagAttribute(line, "GROUP-ID"), CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI")));
+                        }
                     }
                     else if (line.StartsWith(HLSTags.ext_x_playlist_type)) ;
                     else if (line.StartsWith(HLSTags.ext_i_frames_only))
