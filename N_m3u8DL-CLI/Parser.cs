@@ -318,7 +318,7 @@ namespace N_m3u8DL_CLI
                     else if (expectSegment)
                     {
                         segUrl = CombineURL(BaseUrl, line);
-                        if (M3u8Url.Contains("akamaized.net") && M3u8Url.Contains("?__gda__"))
+                        if (M3u8Url.Contains("?__gda__"))
                         {
                             segUrl += new Regex("\\?__gda__.*").Match(M3u8Url).Value;
                         }
@@ -348,7 +348,7 @@ namespace N_m3u8DL_CLI
                     {
                         string listUrl;
                         listUrl = CombineURL(BaseUrl, line);
-                        if (M3u8Url.Contains("akamaized.net") && M3u8Url.Contains("?__gda__"))
+                        if (M3u8Url.Contains("?__gda__"))
                         {
                             listUrl += new Regex("\\?__gda__.*").Match(M3u8Url).Value;
                         }
