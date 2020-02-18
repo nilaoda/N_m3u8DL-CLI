@@ -222,6 +222,15 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 修复vtt字幕无法正常合并的bug
     /// 2020年1月31日
     ///   - ?__gda__行为优化
+    /// 2020年2月1日
+    ///   - 修复bug
+    ///   - 支援twitcasting下载
+    /// 2020年2月3日
+    ///   - 解密异常则退出程序
+    ///   - 通过json下载时若已存在文件则覆盖
+    /// 2020年2月18日
+    ///   - 修正获取BaseUrl的BUG
+    ///   - 重新打包dll
     /// </summary>
     /// 
 
@@ -535,6 +544,11 @@ namespace N_m3u8DL_CLI.NetCore
                     fileName = Global.GetUrlFileName(testurl) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss");
 
 
+                if (testurl.Contains("twitcasting") && testurl.Contains("/fmp4/"))
+                {
+                    binaryMerge = true;
+                }
+
                 //优酷DRM设备更改
                 /*if (testurl.Contains("playlist/m3u8"))
                 {
@@ -577,7 +591,7 @@ namespace N_m3u8DL_CLI.NetCore
                 {
                     if (!Directory.Exists(Path.Combine(workDir, fileName)))//若文件夹不存在则新建文件夹   
                         Directory.CreateDirectory(Path.Combine(workDir, fileName)); //新建文件夹  
-                    File.Copy(testurl, Path.Combine(Path.Combine(workDir, fileName), "meta.json"));
+                    File.Copy(testurl, Path.Combine(Path.Combine(workDir, fileName), "meta.json"), true);
                 }
                 else
                 {
