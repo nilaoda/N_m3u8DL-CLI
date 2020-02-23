@@ -12,6 +12,8 @@ namespace N_m3u8DL_CLI
 {
     class Downloader
     {
+        public static bool YouKuAES = false;
+
         private int timeOut = 0;
         private int retry = 5;
         private int count = 0;
@@ -72,7 +74,7 @@ namespace N_m3u8DL_CLI
                 {
                     IsDone = false;  //设置为未完成下载
 
-                    if (Method == "NONE")
+                    if (Method == "NONE" || method.Contains("NOTSUPPORTED")) 
                     {
                         LOGGER.PrintLine("<" + SegIndex + " Downloading>");
                         byte[] segBuff = Global.HttpDownloadFileToBytes(fileUrl, Headers, TimeOut);
@@ -86,18 +88,30 @@ namespace N_m3u8DL_CLI
                         LOGGER.PrintLine("<" + SegIndex + " Downloading>");
                         byte[] encryptedBuff = Global.HttpDownloadFileToBytes(fileUrl, Headers, TimeOut);
                         //byte[] encryptedBuff = Global.WebClientDownloadToBytes(fileUrl, Headers);
-                        byte[] decryptBuff = Decrypter.AES128Decrypt(
-                            encryptedBuff,
-                            Convert.FromBase64String(Key),
-                            Decrypter.HexStringToBytes(Iv)
-                            );
+                        byte[] decryptBuff = null;
+                        if (YouKuAES)
+                        {
+                            decryptBuff = DecrypterYK.Decrypt(
+                                encryptedBuff,
+                                Convert.FromBase64String(Key),
+                                Decrypter.HexStringToBytes(Iv)
+                                );
+                        }
+                        else
+                        {
+                            decryptBuff = Decrypter.AES128Decrypt(
+                                encryptedBuff,
+                                Convert.FromBase64String(Key),
+                                Decrypter.HexStringToBytes(Iv)
+                                );
+                        }
                         Global.AppendBytesToFileStreamAndDoNotClose(LiveStream, decryptBuff);
                         LOGGER.PrintLine("<" + SegIndex + " Complete>\r\n");
                         IsDone = true;
                     }
                     else
                     {
-                        LOGGER.PrintLine("不支持这种加密方式!", LOGGER.Error);
+                        //LOGGER.PrintLine("不支持这种加密方式!", LOGGER.Error);
                         IsDone = true;
                     }
                     if (firstSeg && Global.FileSize(LiveFile) != 0)
@@ -167,7 +181,7 @@ namespace N_m3u8DL_CLI
                 if (File.Exists(savePath) && Global.ShouldStop == false) 
                 {
                     FileInfo fi = new FileInfo(savePath);
-                    if (Method == "NONE")
+                    if (Method == "NONE" || method.Contains("NOTSUPPORTED"))
                     {
                         fi.MoveTo(Path.GetDirectoryName(savePath) + "\\" + Path.GetFileNameWithoutExtension(savePath) + ".ts");
                         DownloadManager.DownloadedSize += fi.Length;
@@ -179,11 +193,23 @@ namespace N_m3u8DL_CLI
                         //解密
                         try
                         {
-                            byte[] decryptBuff = Decrypter.AES128Decrypt(
-                                fi.FullName,
-                                Convert.FromBase64String(Key),
-                                Decrypter.HexStringToBytes(Iv)
-                                );
+                            byte[] decryptBuff = null;
+                            if (YouKuAES)
+                            {
+                                decryptBuff = DecrypterYK.Decrypt(
+                                    File.ReadAllBytes(fi.FullName),
+                                    Convert.FromBase64String(Key),
+                                    Decrypter.HexStringToBytes(Iv)
+                                    );
+                            }
+                            else
+                            {
+                                decryptBuff = Decrypter.AES128Decrypt(
+                                    fi.FullName,
+                                    Convert.FromBase64String(Key),
+                                    Decrypter.HexStringToBytes(Iv)
+                                    );
+                            }
                             FileStream fs = new FileStream(Path.GetDirectoryName(savePath) + "\\" + Path.GetFileNameWithoutExtension(savePath) + ".ts", FileMode.Create);
                             fs.Write(decryptBuff, 0, decryptBuff.Length);
                             fs.Close();
@@ -193,15 +219,10 @@ namespace N_m3u8DL_CLI
                         }
                         catch (Exception ex)
                         {
+                            LOGGER.PrintLine(ex.Message, LOGGER.Error);
                             LOGGER.WriteLineError(ex.Message);
+                            Environment.Exit(-1);
                         }
-                    }
-                    else if(File.Exists(fi.FullName)
-                        && Method != "AES-128")
-                    {
-                        LOGGER.WriteLineError($"Do not support this METHOD: {Method}");
-                        LOGGER.PrintLine("不支持这种加密方式!", LOGGER.Error);
-                        return;
                     }
                     else
                     {

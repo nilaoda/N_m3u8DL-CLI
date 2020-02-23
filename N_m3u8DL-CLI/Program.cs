@@ -231,6 +231,10 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年2月18日
     ///   - 修正获取BaseUrl的BUG
     ///   - 重新打包dll
+    /// 2020年2月23日
+    ///   - 不支持的加密方式将标记为NOTSUPPORTED并强制启用二进制合并
+    ///   - 启用二进制合并的情况下，如果m3u8文件中存在map文件，则合并为mp4格式
+    ///   - 支持优酷视频解密
     /// </summary>
     /// 
 
@@ -329,7 +333,6 @@ namespace N_m3u8DL_CLI.NetCore
                 string muxSetJson = "MUXSETS.json";
                 string workDir = CURRENT_PATH + "\\Downloads";
                 bool muxFastStart = false;
-                bool binaryMerge = false;
                 bool delAfterDone = false;
                 bool parseOnly = false;
                 bool noMerge = false;
@@ -366,6 +369,7 @@ namespace N_m3u8DL_CLI.NetCore
     --downloadRange Range       仅下载视频的一部分分片或长度
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
+    --enableYouKuAes            使用优酷AES-128解密方案
     --enableDelAfterDone        开启下载后删除临时文件夹的功能
     --enableMuxFastStart        开启混流mp4的FastStart特性
     --enableBinaryMerge         开启二进制合并分片
@@ -374,7 +378,7 @@ namespace N_m3u8DL_CLI.NetCore
     --disableDateInfo           关闭混流中的日期写入
     --noMerge                   禁用自动合并
     --noProxy                   不自动使用系统代理
-    --disableIntegrityCheck      不检测分片数量是否完整");
+    --disableIntegrityCheck     不检测分片数量是否完整");
                     return;
                 }
                 if (arguments.Has("--enableDelAfterDone"))
@@ -387,7 +391,7 @@ namespace N_m3u8DL_CLI.NetCore
                 }
                 if (arguments.Has("--enableBinaryMerge"))
                 {
-                    binaryMerge = true;
+                    DownloadManager.BinaryMerge = true;
                 }
                 if (arguments.Has("--disableDateInfo"))
                 {
@@ -408,6 +412,10 @@ namespace N_m3u8DL_CLI.NetCore
                 if (arguments.Has("--enableMuxFastStart"))
                 {
                     muxFastStart = true;
+                }
+                if (arguments.Has("--enableYouKuAes"))
+                {
+                    Downloader.YouKuAES = true;
                 }
                 if (arguments.Has("--disableIntegrityCheck"))
                 {
@@ -546,7 +554,7 @@ namespace N_m3u8DL_CLI.NetCore
 
                 if (testurl.Contains("twitcasting") && testurl.Contains("/fmp4/"))
                 {
-                    binaryMerge = true;
+                    DownloadManager.BinaryMerge = true;
                 }
 
                 //优酷DRM设备更改
@@ -647,7 +655,6 @@ namespace N_m3u8DL_CLI.NetCore
                     md.NoMerge = noMerge;
                     md.DownName = fileName;
                     md.DelAfterDone = delAfterDone;
-                    md.BinaryMerge = binaryMerge;
                     md.MuxFormat = "mp4";
                     md.RetryCount = retryCount;
                     md.MuxSetJson = muxSetJson;

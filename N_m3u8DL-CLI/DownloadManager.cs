@@ -36,7 +36,7 @@ namespace N_m3u8DL_CLI
         bool externalSub = false;  //额外的字幕
         string externalSubUrl = "";
         string fflogName = "_ffreport.log";
-        private bool binaryMerge = false;
+        public static bool BinaryMerge = false;
         private bool noMerge = false;
         private bool muxFastStart = true;
         private string muxFormat = "mp4";
@@ -51,7 +51,6 @@ namespace N_m3u8DL_CLI
         public string MuxFormat { get => muxFormat; set => muxFormat = value; }
         public bool MuxFastStart { get => muxFastStart; set => muxFastStart = value; }
         public string MuxSetJson { get => muxSetJson; set => muxSetJson = value; }
-        public bool BinaryMerge { get => binaryMerge; set => binaryMerge = value; }
         public int TimeOut { get => timeOut; set => timeOut = value; }
         public static double DownloadedSize { get => downloadedSize; set => downloadedSize = value; }
         public static bool HasSetDir { get => hasSetDir; set => hasSetDir = value; }
@@ -171,6 +170,8 @@ namespace N_m3u8DL_CLI
                 sd.SavePath = DownDir + "\\!MAP.tsdownloading";
                 if (File.Exists(sd.SavePath))
                     File.Delete(sd.SavePath);
+                if (File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
+                    File.Delete(DownDir + "\\Part_0\\!MAP.ts");
                 LOGGER.PrintLine("下载MAP文件...");
                 sd.Down();  //开始下载
             }
@@ -397,6 +398,10 @@ namespace N_m3u8DL_CLI
                         {
                             LOGGER.PrintLine("二进制合并...请耐心等待");
                             MuxFormat = "ts";
+                            //有MAP文件，一般为mp4，采取默认动作
+                            if(File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
+                                MuxFormat = "mp4";
+
                             if (Global.AUDIO_TYPE != "")
                                 MuxFormat = Global.AUDIO_TYPE;
                             Global.CombineMultipleFilesIntoSingleFile(Global.GetFiles(DownDir + "\\Part_0", ".ts"), FFmpeg.OutPutPath + $".{MuxFormat}");
@@ -547,6 +552,9 @@ namespace N_m3u8DL_CLI
                     {
                         LOGGER.PrintLine("二进制合并...请耐心等待");
                         MuxFormat = "ts";
+                        //有MAP文件，一般为mp4，采取默认动作
+                        if (File.Exists(DownDir + "\\!MAP.ts")) 
+                            MuxFormat = "mp4";
                         Global.CombineMultipleFilesIntoSingleFile(Global.GetFiles(DownDir, ".ts"), FFmpeg.OutPutPath + $".{MuxFormat}");
                     }
                     else

@@ -557,6 +557,12 @@ namespace N_m3u8DL_CLI
             //存在加密
             if (m != "")
             {
+                if (m != "AES-128")
+                {
+                    LOGGER.PrintLine($"不支持{m}加密方式,将不被处理,且强制开启二进制合并", LOGGER.Error);
+                    DownloadManager.BinaryMerge = true;
+                    return new string[] { $"{m}(NOTSUPPORTED)", "", "" };
+                }
                 //METHOD
                 key[0] = m;
                 //URI
