@@ -62,6 +62,7 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --useKeyFile File           使用外部16字节文件定义AES-128解密KEY
     --useKeyBase64 Base64String 使用Base64字符串定义AES-128解密KEY
     --downloadRange Range       仅下载视频的一部分分片或长度
+    --liveRecDur HH:MM:SS       直播录制时，达到此长度自动退出软件
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
     --enableYouKuAes            使用优酷AES-128解密方案
