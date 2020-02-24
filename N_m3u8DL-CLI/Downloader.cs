@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DecryptYK;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -77,21 +78,25 @@ namespace N_m3u8DL_CLI
                     if (Method == "NONE" || method.Contains("NOTSUPPORTED")) 
                     {
                         LOGGER.PrintLine("<" + SegIndex + " Downloading>");
+                        LOGGER.WriteLine("<" + SegIndex + " Downloading>");
                         byte[] segBuff = Global.HttpDownloadFileToBytes(fileUrl, Headers, TimeOut);
                         //byte[] segBuff = Global.WebClientDownloadToBytes(fileUrl, Headers);
                         Global.AppendBytesToFileStreamAndDoNotClose(LiveStream, segBuff);
                         LOGGER.PrintLine("<" + SegIndex + " Complete>\r\n");
+                        LOGGER.WriteLine("<" + SegIndex + " Complete>");
                         IsDone = true;
                     }
                     else if (Method == "AES-128")
                     {
                         LOGGER.PrintLine("<" + SegIndex + " Downloading>");
+                        LOGGER.WriteLine("<" + SegIndex + " Downloading>");
                         byte[] encryptedBuff = Global.HttpDownloadFileToBytes(fileUrl, Headers, TimeOut);
                         //byte[] encryptedBuff = Global.WebClientDownloadToBytes(fileUrl, Headers);
                         byte[] decryptBuff = null;
                         if (YouKuAES)
                         {
-                            decryptBuff = DecrypterYK.Decrypt(
+                            //decryptBuff = DecrypterYK.Decrypt(
+                            decryptBuff = Decrypter.AES128Decrypt(
                                 encryptedBuff,
                                 Convert.FromBase64String(Key),
                                 Decrypter.HexStringToBytes(Iv)
@@ -107,6 +112,7 @@ namespace N_m3u8DL_CLI
                         }
                         Global.AppendBytesToFileStreamAndDoNotClose(LiveStream, decryptBuff);
                         LOGGER.PrintLine("<" + SegIndex + " Complete>\r\n");
+                        LOGGER.WriteLine("<" + SegIndex + " Complete>");
                         IsDone = true;
                     }
                     else
@@ -116,13 +122,20 @@ namespace N_m3u8DL_CLI
                     }
                     if (firstSeg && Global.FileSize(LiveFile) != 0)
                     {
-                        LOGGER.STOPLOG = false;  //记录日志
+                        //LOGGER.STOPLOG = false;  //记录日志
                         foreach (string ss in (string[])Global.GetVideoInfo(LiveFile).ToArray(typeof(string)))
                         {
                             LOGGER.WriteLine(ss.Trim());
                         }
                         firstSeg = false;
-                        LOGGER.STOPLOG = true;  //停止记录日志
+                        //LOGGER.STOPLOG = true;  //停止记录日志
+                    }
+                    HLSLiveDownloader.REC_DUR += Convert.ToInt32(SegDur);
+                    if (HLSLiveDownloader.REC_DUR_LIMIT != -1 && HLSLiveDownloader.REC_DUR >= HLSLiveDownloader.REC_DUR_LIMIT) ;
+                    {
+                        LOGGER.PrintLine("录制已到达限定长度", LOGGER.Warning);
+                        LOGGER.WriteLine("录制已到达限定长度");
+                        Environment.Exit(0); //正常退出
                     }
                     return;
                 }
@@ -196,8 +209,9 @@ namespace N_m3u8DL_CLI
                             byte[] decryptBuff = null;
                             if (YouKuAES)
                             {
-                                decryptBuff = DecrypterYK.Decrypt(
-                                    File.ReadAllBytes(fi.FullName),
+                                //decryptBuff = DecrypterYK.Decrypt(
+                                decryptBuff = Decrypter.AES128Decrypt(
+                                        File.ReadAllBytes(fi.FullName),
                                     Convert.FromBase64String(Key),
                                     Decrypter.HexStringToBytes(Iv)
                                     );

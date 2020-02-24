@@ -29,6 +29,7 @@ namespace N_m3u8DL_CLI
         private string downName = string.Empty;
         private string keyFile = string.Empty;
         private string keyBase64 = string.Empty;
+        private bool liveStream = false;
         private long bestBandwidth = 0;
         private string bestUrl = string.Empty;
         private string bestUrlAudio = string.Empty;
@@ -63,6 +64,7 @@ namespace N_m3u8DL_CLI
         public static string DurEnd { get => durEnd; set => durEnd = value; }
         public string KeyFile { get => keyFile; set => keyFile = value; }
         public string KeyBase64 { get => keyBase64; set => keyBase64 = value; }
+        public bool LiveStream { get => liveStream; set => liveStream = value; }
 
         public void Parse()
         {
@@ -91,8 +93,8 @@ namespace N_m3u8DL_CLI
 
 
             //获取m3u8内容
-
-            LOGGER.PrintLine("获取m3u8内容", LOGGER.Warning);
+            if (!liveStream)
+                LOGGER.PrintLine("获取m3u8内容", LOGGER.Warning);
 
             if (M3u8Url.StartsWith("http"))
                 m3u8Content = Global.GetWebSource(M3u8Url, headers);
@@ -126,8 +128,11 @@ namespace N_m3u8DL_CLI
                     BaseUrl = GetBaseUrl(M3u8Url, headers);
             }
 
-            LOGGER.WriteLine("Parsing Content");
-            LOGGER.PrintLine("解析m3u8内容");
+            if (!liveStream)
+            {
+                LOGGER.WriteLine("Parsing Content");
+                LOGGER.PrintLine("解析m3u8内容");
+            }
 
             if (!string.IsNullOrEmpty(keyBase64))
             {
@@ -536,10 +541,13 @@ namespace N_m3u8DL_CLI
             jsonM3u8Info.Add("segments", parts);
             jsonResult.Add("m3u8Info", jsonM3u8Info);
 
-            
+
             //输出JSON文件
-            LOGGER.WriteLine("Writing Json: [meta.json]");
-            LOGGER.PrintLine("写出meta.json");
+            if (!liveStream)
+            {
+                LOGGER.WriteLine("Writing Json: [meta.json]");
+                LOGGER.PrintLine("写出meta.json");
+            }
             File.WriteAllText(jsonSavePath, jsonResult.ToString());
             //检测是否为master list
             MasterListCheck();

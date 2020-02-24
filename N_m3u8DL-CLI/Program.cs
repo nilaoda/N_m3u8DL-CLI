@@ -235,6 +235,11 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 不支持的加密方式将标记为NOTSUPPORTED并强制启用二进制合并
     ///   - 启用二进制合并的情况下，如果m3u8文件中存在map文件，则合并为mp4格式
     ///   - 支持优酷视频解密
+    /// 2020年2月24日
+    ///   - 直播流录制优化逻辑，避免忙等待
+    ///   - 直播Waiting时，不再输出Parser内容
+    ///   - 直播录制的日志记录
+    ///   - 增加新的选项--liveRecDur限制直播录制时长
     /// </summary>
     /// 
 
@@ -367,6 +372,7 @@ namespace N_m3u8DL_CLI.NetCore
     --useKeyFile File           使用外部16字节文件定义AES-128解密KEY
     --useKeyBase64 Base64String 使用Base64字符串定义AES-128解密KEY
     --downloadRange Range       仅下载视频的一部分分片或长度
+    --liveRecDur HH:MM:SS       直播录制时，达到此长度自动退出软件
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
     --enableYouKuAes            使用优酷AES-128解密方案
@@ -474,6 +480,19 @@ namespace N_m3u8DL_CLI.NetCore
                 if (arguments.Has("--timeOut"))
                 {
                     timeOut = Convert.ToInt32(arguments.Get("--timeOut").Next);
+                }
+                if (arguments.Has("--liveRecDur"))
+                {
+                    //时间码
+                    Regex reg2 = new Regex(@"(\d+):(\d+):(\d+)");
+                    var t = arguments.Get("--liveRecDur").Next;
+                    if (reg2.IsMatch(t))
+                    {
+                        int HH = Convert.ToInt32(reg2.Match(t).Groups[1].Value);
+                        int MM = Convert.ToInt32(reg2.Match(t).Groups[2].Value);
+                        int SS = Convert.ToInt32(reg2.Match(t).Groups[3].Value);
+                        HLSLiveDownloader.REC_DUR_LIMIT = SS + MM * 60 + HH * 60 * 60;
+                    }
                 }
                 if (arguments.Has("--downloadRange"))
                 {
@@ -667,8 +686,8 @@ namespace N_m3u8DL_CLI.NetCore
                     LOGGER.WriteLine("Living Stream Found");
                     LOGGER.WriteLine("Start Recording");
                     LOGGER.PrintLine("识别为直播流, 开始录制");
-                    LOGGER.STOPLOG = true;  //停止记录日志
-                                            //开辟文件流，且不关闭。（便于播放器不断读取文件）
+                    //LOGGER.STOPLOG = true;  //停止记录日志
+                    //开辟文件流，且不关闭。（便于播放器不断读取文件）
                     string LivePath = Path.Combine(Directory.GetParent(parser.DownDir).FullName
                         , DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + "_" + fileName + ".ts");
                     FileStream outputStream = new FileStream(LivePath, FileMode.Append);

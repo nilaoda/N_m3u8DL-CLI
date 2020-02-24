@@ -12,6 +12,8 @@ namespace N_m3u8DL_CLI
 {
     class HLSLiveDownloader
     {
+        public static int REC_DUR_LIMIT = -1; //默认不限制录制时长
+        public static int REC_DUR = 0; //已录制时长
         private string liveFile = string.Empty;
         private string jsonFile = string.Empty;
         private string headers = string.Empty;
@@ -76,6 +78,7 @@ namespace N_m3u8DL_CLI
             Parser parser = new Parser();
             parser.DownDir = Path.GetDirectoryName(jsonFile);
             parser.M3u8Url = m3u8Url;
+            parser.LiveStream = true;
             parser.Parse();  //产生新的json文件
 
             jsonContent = File.ReadAllText(jsonFile);
@@ -89,6 +92,8 @@ namespace N_m3u8DL_CLI
                     //Console.WriteLine(seg.ToString());
                 }
             }
+            if (toDownList.Count > 0)
+                Record();
         }
 
         //public void TryDownload()
@@ -123,6 +128,7 @@ namespace N_m3u8DL_CLI
                 sd.TimeOut = 60000;
                 sd.SegIndex = index;
                 sd.Headers = Headers;
+                sd.SegDur = info["duration"].Value<double>();
                 sd.IsLive = true;  //标记为直播
                 sd.LiveFile = LiveFile;
                 sd.LiveStream = LiveStream;
@@ -132,10 +138,7 @@ namespace N_m3u8DL_CLI
                     toDownList.RemoveAt(0);  //下完删除一项
             }
             LOGGER.PrintLine("Waiting...");
-            //不断查找是否有新分段，有的话立即开始下载
-            while (isNewSeg() != true)
-                isNewSeg();
-            Record();
+            LOGGER.WriteLine("Waiting...");
         }
 
         //检测是否有新分片
