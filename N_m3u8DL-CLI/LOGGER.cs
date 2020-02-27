@@ -61,6 +61,8 @@ namespace N_m3u8DL_CLI
         {
             try
             {
+                if (CursorIndex > 1000)
+                    Console.Clear();
                 if (cursorIndex == 0)
                     Console.SetCursorPosition(0, CursorIndex++);
                 else

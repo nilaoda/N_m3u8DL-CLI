@@ -86,7 +86,7 @@ namespace N_m3u8DL_CLI
             if (Global.VIDEO_TYPE == "H264")
             {
                 Run("ffmpeg",
-                    "-loglevel quiet -i \"" + file + "\" -map 0 -c copy -f mpegts -bsf:v h264_mp4toannexb \""
+                    "-loglevel quiet -i \"" + file + "\" -map 0 -c copy -copy_unknown -f mpegts -bsf:v h264_mp4toannexb \""
                     + Path.GetFileNameWithoutExtension(file) + "[MPEGTS].ts\"", 
                     Path.GetDirectoryName(file));
                 if (File.Exists(Path.GetDirectoryName(file) + "\\" + Path.GetFileNameWithoutExtension(file) + "[MPEGTS].ts"))
@@ -98,7 +98,7 @@ namespace N_m3u8DL_CLI
             else if (Global.VIDEO_TYPE == "H265")
             {
                 Run("ffmpeg",
-                    "-loglevel quiet -i \"" + file + "\" -map 0 -c copy -f mpegts -bsf:v hevc_mp4toannexb \""
+                    "-loglevel quiet -i \"" + file + "\" -map 0 -c copy -copy_unknown -f mpegts -bsf:v hevc_mp4toannexb \""
                     + Path.GetFileNameWithoutExtension(file) + "[MPEGTS].ts\"",
                     Path.GetDirectoryName(file));
                 if (File.Exists(Path.GetDirectoryName(file) + "\\" + Path.GetFileNameWithoutExtension(file) + "[MPEGTS].ts"))

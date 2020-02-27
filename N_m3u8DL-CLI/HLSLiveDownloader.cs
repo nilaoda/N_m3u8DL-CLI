@@ -13,7 +13,7 @@ namespace N_m3u8DL_CLI
     class HLSLiveDownloader
     {
         public static int REC_DUR_LIMIT = -1; //默认不限制录制时长
-        public static int REC_DUR = 0; //已录制时长
+        public static double REC_DUR = 0; //已录制时长
         private string liveFile = string.Empty;
         private string jsonFile = string.Empty;
         private string headers = string.Empty;

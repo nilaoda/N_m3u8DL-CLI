@@ -242,6 +242,8 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 增加新的选项--liveRecDur限制直播录制时长
     /// 2020年2月25日
     ///   - 修复优酷解密过程错误写入冗余数据的bug
+    /// 2020年2月27日
+    ///   - 细节bug修复
     /// </summary>
     /// 
 

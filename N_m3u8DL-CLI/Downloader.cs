@@ -130,7 +130,7 @@ namespace N_m3u8DL_CLI
                         firstSeg = false;
                         //LOGGER.STOPLOG = true;  //停止记录日志
                     }
-                    HLSLiveDownloader.REC_DUR += Convert.ToInt32(SegDur);
+                    HLSLiveDownloader.REC_DUR += SegDur;
                     if (HLSLiveDownloader.REC_DUR_LIMIT != -1 && HLSLiveDownloader.REC_DUR >= HLSLiveDownloader.REC_DUR_LIMIT)
                     {
                         LOGGER.PrintLine("录制已到达限定长度", LOGGER.Warning);
