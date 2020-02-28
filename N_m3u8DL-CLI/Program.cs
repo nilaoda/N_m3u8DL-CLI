@@ -244,6 +244,9 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 修复优酷解密过程错误写入冗余数据的bug
     /// 2020年2月27日
     ///   - 细节bug修复
+    /// 2020年2月28日
+    ///   - 修复本地masterList的读取问题
+    ///   - 在程序目录下创建NO_UPDATE文件可以禁止启动时检测更新
     /// </summary>
     /// 
 
@@ -324,12 +327,15 @@ namespace N_m3u8DL_CLI.NetCore
 
             HasFFmpeg:
                 Global.WriteInit();
-                Thread checkUpdate = new Thread(() =>
-                  {
-                      Global.CheckUpdate();
-                  });
-                checkUpdate.IsBackground = true;
-                checkUpdate.Start();
+                if (!File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "NO_UPDATE"))) 
+                {
+                    Thread checkUpdate = new Thread(() =>
+                    {
+                        Global.CheckUpdate();
+                    });
+                    checkUpdate.IsBackground = true;
+                    checkUpdate.Start();
+                }
 
                 int maxThreads = Environment.ProcessorCount;
                 int minThreads = 16;

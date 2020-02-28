@@ -98,6 +98,11 @@ namespace N_m3u8DL_CLI
 
             if (M3u8Url.StartsWith("http"))
                 m3u8Content = Global.GetWebSource(M3u8Url, headers);
+            else if (M3u8Url.StartsWith("file:"))
+            {
+                Uri t = new Uri(M3u8Url);
+                m3u8Content = File.ReadAllText(t.LocalPath);
+            }
             else if (File.Exists(M3u8Url))
             {
                 m3u8Content = File.ReadAllText(M3u8Url);
