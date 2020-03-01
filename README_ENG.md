@@ -11,7 +11,7 @@
 This is a m3u8 downloader.  
 ## Summary
 Supports: 
-  * Auto deceypt for `AES-128`
+  * Auto deceypt for `AES-128-CBC`
   * `Master List`
   * Live stream recording(`BETA`)
   * `Dolby Vision` from IQiYi, YouKu, Tencent
