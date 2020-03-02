@@ -259,7 +259,7 @@ namespace N_m3u8DL_CLI
             catch (Exception ex)
             {
                 LOGGER.WriteLineError(ex.Message);
-                if (ex.Message.Contains("404"))
+                if (ex.Message.Contains("404") || ex.Message.Contains("400"))//(400) 错误的请求,片段过期会提示400错误
                 {
                     IsDone = true;
                     return;
