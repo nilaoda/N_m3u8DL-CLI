@@ -18,7 +18,9 @@
 本项目已与2019年10月9日开源，采用MIT许可证，各取所需。
 
 # 关于跨平台
-本项目已通过`.NET Core`实现跨平台，理论支持Mac、Linux、Windows等平台，请移步：https://github.com/nilaoda/N_m3u8DL-CLI_Core
+~~本项目已通过`.NET Core`实现跨平台，理论支持Mac、Linux、Windows等平台，请移步：https://github.com/nilaoda/N_m3u8DL-CLI_Core~~
+
+暂时放弃跨平台（很多API需要重写才能实现功能，日后有空再维护）
 
 # N_m3u8DL-CLI
 一个**简单易用的**m3u8下载器，下载地址：https://github.com/nilaoda/N_m3u8DL-CLI/releases  
