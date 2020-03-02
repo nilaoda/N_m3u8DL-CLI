@@ -22,7 +22,7 @@ namespace N_m3u8DL_CLI
         private int targetduration = 10;
         private bool isFirstJson = true;
 
-
+        public double TotalDuration { get; set; }
         public string Headers { get => headers; set => headers = value; }
         public string DownDir { get => downDir; set => downDir = value; }
         public FileStream LiveStream { get => liveStream; set => liveStream = value; }
@@ -60,6 +60,8 @@ namespace N_m3u8DL_CLI
             JObject initJson = JObject.Parse(jsonContent);
             string m3u8Url = initJson["m3u8"].Value<string>();
             targetduration = initJson["m3u8Info"]["targetDuration"].Value<int>();
+            TotalDuration = initJson["m3u8Info"]["totalDuration"].Value<double>();
+            timer.Interval = TotalDuration * 1000 + 500;//设置定时器运行间隔
             JArray lastSegments = JArray.Parse(initJson["m3u8Info"]["segments"][0].ToString().Trim());  //上次的分段，用于比对新分段
             ArrayList tempList = new ArrayList();  //所有待下载的列表
             tempList.Clear();
