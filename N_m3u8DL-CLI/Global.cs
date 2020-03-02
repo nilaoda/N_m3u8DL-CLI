@@ -97,9 +97,11 @@ namespace N_m3u8DL_CLI
         }
 
         //获取网页源码
-        public static string GetWebSource(String url, string headers = "", int TimeOut = 60000)
+        public static string GetWebSource(String url, string headers = "", int retry = 10, int TimeOut = 60000)
         {
             string htmlCode = string.Empty;
+            for (int i = 0; i < retry; i++)
+            { 
             try
             {
                 HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
@@ -176,12 +178,15 @@ namespace N_m3u8DL_CLI
                 {
                     webRequest.Abort();
                 }
+
+                    break;
             }
             catch (Exception e)  //捕获所有异常
             {
                 LOGGER.WriteLineError(e.Message);
+                    continue;
             }
-
+            }
             return htmlCode;
         }
 
