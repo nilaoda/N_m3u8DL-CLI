@@ -125,7 +125,7 @@ namespace N_m3u8DL_CLI
                     sd.Key = info["key"].Value<string>();
                     sd.Iv = info["iv"].Value<string>();
                 }
-                sd.TimeOut = 60000;
+                sd.TimeOut = (int)timer.Interval-1000;//超时时间不超过下次执行时间
                 sd.SegIndex = index;
                 sd.Headers = Headers;
                 sd.SegDur = info["duration"].Value<double>();
@@ -133,7 +133,7 @@ namespace N_m3u8DL_CLI
                 sd.LiveFile = LiveFile;
                 sd.LiveStream = LiveStream;
                 sd.Down();  //开始下载
-                while (sd.IsDone != true) ;  //忙等待
+                while (sd.IsDone != true) { Thread.Sleep(1); };  //忙等待 Thread.Sleep(1) 可防止cpu 100% 防止电脑风扇狂转
                 if (toDownList.Count > 0)
                     toDownList.RemoveAt(0);  //下完删除一项
             }

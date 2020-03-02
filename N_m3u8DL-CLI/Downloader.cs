@@ -257,7 +257,7 @@ namespace N_m3u8DL_CLI
                 }
                 else if (IsLive && count++ < Retry) 
                 {
-                    Thread.Sleep(5000);
+                    Thread.Sleep(2000);//直播一般3-6秒一个片段
                     Down();
                 }
             }
