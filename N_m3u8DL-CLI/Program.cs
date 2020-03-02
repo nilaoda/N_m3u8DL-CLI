@@ -545,11 +545,18 @@ namespace N_m3u8DL_CLI.NetCore
                 }
 
                 //如果只有URL，没有附加参数，则尝试解析配置文件
-                if (args.Length == 1)
+                if (args.Length == 1 || (args.Length == 3 && args[1].ToLower() == "--savename"))
                 {
                     if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt")))
                     {
-                        args = Global.ParseArguments($"\"{args[0]}\"" + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
+                        if (args.Length == 3)
+                        {
+                            args = Global.ParseArguments($"\"{args[0]}\" {args[1]} {args[2]} " + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
+                        }
+                        else
+                        {
+                            args = Global.ParseArguments($"\"{args[0]}\" " + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
+                        }
                         goto parseArgs;
                     }
                 }
