@@ -2,15 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using System.Web;
 
 namespace N_m3u8DL_CLI
 {
@@ -204,7 +199,7 @@ namespace N_m3u8DL_CLI
                     //解析定义的分段长度
                     else if (line.StartsWith(HLSTags.ext_x_targetduration))
                     {
-                        targetDuration = Convert.ToInt32(line.Replace(HLSTags.ext_x_targetduration + ":", "").Trim());
+                        targetDuration = Convert.ToInt32(Convert.ToDouble(line.Replace(HLSTags.ext_x_targetduration + ":", "").Trim()));
                     }
                     //解析起始编号
                     else if (line.StartsWith(HLSTags.ext_x_media_sequence))
@@ -690,7 +685,17 @@ namespace N_m3u8DL_CLI
                     else
                     {
                         string keyUrl = CombineURL(BaseUrl, key[1]);
-                        key[1] = Convert.ToBase64String(Global.HttpDownloadFileToBytes(keyUrl, Headers));
+                        if (keyUrl.Contains("edu.51cto.com")) //51cto
+                        {
+                            keyUrl = keyUrl + "&sign=" + Global.GetTimeStamp(false);
+                            string lessonId = Global.GetQueryString("lesson_id", keyUrl);
+                            var encodeKey = Encoding.UTF8.GetString(Global.HttpDownloadFileToBytes(keyUrl, Headers));
+                            key[1] = Decode51CtoKey.GetDecodeKey(encodeKey, lessonId);
+                        }
+                        else
+                        {
+                            key[1] = Convert.ToBase64String(Global.HttpDownloadFileToBytes(keyUrl, Headers));
+                        }
                     }
                 }
                 //IV

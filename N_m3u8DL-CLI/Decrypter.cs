@@ -10,7 +10,7 @@ namespace N_m3u8DL_CLI
 {
     class Decrypter
     {
-        public static byte[] AES128Decrypt(string filePath, byte[] keyByte, byte[] ivByte)
+        public static byte[] AES128Decrypt(string filePath, byte[] keyByte, byte[] ivByte, CipherMode mode = CipherMode.CBC)
         {
             FileStream fs = new FileStream(filePath, FileMode.Open);
             //获取文件大小
@@ -24,7 +24,7 @@ namespace N_m3u8DL_CLI
             dcpt.KeySize = 128;
             dcpt.Key = keyByte;
             dcpt.IV = ivByte;
-            dcpt.Mode = CipherMode.CBC;
+            dcpt.Mode = mode;
             dcpt.Padding = PaddingMode.PKCS7;
 
             ICryptoTransform cTransform = dcpt.CreateDecryptor();
@@ -32,7 +32,7 @@ namespace N_m3u8DL_CLI
             return resultArray;
         }
 
-        public static byte[] AES128Decrypt(byte[] encryptedBuff, byte[] keyByte, byte[] ivByte)
+        public static byte[] AES128Decrypt(byte[] encryptedBuff, byte[] keyByte, byte[] ivByte, CipherMode mode = CipherMode.CBC)
         {
             byte[] inBuff = encryptedBuff;
 
@@ -41,7 +41,7 @@ namespace N_m3u8DL_CLI
             dcpt.KeySize = 128;
             dcpt.Key = keyByte;
             dcpt.IV = ivByte;
-            dcpt.Mode = CipherMode.CBC;
+            dcpt.Mode = mode;
             dcpt.Padding = PaddingMode.PKCS7;
 
             ICryptoTransform cTransform = dcpt.CreateDecryptor();

@@ -39,7 +39,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.JScript" />
-    <Reference Include="Newtonsoft.Json" />
+    <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="NiL.JS, Version=2.5.1428.0, Culture=neutral, PublicKeyToken=fa941a7c2a4de689, processorArchitecture=MSIL">
+      <HintPath>..\packages\NiL.JS.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
     <Reference Include="System.Collections" />
@@ -56,6 +62,7 @@
   <ItemGroup>
     <Compile Include="CommandLineArgument.cs" />
     <Compile Include="CommandLineArgumentParser.cs" />
+    <Compile Include="Decode51CtoKey.cs" />
     <Compile Include="Decrypter.cs" />
     <Compile Include="FFmpeg.cs" />
     <Compile Include="Global.cs" />
@@ -73,6 +80,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <None Include="bin\Debug\Newtonsoft.Json.dll" />

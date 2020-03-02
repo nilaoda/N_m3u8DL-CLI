@@ -216,6 +216,15 @@ namespace N_m3u8DL_CLI
                                     Decrypter.HexStringToBytes(Iv)
                                     );
                             }
+                            else if(fileUrl.Contains(".51cto.com/")) //使用AES-128-ECB模式解密
+                            {
+                                decryptBuff = Decrypter.AES128Decrypt(
+                                    fi.FullName,
+                                    Convert.FromBase64String(Key),
+                                    Decrypter.HexStringToBytes(Iv),
+                                    System.Security.Cryptography.CipherMode.ECB
+                                    );
+                            }
                             else
                             {
                                 decryptBuff = Decrypter.AES128Decrypt(

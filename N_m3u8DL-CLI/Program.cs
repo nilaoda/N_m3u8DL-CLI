@@ -247,6 +247,11 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年2月28日
     ///   - 修复本地masterList的读取问题
     ///   - 在程序目录下创建NO_UPDATE文件可以禁止启动时检测更新
+    /// 2020年2月29日
+    ///   - 识别#EXT-X-TARGETDURATION时，支持非整数
+    /// 2020年3月2日
+    ///   - 支持51cto的key自动解密
+    ///   - 请求m3u8内容时，有10次自动重试
     /// </summary>
     /// 
 

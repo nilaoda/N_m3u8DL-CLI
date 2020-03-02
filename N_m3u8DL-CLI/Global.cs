@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.5.4";
-        static string nowDate = "20200228";
+        static string nowVer = "2.5.5";
+        static string nowDate = "20200302";
         public static void WriteInit()
         {
             Console.Clear();
@@ -97,96 +97,97 @@ namespace N_m3u8DL_CLI
         }
 
         //获取网页源码
-        public static string GetWebSource(String url, string headers = "", int retry = 10, int TimeOut = 60000)
+        public static string GetWebSource(String url, string headers = "", int TimeOut = 60000)
         {
             string htmlCode = string.Empty;
-            for (int i = 0; i < retry; i++)
-            { 
-            try
+            for(int i = 0; i < 10; i++)
             {
-                HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
-                webRequest.Method = "GET";
-                if (NoProxy) webRequest.Proxy = null;
-                webRequest.UserAgent = "Mozilla/4.0";
-                webRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
-                webRequest.Timeout = TimeOut;  //设置超时
-                webRequest.KeepAlive = false;
-                webRequest.AllowAutoRedirect = true;  //自动跳转
-                if (url.Contains("pcvideo") && url.Contains(".titan.mgtv.com"))
+                try
                 {
-                    webRequest.UserAgent = "";
-                    if (!url.Contains("/internettv/"))
-                        webRequest.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
-                    webRequest.Headers.Add("Cookie", "MQGUID");
-                }
-                //添加headers
-                if (headers != "")
-                {
-                    foreach (string att in headers.Split('|'))
+                    HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
+                    webRequest.Method = "GET";
+                    if (NoProxy) webRequest.Proxy = null;
+                    webRequest.UserAgent = "Mozilla/4.0";
+                    webRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+                    webRequest.Timeout = TimeOut;  //设置超时
+                    webRequest.KeepAlive = false;
+                    webRequest.AllowAutoRedirect = true;  //自动跳转
+                    if (url.Contains("pcvideo") && url.Contains(".titan.mgtv.com"))
                     {
-                        try
+                        webRequest.UserAgent = "";
+                        if (!url.Contains("/internettv/"))
+                            webRequest.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
+                        webRequest.Headers.Add("Cookie", "MQGUID");
+                    }
+                    //添加headers
+                    if (headers != "")
+                    {
+                        foreach (string att in headers.Split('|'))
                         {
-                            if (att.Split(':')[0].ToLower() == "referer")
-                                webRequest.Referer = att.Substring(att.IndexOf(":") + 1);
-                            else if (att.Split(':')[0].ToLower() == "user-agent")
-                                webRequest.UserAgent = att.Substring(att.IndexOf(":") + 1);
-                            else if (att.Split(':')[0].ToLower() == "range")
-                                webRequest.AddRange(Convert.ToInt32(att.Substring(att.IndexOf(":") + 1).Split('-')[0], Convert.ToInt32(att.Substring(att.IndexOf(":") + 1).Split('-')[1])));
-                            else if (att.Split(':')[0].ToLower() == "accept")
-                                webRequest.Accept = att.Substring(att.IndexOf(":") + 1);
-                            else
-                                webRequest.Headers.Add(att);
-                        }
-                        catch (Exception e)
-                        {
-                            LOGGER.WriteLineError(e.Message);
+                            try
+                            {
+                                if (att.Split(':')[0].ToLower() == "referer")
+                                    webRequest.Referer = att.Substring(att.IndexOf(":") + 1);
+                                else if (att.Split(':')[0].ToLower() == "user-agent")
+                                    webRequest.UserAgent = att.Substring(att.IndexOf(":") + 1);
+                                else if (att.Split(':')[0].ToLower() == "range")
+                                    webRequest.AddRange(Convert.ToInt32(att.Substring(att.IndexOf(":") + 1).Split('-')[0], Convert.ToInt32(att.Substring(att.IndexOf(":") + 1).Split('-')[1])));
+                                else if (att.Split(':')[0].ToLower() == "accept")
+                                    webRequest.Accept = att.Substring(att.IndexOf(":") + 1);
+                                else
+                                    webRequest.Headers.Add(att);
+                            }
+                            catch (Exception e)
+                            {
+                                LOGGER.WriteLineError(e.Message);
+                            }
                         }
                     }
-                }
-                HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
-                if (webResponse.ContentEncoding != null
-                    && webResponse.ContentEncoding.ToLower() == "gzip") //如果使用了GZip则先解压
-                {
-                    using (Stream streamReceive = webResponse.GetResponseStream())
+                    HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+                    if (webResponse.ContentEncoding != null
+                        && webResponse.ContentEncoding.ToLower() == "gzip") //如果使用了GZip则先解压
                     {
-                        using (var zipStream =
-                            new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress))
+                        using (Stream streamReceive = webResponse.GetResponseStream())
                         {
-                            using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8))
+                            using (var zipStream =
+                                new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress))
+                            {
+                                using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8))
+                                {
+                                    htmlCode = sr.ReadToEnd();
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        using (Stream streamReceive = webResponse.GetResponseStream())
+                        {
+                            using (StreamReader sr = new StreamReader(streamReceive, Encoding.UTF8))
                             {
                                 htmlCode = sr.ReadToEnd();
                             }
                         }
                     }
-                }
-                else
-                {
-                    using (Stream streamReceive = webResponse.GetResponseStream())
+
+                    if (webResponse != null)
                     {
-                        using (StreamReader sr = new StreamReader(streamReceive, Encoding.UTF8))
-                        {
-                            htmlCode = sr.ReadToEnd();
-                        }
+                        webResponse.Close();
                     }
-                }
-
-                if (webResponse != null)
-                {
-                    webResponse.Close();
-                }
-                if (webRequest != null)
-                {
-                    webRequest.Abort();
-                }
-
+                    if (webRequest != null)
+                    {
+                        webRequest.Abort();
+                    }
                     break;
-            }
-            catch (Exception e)  //捕获所有异常
-            {
-                LOGGER.WriteLineError(e.Message);
+                }
+                catch (Exception e)  //捕获所有异常
+                {
+                    LOGGER.WriteLineError(e.Message);
+                    Thread.Sleep(1000); //1秒后重试
                     continue;
+                }
             }
-            }
+
             return htmlCode;
         }
 
