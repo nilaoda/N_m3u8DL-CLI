@@ -309,10 +309,22 @@ namespace N_m3u8DL_CLI
                     //#EXT-X-MAP
                     else if (line.StartsWith(HLSTags.ext_x_map))
                     {
-                        extMAP[0] = Global.GetTagAttribute(line, "URI");
-                        if (line.Contains("BYTERANGE"))
-                            extMAP[1] = Global.GetTagAttribute(line, "BYTERANGE");
-                        if (!extMAP[0].StartsWith("http")) extMAP[0] = CombineURL(BaseUrl, extMAP[0]);
+                        if (extMAP[0] == "")
+                        {
+                            extMAP[0] = Global.GetTagAttribute(line, "URI");
+                            if (line.Contains("BYTERANGE"))
+                                extMAP[1] = Global.GetTagAttribute(line, "BYTERANGE");
+                            if (!extMAP[0].StartsWith("http")) extMAP[0] = CombineURL(BaseUrl, extMAP[0]);
+                        }
+                        //遇到了其他的map，说明已经不是一个视频了，全部丢弃即可
+                        else
+                        {
+                            if (segments.Count > 0)
+                                parts.Add(segments);
+                            segments = new JArray();
+                            isEndlist = true;
+                            break;
+                        }
                     }
                     else if (line.StartsWith(HLSTags.ext_x_start)) ;
                     //评论行不解析
