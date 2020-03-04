@@ -19,7 +19,7 @@ namespace N_m3u8DL_CLI
         private string headers = string.Empty;
         private string downDir = string.Empty;
         private FileStream liveStream = null;
-        private int targetduration = 10;
+        private double targetduration = 10;
         private bool isFirstJson = true;
 
         public double TotalDuration { get; set; }
@@ -59,9 +59,9 @@ namespace N_m3u8DL_CLI
             string jsonContent = File.ReadAllText(jsonFile);
             JObject initJson = JObject.Parse(jsonContent);
             string m3u8Url = initJson["m3u8"].Value<string>();
-            targetduration = initJson["m3u8Info"]["targetDuration"].Value<int>();
+            targetduration = initJson["m3u8Info"]["targetDuration"].Value<double>();
             TotalDuration = initJson["m3u8Info"]["totalDuration"].Value<double>();
-            timer.Interval = TotalDuration * 1000 - 1000;//设置定时器运行间隔
+            timer.Interval = TotalDuration * 1000 - targetduration;//设置定时器运行间隔
             JArray lastSegments = JArray.Parse(initJson["m3u8Info"]["segments"][0].ToString().Trim());  //上次的分段，用于比对新分段
             ArrayList tempList = new ArrayList();  //所有待下载的列表
             tempList.Clear();
@@ -115,10 +115,9 @@ namespace N_m3u8DL_CLI
 
         private void Record()
         {
-            ArrayList temp = toDownList;
-            while(temp.Count != 0)
+            while (toDownList.Count > 0 && (sd.FileUrl != "" ? sd.IsDone : true)) 
             {
-                JObject info = JObject.Parse(temp[0].ToString());
+                JObject info = JObject.Parse(toDownList[0].ToString());
                 int index = info["index"].Value<int>();
                 sd.FileUrl = info["segUri"].Value<string>();
                 sd.Method = info["method"].Value<string>();
@@ -139,7 +138,7 @@ namespace N_m3u8DL_CLI
                 if (toDownList.Count > 0)
                     toDownList.RemoveAt(0);  //下完删除一项
             }
-            LOGGER.PrintLine("Waiting...");
+            LOGGER.PrintLine("Waiting...", LOGGER.Warning);
             LOGGER.WriteLine("Waiting...");
         }
 
