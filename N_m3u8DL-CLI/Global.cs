@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.5.6";
-        static string nowDate = "20200302";
+        static string nowVer = "2.5.7";
+        static string nowDate = "20200305";
         public static void WriteInit()
         {
             Console.Clear();
@@ -296,6 +296,12 @@ namespace N_m3u8DL_CLI
         /// <param name="outputFilePath"></param>
         public static void CombineMultipleFilesIntoSingleFile(string[] files, string outputFilePath)
         {
+            //同名文件已存在的共存策略
+            if (File.Exists(outputFilePath))
+            {
+                outputFilePath = Path.Combine(Path.GetDirectoryName(outputFilePath),
+                    Path.GetFileNameWithoutExtension(outputFilePath) + "_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + Path.GetExtension(outputFilePath));
+            }
             if (files.Length == 1)
             {
                 FileInfo fi = new FileInfo(files[0]);

@@ -23,6 +23,13 @@ namespace N_m3u8DL_CLI
             string poster = "", string audioName = "", string title = "",
             string copyright = "", string comment = "", string encodingTool = "")
         {
+            //同名文件已存在的共存策略
+            if (File.Exists($"{OutPutPath}.{muxFormat.ToLower()}")) 
+            {
+                OutPutPath = Path.Combine(Path.GetDirectoryName(OutPutPath),
+                    Path.GetFileName(OutPutPath) + "_" + DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss"));
+            }
+
             string command = "-loglevel warning -i concat:\"";
             string data = string.Empty;
             string ddpAudio = string.Empty;
