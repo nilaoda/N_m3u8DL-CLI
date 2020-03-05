@@ -83,4 +83,4 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
 https://nilaoda.github.io/N_m3u8DL-CLI/
 
 # 赞赏
-![Pay](https://raw.githubusercontent.com/nilaoda/N_m3u8DL-CLI/master/docs/source/images/alipay.png)
+https://nilaoda.github.io/N_m3u8DL-CLI/source/images/alipay.png
