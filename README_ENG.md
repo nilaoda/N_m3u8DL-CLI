@@ -22,7 +22,6 @@ Supports:
   * Mux without video track
   * Auto use system proxy
   * Optimization for Chinese streaming platform
-  * YouKu Copyright DRM decryption
   
   ![ScreenShot](https://nilaoda.github.io/N_m3u8DL-CLI/source/images/%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8.gif)  
   
@@ -47,7 +46,6 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --downloadRange Range       Set range for a video
     --stopSpeed  Number         Speed below this, retry(KB/s)
     --maxSpeed   Number         Set max download speed(KB/s)
-    --enableYouKuAes            Enable YouKu AES-128 decryption
     --enableDelAfterDone        Enable delete clips after download completed
     --enableMuxFastStart        Enable fast start for mp4
     --enableBinaryMerge         Enable use binary merge instead ffmpeg
