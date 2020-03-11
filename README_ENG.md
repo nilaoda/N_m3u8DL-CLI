@@ -14,7 +14,6 @@ Supports:
   * Auto deceypt for `AES-128-CBC`
   * `Master List`
   * Live stream recording(`BETA`)
-  * `Dolby Vision` from IQiYi, YouKu, Tencent
   * Customize HTTP headers
   * Auto merge clips(Binary or ffmpeg)
   * Select save clip by `time code` or `index`
