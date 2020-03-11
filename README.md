@@ -65,7 +65,6 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --liveRecDur HH:MM:SS       直播录制时，达到此长度自动退出软件
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
-    --enableYouKuAes            使用优酷AES-128解密方案
     --enableDelAfterDone        开启下载后删除临时文件夹的功能
     --enableMuxFastStart        开启混流mp4的FastStart特性
     --enableBinaryMerge         开启二进制合并分片
