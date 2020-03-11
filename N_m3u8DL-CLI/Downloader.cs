@@ -1,5 +1,4 @@
-﻿//using DecryptYK;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -13,8 +12,6 @@ namespace N_m3u8DL_CLI
 {
     class Downloader
     {
-        public static bool YouKuAES = false;
-
         private int timeOut = 0;
         private int retry = 5;
         private int count = 0;
@@ -93,23 +90,11 @@ namespace N_m3u8DL_CLI
                         byte[] encryptedBuff = Global.HttpDownloadFileToBytes(fileUrl, Headers, TimeOut);
                         //byte[] encryptedBuff = Global.WebClientDownloadToBytes(fileUrl, Headers);
                         byte[] decryptBuff = null;
-                        if (YouKuAES)
-                        {
-                            //decryptBuff = DecrypterYK.Decrypt(
-                            decryptBuff = Decrypter.AES128Decrypt(
-                                encryptedBuff,
-                                Convert.FromBase64String(Key),
-                                Decrypter.HexStringToBytes(Iv)
-                                );
-                        }
-                        else
-                        {
-                            decryptBuff = Decrypter.AES128Decrypt(
-                                encryptedBuff,
-                                Convert.FromBase64String(Key),
-                                Decrypter.HexStringToBytes(Iv)
-                                );
-                        }
+                        decryptBuff = Decrypter.AES128Decrypt(
+                            encryptedBuff,
+                            Convert.FromBase64String(Key),
+                            Decrypter.HexStringToBytes(Iv)
+                            );
                         Global.AppendBytesToFileStreamAndDoNotClose(LiveStream, decryptBuff);
                         LOGGER.PrintLine("<" + SegIndex + " Complete>\r\n");
                         LOGGER.WriteLine("<" + SegIndex + " Complete>");
@@ -131,7 +116,7 @@ namespace N_m3u8DL_CLI
                         //LOGGER.STOPLOG = true;  //停止记录日志
                     }
                     HLSLiveDownloader.REC_DUR += SegDur;
-                    if (HLSLiveDownloader.REC_DUR_LIMIT != -1 && HLSLiveDownloader.REC_DUR >= HLSLiveDownloader.REC_DUR_LIMIT)
+                    if (HLSLiveDownloader.REC_DUR_LIMIT != -1 && HLSLiveDownloader.REC_DUR >= HLSLiveDownloader.REC_DUR_LIMIT) 
                     {
                         LOGGER.PrintLine("录制已到达限定长度", LOGGER.Warning);
                         LOGGER.WriteLine("录制已到达限定长度");
@@ -207,16 +192,7 @@ namespace N_m3u8DL_CLI
                         try
                         {
                             byte[] decryptBuff = null;
-                            if (YouKuAES)
-                            {
-                                //decryptBuff = DecrypterYK.Decrypt(
-                                decryptBuff = Decrypter.AES128Decrypt(
-                                        File.ReadAllBytes(fi.FullName),
-                                    Convert.FromBase64String(Key),
-                                    Decrypter.HexStringToBytes(Iv)
-                                    );
-                            }
-                            else if(fileUrl.Contains(".51cto.com/")) //使用AES-128-ECB模式解密
+                            if(fileUrl.Contains(".51cto.com/")) //使用AES-128-ECB模式解密
                             {
                                 decryptBuff = Decrypter.AES128Decrypt(
                                     fi.FullName,

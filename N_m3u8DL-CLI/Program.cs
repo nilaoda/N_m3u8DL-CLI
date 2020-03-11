@@ -234,14 +234,11 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年2月23日
     ///   - 不支持的加密方式将标记为NOTSUPPORTED并强制启用二进制合并
     ///   - 启用二进制合并的情况下，如果m3u8文件中存在map文件，则合并为mp4格式
-    ///   - 支持优酷视频解密
     /// 2020年2月24日
     ///   - 直播流录制优化逻辑，避免忙等待
     ///   - 直播Waiting时，不再输出Parser内容
     ///   - 直播录制的日志记录
     ///   - 增加新的选项--liveRecDur限制直播录制时长
-    /// 2020年2月25日
-    ///   - 修复优酷解密过程错误写入冗余数据的bug
     /// 2020年2月27日
     ///   - 细节bug修复
     /// 2020年2月28日
@@ -401,7 +398,6 @@ namespace N_m3u8DL_CLI.NetCore
     --liveRecDur HH:MM:SS       直播录制时，达到此长度自动退出软件
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
-    --enableYouKuAes            使用优酷AES-128解密方案
     --enableDelAfterDone        开启下载后删除临时文件夹的功能
     --enableMuxFastStart        开启混流mp4的FastStart特性
     --enableBinaryMerge         开启二进制合并分片
@@ -444,10 +440,6 @@ namespace N_m3u8DL_CLI.NetCore
                 if (arguments.Has("--enableMuxFastStart"))
                 {
                     muxFastStart = true;
-                }
-                if (arguments.Has("--enableYouKuAes"))
-                {
-                    Downloader.YouKuAES = true;
                 }
                 if (arguments.Has("--disableIntegrityCheck"))
                 {
