@@ -30,11 +30,12 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.6.0";
-        static string nowDate = "20200311";
+        static string nowVer = "2.6.1";
+        static string nowDate = "20200417";
         public static void WriteInit()
         {
             Console.Clear();
+            Console.SetCursorPosition(0, 0);
             Console.BackgroundColor = ConsoleColor.Blue; //设置背景色
             Console.ForegroundColor = ConsoleColor.White; //设置前景色，即字体颜色
             Console.WriteLine($"N_m3u8DL-CLI v{nowVer} {nowDate}...");

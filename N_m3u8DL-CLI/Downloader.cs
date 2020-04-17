@@ -220,6 +220,7 @@ namespace N_m3u8DL_CLI
                         {
                             LOGGER.PrintLine(ex.Message, LOGGER.Error);
                             LOGGER.WriteLineError(ex.Message);
+                            Thread.Sleep(3000);
                             Environment.Exit(-1);
                         }
                     }

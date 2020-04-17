@@ -260,6 +260,10 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 逻辑优化
     /// 2020年3月5日
     ///   - 增加同名文件合并时共存策略
+    /// 2020年4月17日
+    ///   - 优化异常捕获
+    ///   - 控制台输出设置为UTF-8
+    ///   - 细节优化
     /// </summary>
     /// 
 
@@ -299,6 +303,7 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
+            Console.OutputEncoding = Encoding.UTF8;
 
             try
             {
@@ -732,6 +737,7 @@ namespace N_m3u8DL_CLI.NetCore
                 LOGGER.WriteLineError("Download Failed");
                 LOGGER.PrintLine("下载失败, 程序退出", LOGGER.Error);
                 Console.CursorVisible = true;
+                Thread.Sleep(3000);
                 Environment.Exit(-1);
                 //Console.Write("按任意键继续..."); Console.ReadKey(); return;
             }
