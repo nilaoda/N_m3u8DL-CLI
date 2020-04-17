@@ -30,7 +30,7 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.6.1";
+        static string nowVer = "2.6.2";
         static string nowDate = "20200417";
         public static void WriteInit()
         {
@@ -685,6 +685,7 @@ namespace N_m3u8DL_CLI
                 p.StartInfo.RedirectStandardOutput = true;  //由调用程序获取输出信息
                 p.StartInfo.RedirectStandardError = true;   //重定向标准错误输出
                 p.StartInfo.CreateNoWindow = true;          //不显示程序窗口
+                p.StartInfo.StandardErrorEncoding = Encoding.UTF8;
                 p.Start();//启动程序
                 p.StandardInput.AutoFlush = true;
                 //获取cmd窗口的输出信息

@@ -303,7 +303,7 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
-            Console.OutputEncoding = Encoding.UTF8;
+            Console.OutputEncoding = Encoding.GetEncoding("gbk");
 
             try
             {
