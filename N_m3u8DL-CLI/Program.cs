@@ -262,7 +262,6 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 增加同名文件合并时共存策略
     /// 2020年4月17日
     ///   - 优化异常捕获
-    ///   - 控制台输出设置为UTF-8
     ///   - 细节优化
     /// </summary>
     /// 
@@ -303,7 +302,6 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
-            Console.OutputEncoding = Encoding.GetEncoding("gbk");
 
             try
             {
