@@ -89,7 +89,7 @@ namespace N_m3u8DL_CLI
 
             //获取m3u8内容
             if (!liveStream)
-                LOGGER.PrintLine("获取m3u8内容", LOGGER.Warning);
+                LOGGER.PrintLine(strings.downloadingM3u8, LOGGER.Warning);
 
             if (M3u8Url.StartsWith("http"))
                 m3u8Content = Global.GetWebSource(M3u8Url, headers);
@@ -116,8 +116,23 @@ namespace N_m3u8DL_CLI
             if (M3u8Url.Contains("tlivecloud-playback-cdn.ysp.cctv.cn") && M3u8Url.Contains("endtime="))
                 isEndlist = true;
 
+            if (M3u8Url.Contains("imooc.com/"))
+            {
+                m3u8Content = DecodeImooc.DecodeM3u8(m3u8Content);
+            }
+
             //输出m3u8文件
             File.WriteAllText(m3u8SavePath, m3u8Content);
+
+            //针对优酷#EXT-X-VERSION:7杜比视界片源修正
+            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && m3u8Content.Contains("ott.cibntv.net") && m3u8Content.Contains("ccode=")) 
+            {
+                Regex ykmap = new Regex("#EXT-X-DISCONTINUITY\\s+#EXT-X-MAP:URI=\\\"(.*?)\\\",BYTERANGE=\\\"(.*?)\\\"");
+                foreach (Match m in ykmap.Matches(m3u8Content))
+                {
+                    m3u8Content = m3u8Content.Replace(m.Value, $"#EXTINF:0.000000,\n#EXT-X-BYTERANGE:{m.Groups[2].Value}\n{m.Groups[1].Value}");
+                }
+            }
 
             //如果BaseUrl为空则截取字符串充当
             if (BaseUrl == "")
@@ -130,8 +145,8 @@ namespace N_m3u8DL_CLI
 
             if (!liveStream)
             {
-                LOGGER.WriteLine("Parsing Content");
-                LOGGER.PrintLine("解析m3u8内容");
+                LOGGER.WriteLine(strings.parsingM3u8);
+                LOGGER.PrintLine(strings.parsingM3u8);
             }
 
             if (!string.IsNullOrEmpty(keyBase64))
@@ -428,8 +443,8 @@ namespace N_m3u8DL_CLI
 
             if (isM3u == false)
             {
-                LOGGER.WriteLineError("NOT Contain #EXTM3U");
-                LOGGER.PrintLine("无法读取m3u8", LOGGER.Error);
+                LOGGER.WriteLineError(strings.invalidM3u8);
+                LOGGER.PrintLine(strings.invalidM3u8, LOGGER.Error);
                 return;
             }
 
@@ -557,8 +572,8 @@ namespace N_m3u8DL_CLI
             //输出JSON文件
             if (!liveStream)
             {
-                LOGGER.WriteLine("Writing Json: [meta.json]");
-                LOGGER.PrintLine("写出meta.json");
+                LOGGER.WriteLine(strings.wrtingMeta);
+                LOGGER.PrintLine(strings.wrtingMeta);
             }
             File.WriteAllText(jsonSavePath, jsonResult.ToString());
             //检测是否为master list
@@ -579,7 +594,7 @@ namespace N_m3u8DL_CLI
             {
                 if (m != "AES-128")
                 {
-                    LOGGER.PrintLine($"不支持{m}加密方式,将不被处理,且强制开启二进制合并", LOGGER.Error);
+                    LOGGER.PrintLine(string.Format(strings.notSupportMethod, m), LOGGER.Error);
                     DownloadManager.BinaryMerge = true;
                     return new string[] { $"{m}(NOTSUPPORTED)", "", "" };
                 }
@@ -593,8 +608,8 @@ namespace N_m3u8DL_CLI
                 }
                 else
                 {
-                    LOGGER.PrintLine("获取m3u8 key...", LOGGER.Warning);
-                    LOGGER.WriteLine("Opening " + key[1]);
+                    LOGGER.PrintLine(strings.downloadingM3u8Key, LOGGER.Warning);
+                    LOGGER.WriteLine(strings.downloadingM3u8Key + " " + key[1]);
                     if (key[1].StartsWith("http"))
                     {
                         string keyUrl = key[1];
@@ -682,6 +697,10 @@ namespace N_m3u8DL_CLI
                             }
                             key[1] = Convert.ToBase64String(Encoding.Default.GetBytes(decKey));
                         } //气球云
+                        else if (key[1].Contains("imooc.com/"))
+                        {
+                            key[1] = DecodeImooc.DecodeKey(Global.GetWebSource(key[1], Headers));
+                        }
                         else
                         {
                             if (keyUrl.Contains("https://keydeliver.linetv.tw/jurassicPark"))  //linetv
@@ -699,8 +718,8 @@ namespace N_m3u8DL_CLI
                         string keyUrl = CombineURL(BaseUrl, key[1]);
                         if (keyUrl.Contains("edu.51cto.com")) //51cto
                         {
-                            keyUrl = keyUrl + "&sign=" + Global.GetTimeStamp(false);
                             string lessonId = Global.GetQueryString("lesson_id", keyUrl);
+                            keyUrl = keyUrl + "&sign=" + Decode51CtoKey.GetSign(lessonId);
                             var encodeKey = Encoding.UTF8.GetString(Global.HttpDownloadFileToBytes(keyUrl, Headers));
                             key[1] = Decode51CtoKey.GetDecodeKey(encodeKey, lessonId);
                         }
@@ -724,18 +743,18 @@ namespace N_m3u8DL_CLI
             {
                 File.Copy(m3u8SavePath, Path.GetDirectoryName(m3u8SavePath) + "\\master.m3u8", true);
                 LOGGER.WriteLine("Master List Found");
-                LOGGER.PrintLine("识别到大师列表", LOGGER.Warning);
+                LOGGER.PrintLine(strings.masterListFound, LOGGER.Warning);
                 string t = "{" + "\"masterUri\":\"" + M3u8Url + "\","
                     + "\"updateTime\":\"" + DateTime.Now.ToString("o") + "\","
                     + "\"playLists:\":[" + string.Join(",", extLists.ToArray()) + "]" + "}";
                 //输出json文件
-                LOGGER.WriteLine("Writing Master List Json: [playLists.json]");
-                LOGGER.PrintLine("写出playLists.json");
+                LOGGER.WriteLine(strings.wrtingMasterMeta);
+                LOGGER.PrintLine(strings.wrtingMasterMeta);
                 File.WriteAllText(Path.GetDirectoryName(jsonSavePath) + "\\playLists.json", Global.ConvertJsonString(t));
-                LOGGER.WriteLine("Select Playlist: " + bestUrl);
-                LOGGER.PrintLine("已自动选择最高清晰度");
-                LOGGER.WriteLine("Start Re-Parsing");
-                LOGGER.PrintLine("重新解析m3u8...", LOGGER.Warning);
+                LOGGER.WriteLine(strings.selectPlaylist + ": " + bestUrl);
+                LOGGER.PrintLine(strings.selectPlaylist);
+                LOGGER.WriteLine(strings.startReParsing);
+                LOGGER.PrintLine(strings.startReParsing, LOGGER.Warning);
                 //重置Baseurl并重新解析
                 M3u8Url = bestUrl;
                 BaseUrl = "";

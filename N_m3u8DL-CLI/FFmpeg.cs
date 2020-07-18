@@ -84,7 +84,7 @@ namespace N_m3u8DL_CLI
             }
 
             Run("ffmpeg", command, Path.GetDirectoryName(files[0]));
-            LOGGER.WriteLine("Result in [ffreport.log]");
+            LOGGER.WriteLine(strings.ffmpegDone);
             //Console.WriteLine(command);
         }
 

@@ -19,7 +19,7 @@ namespace N_m3u8DL_CLI
             fs.Read(inBuff, 0, inBuff.Length);
             fs.Close();
 
-            Aes dcpt = Aes.Create("AES");
+            Aes dcpt = Aes.Create();
             dcpt.BlockSize = 128;
             dcpt.KeySize = 128;
             dcpt.Key = keyByte;
@@ -36,7 +36,7 @@ namespace N_m3u8DL_CLI
         {
             byte[] inBuff = encryptedBuff;
 
-            Aes dcpt = Aes.Create("AES");
+            Aes dcpt = Aes.Create();
             dcpt.BlockSize = 128;
             dcpt.KeySize = 128;
             dcpt.Key = keyByte;

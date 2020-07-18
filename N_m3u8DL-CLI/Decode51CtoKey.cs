@@ -1,6 +1,8 @@
 ﻿using NiL.JS.BaseLibrary;
 using NiL.JS.Core;
 using NiL.JS.Extensions;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace N_m3u8DL_CLI
 {
@@ -285,6 +287,19 @@ function getKey(text, lid) {
     return btoa(dec(text, lid));
 }";
 
+        private static string MD5Encoding(string rawPass)
+        {
+            MD5 md5 = MD5.Create();
+            byte[] bs = Encoding.UTF8.GetBytes(rawPass);
+            byte[] hs = md5.ComputeHash(bs);
+            StringBuilder sb = new StringBuilder();
+            foreach (byte b in hs)
+            {
+                sb.Append(b.ToString("x2"));
+            }
+            return sb.ToString();
+        }
+
         public static string GetDecodeKey(string encodeKey, string lid)
         {
             var context = new Context();
@@ -292,6 +307,12 @@ function getKey(text, lid) {
             var concatFunction = context.GetVariable("getKey").As<Function>();
             string key = concatFunction.Call(new Arguments { encodeKey, lid }).ToString();
             return key;
+        }
+
+        public static string GetSign(string lid)
+        {
+            var data = lid + "eDu_51Cto_siyuanTlw";
+            return MD5Encoding(data);
         }
     }
 }

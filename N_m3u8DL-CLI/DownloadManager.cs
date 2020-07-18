@@ -77,8 +77,8 @@ namespace N_m3u8DL_CLI
                 if (initJson["m3u8Info"]["audio"].ToString() != "")
                     externalAudio = true;
                 externalAudioUrl = initJson["m3u8Info"]["audio"].ToString();
-                LOGGER.WriteLine("Has External Audio Track");
-                LOGGER.PrintLine("识别到外挂音频轨道", LOGGER.Warning);
+                LOGGER.WriteLine(strings.hasExternalAudioTrack);
+                LOGGER.PrintLine(strings.hasExternalAudioTrack, LOGGER.Warning);
             }
             catch (Exception) {}
             try
@@ -86,8 +86,8 @@ namespace N_m3u8DL_CLI
                 if (initJson["m3u8Info"]["sub"].ToString() != "")
                     externalSub = true;
                 externalSubUrl = initJson["m3u8Info"]["sub"].ToString();
-                LOGGER.WriteLine("Has External Subtitle Track");
-                LOGGER.PrintLine("识别到外挂字幕轨道", LOGGER.Warning);
+                LOGGER.WriteLine(strings.hasExternalSubtitleTrack);
+                LOGGER.PrintLine(strings.hasExternalSubtitleTrack, LOGGER.Warning);
             }
             catch (Exception) { }
             total = Convert.ToInt32(segCount);
@@ -149,8 +149,8 @@ namespace N_m3u8DL_CLI
             };
 
             //开始调用下载
-            LOGGER.WriteLine("Start Downloading");
-            LOGGER.PrintLine("开始下载文件", LOGGER.Warning);
+            LOGGER.WriteLine(strings.startDownloading);
+            LOGGER.PrintLine(strings.startDownloading, LOGGER.Warning);
 
             //下载MAP文件（若有）
             try
@@ -172,7 +172,7 @@ namespace N_m3u8DL_CLI
                     File.Delete(sd.SavePath);
                 if (File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
                     File.Delete(DownDir + "\\Part_0\\!MAP.ts");
-                LOGGER.PrintLine("下载MAP文件...");
+                LOGGER.PrintLine(strings.downloadingMapFile);
                 sd.Down();  //开始下载
             }
             catch (Exception e)
@@ -214,7 +214,7 @@ namespace N_m3u8DL_CLI
                     sd.SavePath = DownDir + "\\Part_" + 0.ToString(partsPadZero) + "\\" + firstSeg["index"].Value<int>().ToString(segsPadZero) + ".tsdownloading";
                     if (File.Exists(sd.SavePath))
                         File.Delete(sd.SavePath);
-                    LOGGER.PrintLine("下载首分片...");
+                    LOGGER.PrintLine(strings.downloadingFirstSegement);
                     if (!Global.ShouldStop)
                         sd.Down();  //开始下载
                 }
@@ -238,7 +238,7 @@ namespace N_m3u8DL_CLI
                     if (ss.Trim().Contains("Error in reading file"))
                         flag = true;
                 }
-                LOGGER.PrintLine("等待下载完成...", LOGGER.Warning);
+                LOGGER.PrintLine(strings.waitForCompletion, LOGGER.Warning);
                 if (!flag)
                     Global.HadReadInfo = true;
             }
@@ -356,13 +356,13 @@ namespace N_m3u8DL_CLI
         ll:
             if (tsCount != segCount)
             {
-                LOGGER.PrintLine("完成数量 " + tsCount + " / " + segCount);
-                LOGGER.WriteLine("Downloaded " + tsCount + " of " + segCount);
+                LOGGER.PrintLine(strings.downloadedCount + tsCount + " / " + segCount);
+                LOGGER.WriteLine(strings.downloadedCount + tsCount + " of " + segCount);
                 if (Count <= RetryCount)
                 {
                     Count++;
-                    LOGGER.WriteLine("Retry Count " + Count + " / " + RetryCount);
-                    LOGGER.PrintLine("重试次数 " + Count + " / " + RetryCount, LOGGER.Warning);
+                    LOGGER.WriteLine(strings.retryCount + Count + " / " + RetryCount);
+                    LOGGER.PrintLine(strings.retryCount + Count + " / " + RetryCount, LOGGER.Warning);
                     Thread.Sleep(3000);
                     GC.Collect(); //垃圾回收
                     DoDownload();
@@ -370,15 +370,15 @@ namespace N_m3u8DL_CLI
             }
             else  //开始合并
             {
-                LOGGER.PrintLine("已下载完毕" + (DisableIntegrityCheck ? "(已关闭完整性检查)" : ""));
+                LOGGER.PrintLine(strings.downloadComplete + (DisableIntegrityCheck ? "(" + strings.disableIntegrityCheck + ")" : ""));
                 Console.WriteLine();
                 if (NoMerge == false)
                 {
                     string exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
                     string driverName = exePath.Remove(exePath.IndexOf(':'));
                     Console.Title = "Done.";
-                    LOGGER.WriteLine("Start Merging");
-                    LOGGER.PrintLine("开始合并分片...", LOGGER.Warning);
+                    LOGGER.WriteLine(strings.startMerging);
+                    LOGGER.PrintLine(strings.startMerging, LOGGER.Warning);
                     //VTT字幕
                     if (isVTT == true)
                         MuxFormat = "vtt";
@@ -396,7 +396,7 @@ namespace N_m3u8DL_CLI
 
                         if (BinaryMerge)
                         {
-                            LOGGER.PrintLine("二进制合并...请耐心等待");
+                            LOGGER.PrintLine(strings.binaryMergingPleaseWait);
                             MuxFormat = "ts";
                             //有MAP文件，一般为mp4，采取默认动作
                             if(File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
@@ -418,8 +418,8 @@ namespace N_m3u8DL_CLI
                                     if (!isVTT && !File.Exists(DownDir + "\\Part_0\\!MAP.ts") && !FFmpeg.CheckMPEGTS(s))
                                     {
                                         //转换
-                                        LOGGER.PrintLine("将文件转换到 MPEG-TS 封装：" + Path.GetFileName(s));
-                                        LOGGER.WriteLine("Re-Mux file to MPEG-TS：" + Path.GetFileName(s));
+                                        LOGGER.PrintLine(strings.remuxToMPEGTS + Path.GetFileName(s));
+                                        LOGGER.WriteLine(strings.remuxToMPEGTS + Path.GetFileName(s));
                                         FFmpeg.ConvertToMPEGTS(s);
                                     }
                                 }
@@ -427,15 +427,15 @@ namespace N_m3u8DL_CLI
                                 //分片过多的情况
                                 if (tsCount >= 1800)
                                 {
-                                    LOGGER.WriteLine("Too Many Segs, Partial Merging");
-                                    LOGGER.PrintLine("分片大于1800个，执行分部合并中...", LOGGER.Warning);
+                                    LOGGER.WriteLine(strings.partialMergingPleaseWait);
+                                    LOGGER.PrintLine(strings.partialMergingPleaseWait, LOGGER.Warning);
                                     Global.PartialCombineMultipleFiles(Global.GetFiles(DownDir + "\\Part_0", ".ts"));
                                 }
 
                                 if (Global.AUDIO_TYPE != "")
                                     MuxFormat = Global.AUDIO_TYPE;
 
-                                LOGGER.PrintLine("使用ffmpeg合并...请耐心等待");
+                                LOGGER.PrintLine(strings.ffmpegMergingPleaseWait);
                                 if (!File.Exists(MuxSetJson))
                                     FFmpeg.Merge(Global.GetFiles(DownDir + "\\Part_0", ".ts"), MuxFormat, MuxFastStart);
                                 else
@@ -458,12 +458,12 @@ namespace N_m3u8DL_CLI
                             }
                             else
                             {
-                                LOGGER.PrintLine("杜比视界内容，使用二进制合并...请耐心等待");
+                                LOGGER.PrintLine(strings.dolbyVisionContentMerging);
                                 Global.CombineMultipleFilesIntoSingleFile(Global.GetFiles(DownDir + "\\Part_0", ".ts"), FFmpeg.OutPutPath + ".mp4");
                             }
                         }
 
-                        LOGGER.WriteLine("Task Done"
+                        LOGGER.WriteLine(strings.taskDone
                                 + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
                                 + "\r\nFile: " + FFmpeg.OutPutPath + "." + (MuxFormat == "aac" ? "m4a" : MuxFormat) + "\r\n\r\n");
 
@@ -482,15 +482,15 @@ namespace N_m3u8DL_CLI
                             externalAudio = false;
                             DownloadedSize = 0;
                             Global.WriteInit();
-                            LOGGER.PrintLine("开始下载外挂音频...", LOGGER.Warning);
+                            LOGGER.PrintLine(strings.downloadingExternalAudioTrack, LOGGER.Warning);
                             Parser parser = new Parser();
                             parser.Headers = Headers; //继承Header
                             parser.BaseUrl = "";
                             parser.M3u8Url = externalAudioUrl;
                             parser.DownName = DownName + "(Audio)";
                             parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
-                            LOGGER.WriteLine("Start Parsing " + externalAudioUrl);
-                            LOGGER.WriteLine("Downloading External Audio Track");
+                            LOGGER.WriteLine(strings.startParsing + externalAudioUrl);
+                            LOGGER.WriteLine(strings.downloadingExternalAudioTrack);
                             DownName = DownName + "(Audio)";
                             fflogName = "_ffreport(Audio).log";
                             DownDir = parser.DownDir;
@@ -504,15 +504,15 @@ namespace N_m3u8DL_CLI
                             externalSub = false;
                             DownloadedSize = 0;
                             Global.WriteInit();
-                            LOGGER.PrintLine("开始下载外挂字幕...", LOGGER.Warning);
+                            LOGGER.PrintLine(strings.downloadingExternalSubtitleTrack, LOGGER.Warning);
                             Parser parser = new Parser();
                             parser.Headers = Headers; //继承Header
                             parser.BaseUrl = "";
                             parser.M3u8Url = externalSubUrl;
                             parser.DownName = DownName + "(Subtitle)";
                             parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
-                            LOGGER.WriteLine("Start Parsing " + externalSubUrl);
-                            LOGGER.WriteLine("Downloading External Subtitle Track");
+                            LOGGER.WriteLine(strings.startParsing + externalSubUrl);
+                            LOGGER.WriteLine(strings.downloadingExternalSubtitleTrack);
                             DownName = DownName + "(Subtitle)";
                             fflogName = "_ffreport(Subtitle).log";
                             DownDir = parser.DownDir;
@@ -521,7 +521,7 @@ namespace N_m3u8DL_CLI
                             LOGGER.CursorIndex = 5;
                             DoDownload();
                         }
-                        LOGGER.PrintLine("任务结束", LOGGER.Warning);
+                        LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
                         Console.CursorVisible = true;
                         Environment.Exit(0);  //正常退出程序
                         Console.Clear();
@@ -530,9 +530,9 @@ namespace N_m3u8DL_CLI
 
                     FFmpeg.OutPutPath = Path.Combine(Directory.GetParent(DownDir).FullName, DownName);
                     FFmpeg.ReportFile = driverName + "\\:" + exePath.Remove(0, exePath.IndexOf(':') + 1).Replace("\\", "/") + "/Logs/" + Path.GetFileNameWithoutExtension(LOGGER.LOGFILE) + fflogName;
-                    
+
                     //合并分段
-                    LOGGER.PrintLine("合并分段中...");
+                    LOGGER.PrintLine(strings.startMerging);
                     for (int i = 0; i < PartsCount; i++)
                     {
                         string outputFilePath = DownDir + "\\Part_" + i.ToString(partsPadZero) + ".ts";
@@ -550,7 +550,7 @@ namespace N_m3u8DL_CLI
 
                     if (BinaryMerge)
                     {
-                        LOGGER.PrintLine("二进制合并...请耐心等待");
+                        LOGGER.PrintLine(strings.binaryMergingPleaseWait);
                         MuxFormat = "ts";
                         //有MAP文件，一般为mp4，采取默认动作
                         if (File.Exists(DownDir + "\\!MAP.ts")) 
@@ -569,8 +569,8 @@ namespace N_m3u8DL_CLI
                                 if (!isVTT && !File.Exists(DownDir + "\\!MAP.ts") && !FFmpeg.CheckMPEGTS(s))
                                 {
                                     //转换
-                                    LOGGER.PrintLine("将文件转换到 MPEG-TS 封装：" + Path.GetFileName(s));
-                                    LOGGER.WriteLine("Re-Mux file to MPEG-TS：" + Path.GetFileName(s));
+                                    LOGGER.PrintLine(strings.remuxToMPEGTS + Path.GetFileName(s));
+                                    LOGGER.WriteLine(strings.remuxToMPEGTS + Path.GetFileName(s));
                                     FFmpeg.ConvertToMPEGTS(s);
                                 }
                             }
@@ -578,7 +578,7 @@ namespace N_m3u8DL_CLI
                             if (Global.AUDIO_TYPE != "")
                                 MuxFormat = Global.AUDIO_TYPE;
 
-                            LOGGER.PrintLine("使用ffmpeg合并...请耐心等待");
+                            LOGGER.PrintLine(strings.ffmpegMergingPleaseWait);
                             if (!File.Exists(MuxSetJson))
                                 FFmpeg.Merge(Global.GetFiles(DownDir, ".ts"), MuxFormat, MuxFastStart);
                             else
@@ -598,12 +598,12 @@ namespace N_m3u8DL_CLI
                         }
                         else
                         {
-                            LOGGER.PrintLine("杜比视界内容，使用二进制合并...请耐心等待");
+                            LOGGER.PrintLine(strings.dolbyVisionContentMerging);
                             Global.CombineMultipleFilesIntoSingleFile(Global.GetFiles(DownDir, ".ts"), FFmpeg.OutPutPath + ".mp4");
                         }
                     }
 
-                    LOGGER.WriteLine("Task Done"
+                    LOGGER.WriteLine(strings.taskDone
                         + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")
                         + "\r\nFile: " + FFmpeg.OutPutPath + "." + (MuxFormat == "aac" ? "m4a" : MuxFormat) + "\r\n\r\n");
                     //Global.ExplorerFile(FFmpeg.OutPutPath + ".mp4");
@@ -622,15 +622,15 @@ namespace N_m3u8DL_CLI
                         externalAudio = false;
                         DownloadedSize = 0;
                         Global.WriteInit();
-                        LOGGER.PrintLine("开始下载外挂音频...", LOGGER.Warning);
+                        LOGGER.PrintLine(strings.downloadingExternalAudioTrack, LOGGER.Warning);
                         Parser parser = new Parser();
                         parser.Headers = Headers; //继承Header
                         parser.BaseUrl = "";
                         parser.M3u8Url = externalAudioUrl;
                         parser.DownName = DownName + "(Audio)";
                         parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
-                        LOGGER.WriteLine("Start Parsing " + externalAudioUrl);
-                        LOGGER.WriteLine("Downloading External Audio Track");
+                        LOGGER.WriteLine(strings.startParsing + externalAudioUrl);
+                        LOGGER.WriteLine(strings.downloadingExternalAudioTrack);
                         DownName = DownName + "(Audio)";
                         fflogName = "_ffreport(Audio).log";
                         DownDir = parser.DownDir;
@@ -644,15 +644,15 @@ namespace N_m3u8DL_CLI
                         externalSub = false;
                         DownloadedSize = 0;
                         Global.WriteInit();
-                        LOGGER.PrintLine("开始下载外挂字幕...", LOGGER.Warning);
+                        LOGGER.PrintLine(strings.downloadingExternalSubtitleTrack, LOGGER.Warning);
                         Parser parser = new Parser();
                         parser.Headers = Headers; //继承Header
                         parser.BaseUrl = "";
                         parser.M3u8Url = externalSubUrl;
                         parser.DownName = DownName + "(Subtitle)";
                         parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
-                        LOGGER.WriteLine("Start Parsing " + externalSubUrl);
-                        LOGGER.WriteLine("Downloading External Subtitle Track");
+                        LOGGER.WriteLine(strings.startParsing + externalSubUrl);
+                        LOGGER.WriteLine(strings.downloadingExternalSubtitleTrack);
                         DownName = DownName + "(Subtitle)";
                         fflogName = "_ffreport(Subtitle).log";
                         DownDir = parser.DownDir;
@@ -661,7 +661,7 @@ namespace N_m3u8DL_CLI
                         LOGGER.CursorIndex = 5;
                         DoDownload();
                     }
-                    LOGGER.PrintLine("任务结束", LOGGER.Warning);
+                    LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
                     Console.CursorVisible = true;
                     Environment.Exit(0);  //正常退出程序
 
@@ -670,8 +670,8 @@ namespace N_m3u8DL_CLI
                 else
                 {
                     Console.Title = "Done.";
-                    LOGGER.PrintLine("任务结束", LOGGER.Warning);
-                    LOGGER.WriteLine("Task Done"
+                    LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
+                    LOGGER.WriteLine(strings.taskDone
                         + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss"));
                     Environment.Exit(0);  //正常退出程序
                 }

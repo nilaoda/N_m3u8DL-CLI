@@ -1,0 +1,301 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="binaryMergingPleaseWait" xml:space="preserve">
+    <value>二进制合并...请耐心等待</value>
+  </data>
+  <data name="disableIntegrityCheck" xml:space="preserve">
+    <value>已关闭完整性检查</value>
+  </data>
+  <data name="dolbyVisionContentMerging" xml:space="preserve">
+    <value>杜比视界内容，使用二进制合并...请耐心等待</value>
+  </data>
+  <data name="downloadComplete" xml:space="preserve">
+    <value>已下载完毕</value>
+  </data>
+  <data name="downloadedCount" xml:space="preserve">
+    <value>完成数量 </value>
+  </data>
+  <data name="downloadFailed" xml:space="preserve">
+    <value>下载失败, 程序退出</value>
+  </data>
+  <data name="downloadingExternalAudioTrack" xml:space="preserve">
+    <value>开始下载外挂音频...</value>
+  </data>
+  <data name="downloadingExternalSubtitleTrack" xml:space="preserve">
+    <value>开始下载外挂字幕...</value>
+  </data>
+  <data name="downloadingFirstSegement" xml:space="preserve">
+    <value>下载首分片...</value>
+  </data>
+  <data name="downloadingM3u8" xml:space="preserve">
+    <value>获取m3u8内容</value>
+  </data>
+  <data name="downloadingM3u8Key" xml:space="preserve">
+    <value>获取m3u8 key...</value>
+  </data>
+  <data name="downloadingMapFile" xml:space="preserve">
+    <value>下载MAP文件...</value>
+  </data>
+  <data name="ExitedCtrlC" xml:space="preserve">
+    <value>强制退出: Ctrl+C</value>
+  </data>
+  <data name="ExitedForce" xml:space="preserve">
+    <value>强制退出: 强制</value>
+  </data>
+  <data name="ffmpegDone" xml:space="preserve">
+    <value>结果输出至 [ffreport.log]</value>
+  </data>
+  <data name="ffmpegLost" xml:space="preserve">
+    <value>在PATH和程序路径下找不到 ffmpeg</value>
+  </data>
+  <data name="ffmpegMergingPleaseWait" xml:space="preserve">
+    <value>使用ffmpeg合并...请耐心等待</value>
+  </data>
+  <data name="ffmpegTip" xml:space="preserve">
+    <value>请下载ffmpeg.exe并把他放到程序同目录.</value>
+  </data>
+  <data name="fileDuration" xml:space="preserve">
+    <value>文件时长：</value>
+  </data>
+  <data name="fileName" xml:space="preserve">
+    <value>文件名称：</value>
+  </data>
+  <data name="hasExternalAudioTrack" xml:space="preserve">
+    <value>识别到外挂音频轨道</value>
+  </data>
+  <data name="hasExternalSubtitleTrack" xml:space="preserve">
+    <value>识别到外挂字幕轨道</value>
+  </data>
+  <data name="helpInfo" xml:space="preserve">
+    <value>N_m3u8DL-CLI.exe &lt;URL|File|JSON&gt; [OPTIONS]  
+
+    --workDir    Directory      设定程序工作目录
+    --saveName   Filename       设定存储文件名(不包括后缀)
+    --baseUrl    BaseUrl        设定Baseurl
+    --headers    headers        设定请求头，格式 key:value 使用|分割不同的key&amp;value
+    --maxThreads Thread         设定程序的最大线程数(默认为32)
+    --minThreads Thread         设定程序的最小线程数(默认为16)
+    --retryCount Count          设定程序的重试次数(默认为15)
+    --timeOut    Sec            设定程序网络请求的超时时间(单位为秒，默认为10秒)
+    --muxSetJson File           使用外部json文件定义混流选项
+    --useKeyFile File           使用外部16字节文件定义AES-128解密KEY
+    --useKeyBase64 Base64String 使用Base64字符串定义AES-128解密KEY
+    --downloadRange Range       仅下载视频的一部分分片或长度
+    --liveRecDur HH:MM:SS       直播录制时，达到此长度自动退出软件
+    --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
+    --maxSpeed   Number         设置下载速度上限(单位为KB/s)
+    --enableDelAfterDone        开启下载后删除临时文件夹的功能
+    --enableMuxFastStart        开启混流mp4的FastStart特性
+    --enableBinaryMerge         开启二进制合并分片
+    --enableParseOnly           开启仅解析模式(程序只进行到meta.json)
+    --enableAudioOnly           合并时仅封装音频轨道
+    --disableDateInfo           关闭混流中的日期写入
+    --noMerge                   禁用自动合并
+    --noProxy                   不自动使用系统代理
+    --disableIntegrityCheck     不检测分片数量是否完整</value>
+  </data>
+  <data name="invalidM3u8" xml:space="preserve">
+    <value>无效的m3u8</value>
+  </data>
+  <data name="InvalidUri" xml:space="preserve">
+    <value>地址无效</value>
+  </data>
+  <data name="liveStreamFoundAndRecoding" xml:space="preserve">
+    <value>识别为直播流, 开始录制...</value>
+  </data>
+  <data name="masterListFound" xml:space="preserve">
+    <value>识别到大师列表</value>
+  </data>
+  <data name="newerVerisonDownloaded" xml:space="preserve">
+    <value>检测到更新，版本：{0}! 新版下载成功，请您自行替换</value>
+  </data>
+  <data name="newerVerisonDownloadFailed" xml:space="preserve">
+    <value>检测到更新，版本：{0}! 新版下载失败，请您自行下载</value>
+  </data>
+  <data name="newerVisionDetected" xml:space="preserve">
+    <value>检测到更新，版本：{0}! 正在尝试自动下载新版</value>
+  </data>
+  <data name="notSupportMethod" xml:space="preserve">
+    <value>不支持{0}加密方式,将不被处理,且强制开启二进制合并</value>
+  </data>
+  <data name="parseExit" xml:space="preserve">
+    <value>解析m3u8成功, 程序退出</value>
+  </data>
+  <data name="parsingM3u8" xml:space="preserve">
+    <value>解析m3u8内容</value>
+  </data>
+  <data name="partialMergingPleaseWait" xml:space="preserve">
+    <value>分片大于1800个，执行分部合并中...</value>
+  </data>
+  <data name="pressAnyKeyExit" xml:space="preserve">
+    <value>按任意键退出.</value>
+  </data>
+  <data name="readingFileInfo" xml:space="preserve">
+    <value>读取文件信息...</value>
+  </data>
+  <data name="recordLimitReached" xml:space="preserve">
+    <value>录制已到达限定长度</value>
+  </data>
+  <data name="remuxToMPEGTS" xml:space="preserve">
+    <value>将文件转换到 MPEG-TS 封装：</value>
+  </data>
+  <data name="retryCount" xml:space="preserve">
+    <value>重试次数 </value>
+  </data>
+  <data name="savePath" xml:space="preserve">
+    <value>存储路径：</value>
+  </data>
+  <data name="segCount" xml:space="preserve">
+    <value>总分片：</value>
+  </data>
+  <data name="selectedCount" xml:space="preserve">
+    <value>已选择分片：</value>
+  </data>
+  <data name="selectPlaylist" xml:space="preserve">
+    <value>已自动选择最高清晰度</value>
+  </data>
+  <data name="SomethingWasWrong" xml:space="preserve">
+    <value>遇到了某些错误!</value>
+  </data>
+  <data name="startDownloading" xml:space="preserve">
+    <value>开始下载文件</value>
+  </data>
+  <data name="startMerging" xml:space="preserve">
+    <value>开始合并分片...</value>
+  </data>
+  <data name="startParsing" xml:space="preserve">
+    <value>开始解析 </value>
+  </data>
+  <data name="startReParsing" xml:space="preserve">
+    <value>重新解析m3u8...</value>
+  </data>
+  <data name="taskDone" xml:space="preserve">
+    <value>任务结束</value>
+  </data>
+  <data name="waitForCompletion" xml:space="preserve">
+    <value>等待下载完成...</value>
+  </data>
+  <data name="wrtingMasterMeta" xml:space="preserve">
+    <value>写出playLists.json</value>
+  </data>
+  <data name="wrtingMeta" xml:space="preserve">
+    <value>写出meta.json</value>
+  </data>
+</root>

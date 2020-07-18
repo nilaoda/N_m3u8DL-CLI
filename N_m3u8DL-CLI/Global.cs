@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.6.3";
-        static string nowDate = "20200417";
+        static string nowVer = "2.7.0";
+        static string nowDate = "20200718";
         public static void WriteInit()
         {
             Console.Clear();
@@ -53,21 +53,21 @@ namespace N_m3u8DL_CLI
                 string latestVer = redirctUrl.Replace("https://github.com/nilaoda/N_m3u8DL-CLI/releases/tag/", "");
                 if (nowVer != latestVer && !latestVer.StartsWith("https"))
                 {
-                    Console.Title = $"检测到更新，版本：{latestVer}! 正在尝试自动下载新版";
+                    Console.Title = string.Format(strings.newerVisionDetected, latestVer);
                     try
                     {
                         //尝试下载新版本(去码云)
                         string url = $"https://gitee.com/nilaoda/N_m3u8DL-CLI/raw/master/N_m3u8DL-CLI_v{latestVer}.exe";
                         if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe")))
                         {
-                            Console.Title = $"检测到更新，版本：{latestVer}! 新版下载成功，请您自行替换";
+                            Console.Title = string.Format(strings.newerVerisonDownloaded, latestVer);
                             return;
                         }
                         HttpDownloadFile(url, Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe"));
                         if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe")))
-                            Console.Title = $"检测到更新，版本：{latestVer}! 新版下载成功，请您自行替换";
+                            Console.Title = string.Format(strings.newerVerisonDownloaded, latestVer);
                         else
-                            Console.Title = $"检测到更新，版本：{latestVer}! 新版下载失败，请您自行下载";
+                            Console.Title = string.Format(strings.newerVerisonDownloadFailed, latestVer);
                     }
                     catch (Exception)
                     {
@@ -666,8 +666,8 @@ namespace N_m3u8DL_CLI
         //调用ffmpeg获取视频信息
         public static ArrayList GetVideoInfo(string file)
         {
-            LOGGER.WriteLine("Reading Video Info");
-            LOGGER.PrintLine("读取文件信息...", LOGGER.Warning);
+            LOGGER.WriteLine(strings.readingFileInfo);
+            LOGGER.PrintLine(strings.readingFileInfo, LOGGER.Warning);
             StringBuilder sb = new StringBuilder();
             ArrayList info = new ArrayList();
             string cmd = "-hide_banner -i \"" + file + "\"";

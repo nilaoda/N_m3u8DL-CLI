@@ -118,8 +118,8 @@ namespace N_m3u8DL_CLI
                     HLSLiveDownloader.REC_DUR += SegDur;
                     if (HLSLiveDownloader.REC_DUR_LIMIT != -1 && HLSLiveDownloader.REC_DUR >= HLSLiveDownloader.REC_DUR_LIMIT) 
                     {
-                        LOGGER.PrintLine("录制已到达限定长度", LOGGER.Warning);
-                        LOGGER.WriteLine("录制已到达限定长度");
+                        LOGGER.PrintLine(strings.recordLimitReached, LOGGER.Warning);
+                        LOGGER.WriteLine(strings.recordLimitReached);
                         Environment.Exit(0); //正常退出
                     }
                     return;
@@ -226,8 +226,8 @@ namespace N_m3u8DL_CLI
                     }
                     else
                     {
-                        LOGGER.WriteLineError("Something was wrong!");
-                        LOGGER.PrintLine("遇到了某些错误!", LOGGER.Error);
+                        LOGGER.WriteLineError(strings.SomethingWasWrong);
+                        LOGGER.PrintLine(strings.SomethingWasWrong, LOGGER.Error);
                         return;
                     }
                     return;

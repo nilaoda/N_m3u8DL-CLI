@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -263,6 +264,15 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年4月17日
     ///   - 优化异常捕获
     ///   - 细节优化
+    /// 2020年4月22日
+    ///   - 51cto getsign
+    /// 2020年5月23日
+    ///   - 优酷杜比视界下载逻辑优化
+    /// 2020年6月15日
+    ///   - 支持IMOCO m3u8/key解密
+    /// 2020年7月18日
+    ///   - 从当前路径和exe路径同时寻找ffmpeg
+    ///   - 支持多语言本地化(简繁英)
     /// </summary>
     /// 
 
@@ -277,13 +287,13 @@ namespace N_m3u8DL_CLI.NetCore
             switch (CtrlType)
             {
                 case 0:
-                    LOGGER.WriteLine("Exited: Ctrl + C"
+                    LOGGER.WriteLine(strings.ExitedCtrlC
                     + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")); //Ctrl+C关闭
                     Console.CursorVisible = true;
                     Console.SetCursorPosition(0, LOGGER.CursorIndex);
                     break;
                 case 2:
-                    LOGGER.WriteLine("Exited: Force"
+                    LOGGER.WriteLine(strings.ExitedForce
                     + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")); //按控制台关闭按钮关闭
                     Console.CursorVisible = true;
                     Console.SetCursorPosition(0, LOGGER.CursorIndex);
@@ -302,6 +312,19 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
+            string loc = "zh-CN";
+            string currLoc = Thread.CurrentThread.CurrentUICulture.Name;
+            if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO")
+            {
+                loc = "zh-TW";
+            }
+            else if (loc != "zh-CN" && loc != "zh-SG")
+            {
+                loc = "en-US";
+            }
+            //设置语言
+            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(loc);
+            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(loc);
 
             try
             {
@@ -311,7 +334,7 @@ namespace N_m3u8DL_CLI.NetCore
                 string fileName = "";
 
                 //寻找ffmpeg.exe
-                if (!File.Exists("ffmpeg.exe"))
+                if (!File.Exists("ffmpeg.exe") && !File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe")))
                 {
                     try
                     {
@@ -329,14 +352,14 @@ namespace N_m3u8DL_CLI.NetCore
 
                     Console.BackgroundColor = ConsoleColor.Red; //设置背景色
                     Console.ForegroundColor = ConsoleColor.White; //设置前景色，即字体颜色
-                    Console.WriteLine("在PATH和程序路径下找不到 ffmpeg.exe");
+                    Console.WriteLine(strings.ffmpegLost);
                     Console.ResetColor(); //将控制台的前景色和背景色设为默认值
-                    Console.WriteLine("请下载ffmpeg.exe并把他放到程序同目录.");
+                    Console.WriteLine(strings.ffmpegTip);
                     Console.WriteLine();
                     Console.WriteLine("x86 https://ffmpeg.zeranoe.com/builds/win32/static/");
                     Console.WriteLine("x64 https://ffmpeg.zeranoe.com/builds/win64/static/");
                     Console.WriteLine();
-                    Console.WriteLine("按任意键退出.");
+                    Console.WriteLine(strings.pressAnyKeyExit);
                     Console.ReadKey();
                     Environment.Exit(-1);
                 }
@@ -384,32 +407,7 @@ namespace N_m3u8DL_CLI.NetCore
                 var arguments = CommandLineArgumentParser.Parse(args);
                 if (args.Length == 1 && args[0] == "--help") 
                 {
-                    Console.WriteLine(@"N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]  
-
-    --workDir    Directory      设定程序工作目录
-    --saveName   Filename       设定存储文件名(不包括后缀)
-    --baseUrl    BaseUrl        设定Baseurl
-    --headers    headers        设定请求头，格式 key:value 使用|分割不同的key&value
-    --maxThreads Thread         设定程序的最大线程数(默认为32)
-    --minThreads Thread         设定程序的最小线程数(默认为16)
-    --retryCount Count          设定程序的重试次数(默认为15)
-    --timeOut    Sec            设定程序网络请求的超时时间(单位为秒，默认为10秒)
-    --muxSetJson File           使用外部json文件定义混流选项
-    --useKeyFile File           使用外部16字节文件定义AES-128解密KEY
-    --useKeyBase64 Base64String 使用Base64字符串定义AES-128解密KEY
-    --downloadRange Range       仅下载视频的一部分分片或长度
-    --liveRecDur HH:MM:SS       直播录制时，达到此长度自动退出软件
-    --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
-    --maxSpeed   Number         设置下载速度上限(单位为KB/s)
-    --enableDelAfterDone        开启下载后删除临时文件夹的功能
-    --enableMuxFastStart        开启混流mp4的FastStart特性
-    --enableBinaryMerge         开启二进制合并分片
-    --enableParseOnly           开启仅解析模式(程序只进行到meta.json)
-    --enableAudioOnly           合并时仅封装音频轨道
-    --disableDateInfo           关闭混流中的日期写入
-    --noMerge                   禁用自动合并
-    --noProxy                   不自动使用系统代理
-    --disableIntegrityCheck     不检测分片数量是否完整");
+                    Console.WriteLine(strings.helpInfo);
                     return;
                 }
                 if (arguments.Has("--enableDelAfterDone"))
@@ -625,8 +623,8 @@ namespace N_m3u8DL_CLI.NetCore
                 //开始解析
 
                 Console.CursorVisible = false;
-                LOGGER.PrintLine($"文件名称：{fileName}");
-                LOGGER.PrintLine($"存储路径：{Path.GetDirectoryName(Path.Combine(workDir, fileName))}");
+                LOGGER.PrintLine($"{strings.fileName}{fileName}");
+                LOGGER.PrintLine($"{strings.savePath}{Path.GetDirectoryName(Path.Combine(workDir, fileName))}");
 
                 Parser parser = new Parser();
                 parser.DownName = fileName;
@@ -640,8 +638,8 @@ namespace N_m3u8DL_CLI.NetCore
                 string exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
                 LOGGER.LOGFILE = Path.Combine(exePath, "Logs", DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss") + ".log");
                 LOGGER.InitLog();
-                LOGGER.WriteLine("Start Parsing " + testurl);
-                LOGGER.PrintLine("开始解析地址...", LOGGER.Warning);
+                LOGGER.WriteLine(strings.startParsing + testurl);
+                LOGGER.PrintLine(strings.startParsing, LOGGER.Warning);
                 if (testurl.EndsWith(".json") && File.Exists(testurl))  //可直接跳过解析
                 {
                     if (!Directory.Exists(Path.Combine(workDir, fileName)))//若文件夹不存在则新建文件夹   
@@ -656,7 +654,7 @@ namespace N_m3u8DL_CLI.NetCore
                 //仅解析模式
                 if (parseOnly)
                 {
-                    LOGGER.PrintLine("解析m3u8成功, 程序退出");
+                    LOGGER.PrintLine(strings.parseExit);
                     Environment.Exit(0);
                 }
 
@@ -666,15 +664,15 @@ namespace N_m3u8DL_CLI.NetCore
                     isVOD = Convert.ToBoolean(initJson["m3u8Info"]["vod"].ToString());
                     //传给Watcher总时长
                     Watcher.TotalDuration = initJson["m3u8Info"]["totalDuration"].Value<double>();
-                    LOGGER.PrintLine($"文件时长：{Global.FormatTime((int)Watcher.TotalDuration)}");
-                    LOGGER.PrintLine("总分片：" + initJson["m3u8Info"]["originalCount"].Value<int>()
-                        + ", 已选择分片：" + initJson["m3u8Info"]["count"].Value<int>());
+                    LOGGER.PrintLine($"{strings.fileDuration}{Global.FormatTime((int)Watcher.TotalDuration)}");
+                    LOGGER.PrintLine(strings.segCount + initJson["m3u8Info"]["originalCount"].Value<int>()
+                        + $", {strings.selectedCount}" + initJson["m3u8Info"]["count"].Value<int>());
                 }
                 else
                 {
                     DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(workDir, fileName));
                     directoryInfo.Delete(true);
-                    LOGGER.PrintLine("地址无效", LOGGER.Error);
+                    LOGGER.PrintLine(strings.InvalidUri, LOGGER.Error);
                     LOGGER.CursorIndex = 5;
                     inputRetryCount--;
                     goto input;
@@ -711,9 +709,8 @@ namespace N_m3u8DL_CLI.NetCore
                 //直播
                 if (isVOD == false)
                 {
-                    LOGGER.WriteLine("Living Stream Found");
-                    LOGGER.WriteLine("Start Recording");
-                    LOGGER.PrintLine("识别为直播流, 开始录制");
+                    LOGGER.WriteLine(strings.liveStreamFoundAndRecoding);
+                    LOGGER.PrintLine(strings.liveStreamFoundAndRecoding);
                     //LOGGER.STOPLOG = true;  //停止记录日志
                     //开辟文件流，且不关闭。（便于播放器不断读取文件）
                     string LivePath = Path.Combine(Directory.GetParent(parser.DownDir).FullName
@@ -732,8 +729,8 @@ namespace N_m3u8DL_CLI.NetCore
                 //监听测试
                 /*httplitsen:
                 HTTPListener.StartListening();*/
-                LOGGER.WriteLineError("Download Failed");
-                LOGGER.PrintLine("下载失败, 程序退出", LOGGER.Error);
+                LOGGER.WriteLineError(strings.downloadFailed);
+                LOGGER.PrintLine(strings.downloadFailed, LOGGER.Error);
                 Console.CursorVisible = true;
                 Thread.Sleep(3000);
                 Environment.Exit(-1);
