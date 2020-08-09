@@ -2,6 +2,9 @@
 
 namespace N_m3u8DL_CLI
 {
+    /**
+     * https://www.cnblogs.com/linxuanchen/p/c-sharp-command-line-argument-parser.html
+     */
     public class CommandLineArgument
     {
         List<CommandLineArgument> _arguments;

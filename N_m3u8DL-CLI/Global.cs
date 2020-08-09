@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.7.1";
-        static string nowDate = "20200719";
+        static string nowVer = "2.5.7";
+        static string nowDate = "20200809";
         public static void WriteInit()
         {
             Console.Clear();
@@ -1014,6 +1014,57 @@ namespace N_m3u8DL_CLI
                     wr.Timeout = timeout; // timeout in milliseconds (ms)
                 return wr;
             }
+        }
+
+        /**
+         * 通过X-TIMESTAMP-MAP 调整VTT字幕的时间轴
+         */
+        public static void ReAdjustVtt(string[] vtts)
+        {
+            string MsToTime(int ms)
+            {
+                TimeSpan ts = new TimeSpan(0, 0, 0, 0, ms);
+                string str = "";
+                str = (ts.Hours.ToString("00") + ":") + ts.Minutes.ToString("00") + ":" + ts.Seconds.ToString("00") + "." + ts.Milliseconds.ToString("000");
+                return str;
+            }
+
+            int TimeToMs(string line)
+            {
+                int hh = Convert.ToInt32(line.Split(':')[0]);
+                int mm = Convert.ToInt32(line.Split(':')[1]);
+                int ss = Convert.ToInt32(line.Split(':')[2].Split('.')[0]);
+                int ms = Convert.ToInt32(line.Split(':')[2].Split('.')[1]);
+                return hh * 60 * 60 * 1000 + mm * 60 * 1000 + ss * 1000 + ms;
+            }
+
+            int addTime = 0;
+            int baseTime = 0;
+            for (int i = 0; i < vtts.Length; i++)
+            {
+                string tmp = File.ReadAllText(vtts[i], Encoding.UTF8);
+                if (!Regex.IsMatch(tmp, "X-TIMESTAMP-MAP.*MPEGTS:(\\d+)"))
+                    break;
+                if (i > 0)
+                {
+                    int newTime = Convert.ToInt32(Regex.Match(tmp, "X-TIMESTAMP-MAP.*MPEGTS:(\\d+)").Groups[1].Value);
+                    //计算偏移量
+                    //LOGGER.PrintLine((newTime - baseTime).ToString());
+                    addTime = addTime + ((newTime - baseTime) / 100);
+                    if ((newTime - baseTime) == 6300000)
+                        addTime -= 3000;
+                    //将新的作为基准时间
+                    baseTime = newTime;
+                    foreach (Match m in Regex.Matches(tmp, @"(\d{2}:\d{2}:\d{2}\.\d{3}) --> (\d{2}:\d{2}:\d{2}\.\d{3})"))
+                    {
+                        string start = m.Groups[1].Value;
+                        string end = m.Groups[2].Value;
+                        tmp = tmp.Replace(m.Value, MsToTime(TimeToMs(start) + addTime) + " --> " + MsToTime(TimeToMs(end) + addTime));
+                    }
+                }
+                File.WriteAllText(vtts[i], Regex.Replace(tmp, "X-TIMESTAMP-MAP=.*", ""), Encoding.UTF8);
+            }
+            //Console.ReadLine();
         }
     }
 }

@@ -197,6 +197,7 @@
     --muxSetJson File           使用外部json文件定義混流選項
     --useKeyFile File           使用外部16字節文件定義AES-128解密KEY
     --useKeyBase64 Base64String 使用Base64字符串定義AES-128解密KEY
+    --useKeyIV     HEXString    使用HEX字符串定義AES-128解密IV
     --downloadRange Range       僅下載視頻的壹部分分片或長度
     --liveRecDur HH:MM:SS       直播錄制時，達到此長度自動退出軟件
     --stopSpeed  Number         當速度低於此值時，重試(單位為KB/s)

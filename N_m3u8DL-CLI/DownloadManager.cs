@@ -192,7 +192,7 @@ namespace N_m3u8DL_CLI
                     if (sd.SegDur < 0) sd.SegDur = 0; //防止负数
                     sd.FileUrl = firstSeg["segUri"].Value<string>();
                     //VTT字幕
-                    if (isVTT == false && sd.FileUrl.Trim('\"').EndsWith(".vtt"))
+                    if (isVTT == false && (sd.FileUrl.Trim('\"').EndsWith(".vtt") || sd.FileUrl.Trim('\"').EndsWith(".webvtt")))
                         isVTT = true;
                     sd.Method = firstSeg["method"].Value<string>();
                     if (sd.Method != "NONE")
@@ -281,8 +281,8 @@ namespace N_m3u8DL_CLI
                             sd.SegDur = info["duration"].Value<double>();
                             if (sd.SegDur < 0) sd.SegDur = 0; //防止负数
                                 sd.FileUrl = info["segUri"].Value<string>();
-                                //VTT字幕
-                                if (isVTT == false && sd.FileUrl.Trim('\"').EndsWith(".vtt"))
+                            //VTT字幕
+                            if (isVTT == false && (sd.FileUrl.Trim('\"').EndsWith(".vtt") || sd.FileUrl.Trim('\"').EndsWith(".webvtt")))
                                 isVTT = true;
                             sd.Method = info["method"].Value<string>();
                             if (sd.Method != "NONE")
@@ -370,7 +370,7 @@ namespace N_m3u8DL_CLI
             }
             else  //开始合并
             {
-                LOGGER.PrintLine(strings.downloadComplete + (DisableIntegrityCheck ? "(" + strings.disableIntegrityCheck + ")" : ""));
+                LOGGER.PrintLine(strings.downloadComplete + (DisableIntegrityCheck ? "("+strings.disableIntegrityCheck+")" : ""));
                 Console.WriteLine();
                 if (NoMerge == false)
                 {
@@ -381,7 +381,10 @@ namespace N_m3u8DL_CLI
                     LOGGER.PrintLine(strings.startMerging, LOGGER.Warning);
                     //VTT字幕
                     if (isVTT == true)
+                    {
                         MuxFormat = "vtt";
+                        Global.ReAdjustVtt(Global.GetFiles(DownDir + "\\Part_0", ".ts"));
+                    }
                     //只有一个Part直接用ffmpeg合并
                     if (PartsCount == 1)
                     {
@@ -497,6 +500,9 @@ namespace N_m3u8DL_CLI
                             parser.Parse();  //开始解析
                             Thread.Sleep(1000);
                             LOGGER.CursorIndex = 5;
+                            Global.HadReadInfo = false;
+                            Global.VIDEO_TYPE = "";
+                            Global.AUDIO_TYPE = "";
                             DoDownload();
                         }
                         if (externalSub)  //下载独立字幕
@@ -509,16 +515,19 @@ namespace N_m3u8DL_CLI
                             parser.Headers = Headers; //继承Header
                             parser.BaseUrl = "";
                             parser.M3u8Url = externalSubUrl;
-                            parser.DownName = DownName + "(Subtitle)";
+                            parser.DownName = DownName.Replace("(Audio)", "") + "(Subtitle)";
                             parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
                             LOGGER.WriteLine(strings.startParsing + externalSubUrl);
                             LOGGER.WriteLine(strings.downloadingExternalSubtitleTrack);
-                            DownName = DownName + "(Subtitle)";
+                            DownName = parser.DownName;
                             fflogName = "_ffreport(Subtitle).log";
                             DownDir = parser.DownDir;
                             parser.Parse();  //开始解析
                             Thread.Sleep(1000);
                             LOGGER.CursorIndex = 5;
+                            Global.HadReadInfo = false;
+                            Global.VIDEO_TYPE = "";
+                            Global.AUDIO_TYPE = "";
                             DoDownload();
                         }
                         LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
@@ -530,7 +539,7 @@ namespace N_m3u8DL_CLI
 
                     FFmpeg.OutPutPath = Path.Combine(Directory.GetParent(DownDir).FullName, DownName);
                     FFmpeg.ReportFile = driverName + "\\:" + exePath.Remove(0, exePath.IndexOf(':') + 1).Replace("\\", "/") + "/Logs/" + Path.GetFileNameWithoutExtension(LOGGER.LOGFILE) + fflogName;
-
+                    
                     //合并分段
                     LOGGER.PrintLine(strings.startMerging);
                     for (int i = 0; i < PartsCount; i++)
@@ -637,6 +646,9 @@ namespace N_m3u8DL_CLI
                         parser.Parse();  //开始解析
                         Thread.Sleep(1000);
                         LOGGER.CursorIndex = 5;
+                        Global.HadReadInfo = false;
+                        Global.VIDEO_TYPE = "";
+                        Global.AUDIO_TYPE = "";
                         DoDownload();
                     }
                     if (externalSub)  //下载独立字幕
@@ -649,16 +661,19 @@ namespace N_m3u8DL_CLI
                         parser.Headers = Headers; //继承Header
                         parser.BaseUrl = "";
                         parser.M3u8Url = externalSubUrl;
-                        parser.DownName = DownName + "(Subtitle)";
+                        parser.DownName = DownName.Replace("(Audio)", "") + "(Subtitle)";
                         parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
                         LOGGER.WriteLine(strings.startParsing + externalSubUrl);
                         LOGGER.WriteLine(strings.downloadingExternalSubtitleTrack);
-                        DownName = DownName + "(Subtitle)";
+                        DownName = parser.DownName;
                         fflogName = "_ffreport(Subtitle).log";
                         DownDir = parser.DownDir;
                         parser.Parse();  //开始解析
                         Thread.Sleep(1000);
                         LOGGER.CursorIndex = 5;
+                        Global.HadReadInfo = false;
+                        Global.VIDEO_TYPE = "";
+                        Global.AUDIO_TYPE = "";
                         DoDownload();
                     }
                     LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);

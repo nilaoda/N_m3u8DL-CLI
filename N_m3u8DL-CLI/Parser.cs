@@ -24,6 +24,7 @@ namespace N_m3u8DL_CLI
         private string downName = string.Empty;
         private string keyFile = string.Empty;
         private string keyBase64 = string.Empty;
+        private string keyIV = string.Empty;
         private bool liveStream = false;
         private long bestBandwidth = 0;
         private string bestUrl = string.Empty;
@@ -60,6 +61,7 @@ namespace N_m3u8DL_CLI
         public string KeyFile { get => keyFile; set => keyFile = value; }
         public string KeyBase64 { get => keyBase64; set => keyBase64 = value; }
         public bool LiveStream { get => liveStream; set => liveStream = value; }
+        public string KeyIV { get => keyIV; set => keyIV = value; }
 
         public void Parse()
         {
@@ -125,7 +127,7 @@ namespace N_m3u8DL_CLI
             File.WriteAllText(m3u8SavePath, m3u8Content);
 
             //针对优酷#EXT-X-VERSION:7杜比视界片源修正
-            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && m3u8Content.Contains("ott.cibntv.net") && m3u8Content.Contains("ccode=")) 
+            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && m3u8Content.Contains("ott.cibntv.net") && m3u8Content.Contains("ccode="))
             {
                 Regex ykmap = new Regex("#EXT-X-DISCONTINUITY\\s+#EXT-X-MAP:URI=\\\"(.*?)\\\",BYTERANGE=\\\"(.*?)\\\"");
                 foreach (Match m in ykmap.Matches(m3u8Content))
@@ -151,13 +153,22 @@ namespace N_m3u8DL_CLI
 
             if (!string.IsNullOrEmpty(keyBase64))
             {
-                string line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{keyBase64}\"";
+                string line = "";
+                if (string.IsNullOrEmpty(keyIV))
+                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{keyBase64}\"";
+                else
+                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{keyBase64}\",IV=0x{keyIV.Replace("0x", "")}";
                 m3u8CurrentKey = ParseKey(line);
             }
             if (!string.IsNullOrEmpty(keyFile))
             {
+                string line = "";
                 Uri u = new Uri(keyFile);
-                string line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"{u.ToString()}\"";
+                if (string.IsNullOrEmpty(keyIV))
+                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{u.ToString()}\"";
+                else
+                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{u.ToString()}\",IV=0x{keyIV.Replace("0x", "")}";
+
                 m3u8CurrentKey = ParseKey(line);
             }
 
@@ -267,7 +278,7 @@ namespace N_m3u8DL_CLI
                             segInfo.Add("key", m3u8CurrentKey[1]);
                             //没有读取到IV，自己生成
                             if (m3u8CurrentKey[2] == "")
-                                segInfo.Add("iv", "0x" + Convert.ToString(segIndex, 2).PadLeft(32, '0'));
+                                segInfo.Add("iv", "0x" + Convert.ToString(segIndex, 16).PadLeft(32, '0'));
                             else
                                 segInfo.Add("iv", m3u8CurrentKey[2]);
                         }
@@ -580,8 +591,14 @@ namespace N_m3u8DL_CLI
             MasterListCheck();
         }
 
+        bool downloadingM3u8KeyTip = false;
         public string[] ParseKey(string line)
         {
+            if (!downloadingM3u8KeyTip)
+            {
+                LOGGER.PrintLine(strings.downloadingM3u8Key, LOGGER.Warning);
+                downloadingM3u8KeyTip = true;
+            }
             string[] tmp = line.Replace(HLSTags.ext_x_key + ":", "").Split(',');
             string[] key = new string[] { "NONE", "", "" };
             string u_l = Global.GetTagAttribute(lastKeyLine.Replace(HLSTags.ext_x_key + ":", ""), "URI");
@@ -608,7 +625,6 @@ namespace N_m3u8DL_CLI
                 }
                 else
                 {
-                    LOGGER.PrintLine(strings.downloadingM3u8Key, LOGGER.Warning);
                     LOGGER.WriteLine(strings.downloadingM3u8Key + " " + key[1]);
                     if (key[1].StartsWith("http"))
                     {
@@ -632,11 +648,11 @@ namespace N_m3u8DL_CLI
                                 {
                                     indexs = "0-1-2-3-4-5-6-7-18-16-15-13-12-11-10-8".Split('-');
                                 }
-                                else if (algorithmNum == 0) 
+                                else if (algorithmNum == 0)
                                 {
                                     indexs = "0-1-2-3-4-5-6-7-8-10-11-12-14-15-16-18".Split('-');
                                 }
-                                else if(algorithmNum == 2)
+                                else if (algorithmNum == 2)
                                 {
                                     var a_CODE = (int)Encoding.ASCII.GetBytes("a")[0];
 
@@ -681,7 +697,7 @@ namespace N_m3u8DL_CLI
                                     return key;
                                 }
                             }
-                            else if(encKey.Length == 17)
+                            else if (encKey.Length == 17)
                             {
                                 indexs = "1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-16".Split('-');
                             }

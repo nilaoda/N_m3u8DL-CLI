@@ -235,11 +235,14 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年2月23日
     ///   - 不支持的加密方式将标记为NOTSUPPORTED并强制启用二进制合并
     ///   - 启用二进制合并的情况下，如果m3u8文件中存在map文件，则合并为mp4格式
+    ///   - 支持优酷视频解密
     /// 2020年2月24日
     ///   - 直播流录制优化逻辑，避免忙等待
     ///   - 直播Waiting时，不再输出Parser内容
     ///   - 直播录制的日志记录
     ///   - 增加新的选项--liveRecDur限制直播录制时长
+    /// 2020年2月25日
+    ///   - 修复优酷解密过程错误写入冗余数据的bug
     /// 2020年2月27日
     ///   - 细节bug修复
     /// 2020年2月28日
@@ -263,6 +266,7 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 增加同名文件合并时共存策略
     /// 2020年4月17日
     ///   - 优化异常捕获
+    ///   - 控制台输出设置为UTF-8
     ///   - 细节优化
     /// 2020年4月22日
     ///   - 51cto getsign
@@ -273,6 +277,16 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年7月18日
     ///   - 从当前路径和exe路径同时寻找ffmpeg
     ///   - 支持多语言本地化(简繁英)
+    /// 2020年8月4日
+    ///   - 修复外挂字幕命名问题
+    ///   - 修复外挂字幕识别问题
+    ///   - 修复外挂轨道的一些逻辑问题
+    ///   - 优化多语言识别逻辑
+    /// 2020年8月5日
+    ///   - 支持相对时间的vtt合并(还存在问题)
+    /// 2020年8月9日
+    ///   - 修复IV错误导致的AES-128解密异常问题
+    ///   - 支持自定义IV(--useKeyIV)
     /// </summary>
     /// 
 
@@ -312,13 +326,18 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
+
             string loc = "zh-CN";
             string currLoc = Thread.CurrentThread.CurrentUICulture.Name;
             if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO")
             {
                 loc = "zh-TW";
             }
-            else if (loc != "zh-CN" && loc != "zh-SG")
+            else if (loc == "zh-CN" || loc == "zh-SG") 
+            {
+                loc = "zh-CN";
+            }
+            else
             {
                 loc = "en-US";
             }
@@ -384,6 +403,7 @@ namespace N_m3u8DL_CLI.NetCore
                 string reqHeaders = "";
                 string keyFile = "";
                 string keyBase64 = "";
+                string keyIV = "";
                 string muxSetJson = "MUXSETS.json";
                 string workDir = CURRENT_PATH + "\\Downloads";
                 bool muxFastStart = false;
@@ -442,6 +462,10 @@ namespace N_m3u8DL_CLI.NetCore
                 {
                     muxFastStart = true;
                 }
+                if (arguments.Has("--enableYouKuAes"))
+                {
+                    Downloader.YouKuAES = true;
+                }
                 if (arguments.Has("--disableIntegrityCheck"))
                 {
                     DownloadManager.DisableIntegrityCheck = true;
@@ -471,6 +495,10 @@ namespace N_m3u8DL_CLI.NetCore
                 if (arguments.Has("--useKeyBase64"))
                 {
                     keyBase64 = arguments.Get("--useKeyBase64").Next;
+                }
+                if (arguments.Has("--useKeyIV"))
+                {
+                    keyIV = arguments.Get("--useKeyIV").Next;
                 }
                 if (arguments.Has("--stopSpeed"))
                 {
@@ -631,6 +659,7 @@ namespace N_m3u8DL_CLI.NetCore
                 parser.DownDir = Path.Combine(workDir, parser.DownName);
                 parser.M3u8Url = testurl;
                 parser.KeyBase64 = keyBase64;
+                parser.KeyIV = keyIV;
                 parser.KeyFile = keyFile;
                 if (baseUrl != "")
                     parser.BaseUrl = baseUrl;
