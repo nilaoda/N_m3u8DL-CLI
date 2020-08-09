@@ -165,9 +165,9 @@ namespace N_m3u8DL_CLI
                 string line = "";
                 Uri u = new Uri(keyFile);
                 if (string.IsNullOrEmpty(keyIV))
-                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{u.ToString()}\"";
+                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"{u.ToString()}\"";
                 else
-                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"base64:{u.ToString()}\",IV=0x{keyIV.Replace("0x", "")}";
+                    line = $"#EXT-X-KEY:METHOD=AES-128,URI=\"{u.ToString()}\",IV=0x{keyIV.Replace("0x", "")}";
 
                 m3u8CurrentKey = ParseKey(line);
             }
