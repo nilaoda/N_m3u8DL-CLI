@@ -43,6 +43,7 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --muxSetJson File           Set a json file for mux
     --useKeyFile File           Use 16 bytes file as KEY for AES-128 decryption
     --useKeyBase64 Base64String Use Base64 String as KEY for AES-128 decryption
+    --useKeyIV     HEXString    Use HEX String as IV for AES-128 decryption
     --downloadRange Range       Set range for a video
     --stopSpeed  Number         Speed below this, retry(KB/s)
     --maxSpeed   Number         Set max download speed(KB/s)
