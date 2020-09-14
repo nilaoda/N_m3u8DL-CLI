@@ -41,10 +41,10 @@
     <Reference Include="Microsoft.JScript" />
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="Newtonsoft.Json">
-      <HintPath>..\packages\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\..\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NiL.JS, Version=2.5.1428.0, Culture=neutral, PublicKeyToken=fa941a7c2a4de689, processorArchitecture=MSIL">
-      <HintPath>..\packages\NiL.JS.dll</HintPath>
+      <HintPath>..\packages\NiL.JS.2.5.1428\lib\net45\NiL.JS.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -63,7 +63,9 @@
     <Compile Include="CommandLineArgument.cs" />
     <Compile Include="CommandLineArgumentParser.cs" />
     <Compile Include="Decode51CtoKey.cs" />
+    <Compile Include="DecodeImooc.cs" />
     <Compile Include="Decrypter.cs" />
+    <Compile Include="DecryptNfmovies.cs" />
     <Compile Include="FFmpeg.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="HLSLiveDownloader.cs" />
@@ -74,6 +76,21 @@
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Downloader.cs" />
+    <Compile Include="strings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>strings.resx</DependentUpon>
+    </Compile>
+    <Compile Include="strings.en-US.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>strings.en-US.resx</DependentUpon>
+    </Compile>
+    <Compile Include="strings.zh-TW.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>strings.zh-TW.resx</DependentUpon>
+    </Compile>
     <Compile Include="Watcher.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -100,16 +117,18 @@
     <Content Include="logo_3Iv_icon.ico" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Include="strings.en-US.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <LastGenOutput>strings.en-US.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="strings.en-US.resx" />
     <EmbeddedResource Include="strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>strings.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="strings.zh-TW.resx" />
+    <EmbeddedResource Include="strings.zh-TW.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>strings.zh-TW.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

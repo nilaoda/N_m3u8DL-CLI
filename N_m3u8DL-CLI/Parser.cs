@@ -94,7 +94,12 @@ namespace N_m3u8DL_CLI
                 LOGGER.PrintLine(strings.downloadingM3u8, LOGGER.Warning);
 
             if (M3u8Url.StartsWith("http"))
-                m3u8Content = Global.GetWebSource(M3u8Url, headers);
+            {
+                if (M3u8Url.Contains("nfmovies.com/hls"))
+                    m3u8Content = DecryptNfmovies.DecryptM3u8(Global.HttpDownloadFileToBytes(M3u8Url, headers));
+                else
+                    m3u8Content = Global.GetWebSource(M3u8Url, headers);
+            }
             else if (M3u8Url.StartsWith("file:"))
             {
                 Uri t = new Uri(M3u8Url);

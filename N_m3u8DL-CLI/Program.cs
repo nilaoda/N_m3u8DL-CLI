@@ -235,14 +235,11 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年2月23日
     ///   - 不支持的加密方式将标记为NOTSUPPORTED并强制启用二进制合并
     ///   - 启用二进制合并的情况下，如果m3u8文件中存在map文件，则合并为mp4格式
-    ///   - 支持优酷视频解密
     /// 2020年2月24日
     ///   - 直播流录制优化逻辑，避免忙等待
     ///   - 直播Waiting时，不再输出Parser内容
     ///   - 直播录制的日志记录
     ///   - 增加新的选项--liveRecDur限制直播录制时长
-    /// 2020年2月25日
-    ///   - 修复优酷解密过程错误写入冗余数据的bug
     /// 2020年2月27日
     ///   - 细节bug修复
     /// 2020年2月28日
@@ -266,7 +263,6 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 增加同名文件合并时共存策略
     /// 2020年4月17日
     ///   - 优化异常捕获
-    ///   - 控制台输出设置为UTF-8
     ///   - 细节优化
     /// 2020年4月22日
     ///   - 51cto getsign
@@ -287,6 +283,10 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年8月9日
     ///   - 修复IV错误导致的AES-128解密异常问题
     ///   - 支持自定义IV(--useKeyIV)
+    /// 2020年9月12日
+    ///   - 支持nfmovies m3u8解密
+    ///   - 支持自动去除PNG Header(https://puui.qpic.cn/newsapp_ls/0/12418116195/0)
+    ///   - 修复相对时间的vtt合并的一些错误逻辑(还存在问题)
     /// </summary>
     /// 
 
@@ -326,14 +326,13 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
-
             string loc = "zh-CN";
             string currLoc = Thread.CurrentThread.CurrentUICulture.Name;
             if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO")
             {
                 loc = "zh-TW";
             }
-            else if (loc == "zh-CN" || loc == "zh-SG") 
+            else if (loc == "zh-CN" || loc == "zh-SG")
             {
                 loc = "zh-CN";
             }
@@ -461,10 +460,6 @@ namespace N_m3u8DL_CLI.NetCore
                 if (arguments.Has("--enableMuxFastStart"))
                 {
                     muxFastStart = true;
-                }
-                if (arguments.Has("--enableYouKuAes"))
-                {
-                    Downloader.YouKuAES = true;
                 }
                 if (arguments.Has("--disableIntegrityCheck"))
                 {

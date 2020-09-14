@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.5.7";
-        static string nowDate = "20200809";
+        static string nowVer = "2.7.3";
+        static string nowDate = "20200914";
         public static void WriteInit()
         {
             Console.Clear();
@@ -545,6 +545,7 @@ namespace N_m3u8DL_CLI
 
                 long totalLen = 0;
                 long downLen = 0;
+                bool pngHeader = false; //PNG HEADER检测
                 using (var response = (HttpWebResponse)request.GetResponse())
                 {
                     using (var responseStream = response.GetResponseStream())
@@ -555,6 +556,10 @@ namespace N_m3u8DL_CLI
                             totalLen = response.ContentLength;
                             byte[] bArr = new byte[1024];
                             int size = responseStream.Read(bArr, 0, (int)bArr.Length);
+                            if (!pngHeader && size > 3 && 137 == bArr[0] && 80 == bArr[1] && 78 == bArr[2] && 71 == bArr[3]) ;
+                            {
+                                pngHeader = true;
+                            }
                             while (size > 0)
                             {
                                 stream.Write(bArr, 0, size);
@@ -579,12 +584,59 @@ namespace N_m3u8DL_CLI
                     try { File.Delete(path); } catch (Exception) { }
                 if (totalLen != -1 && downLen != totalLen) 
                     try { File.Delete(path); } catch (Exception) { }
+                if (pngHeader)
+                    TrySkipPngHeader(path);
             }
             catch (Exception e)
             {
                 LOGGER.WriteLineError("DOWN: " + e.Message + " " + url);
                 try { File.Delete(path); } catch (Exception) { }
             }
+        }
+
+        /// <summary>
+        /// 用于处理利用图床上传TS导致前面被插入PNG Header的情况
+        /// </summary>
+        /// <param name="filePath"></param>
+        public static void TrySkipPngHeader(string filePath)
+        {
+            var u = File.ReadAllBytes(filePath);
+            if (0x47 == u[0])
+            {
+                return;
+            }
+            else if (137 == u[0] && 80 == u[1] && 78 == u[2] && 71 == u[3] && 96 == u[118] && 130 == u[119])
+            {
+                u = u.Skip(120).ToArray();
+            }
+            else if (137 == u[0] && 80 == u[1] && 78 == u[2] && 71 == u[3] && 96 == u[6100] && 130 == u[6101])
+            {
+                u = u.Skip(6102).ToArray();
+            }
+            else if (137 == u[0] && 80 == u[1] && 78 == u[2] && 71 == u[3] && 96 == u[67] && 130 == u[68])
+            {
+                u = u.Skip(69).ToArray();
+            }
+            else if (137 == u[0] && 80 == u[1] && 78 == u[2] && 71 == u[3] && 96 == u[769] && 130 == u[770])
+            {
+                u = u.Skip(771).ToArray();
+            }
+            else if (137 == u[0] && 80 == u[1] && 78 == u[2] && 71 == u[3])
+            {
+                //确定是PNG但是需要手动查询结尾标记(0x60 0x82 0x47)
+                int skip = 0;
+                for (int i = 4; i < u.Length - 3; i++)
+                {
+                    if (u[i] == 0x60 && u[i + 1] == 0x82 && u[i + 2] == 0x47)
+                    {
+                        skip = i + 2;
+                        break;
+                    }
+                }
+                u = u.Skip(skip).ToArray();
+            }
+
+            File.WriteAllBytes(filePath, u);
         }
 
         //格式化json字符串
@@ -1048,6 +1100,8 @@ namespace N_m3u8DL_CLI
                 if (i > 0)
                 {
                     int newTime = Convert.ToInt32(Regex.Match(tmp, "X-TIMESTAMP-MAP.*MPEGTS:(\\d+)").Groups[1].Value);
+                    if (newTime == 900000)
+                        continue;
                     //计算偏移量
                     //LOGGER.PrintLine((newTime - baseTime).ToString());
                     addTime = addTime + ((newTime - baseTime) / 100);
