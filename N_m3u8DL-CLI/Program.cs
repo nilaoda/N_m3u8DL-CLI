@@ -287,6 +287,9 @@ namespace N_m3u8DL_CLI.NetCore
     ///   - 支持nfmovies m3u8解密
     ///   - 支持自动去除PNG Header(https://puui.qpic.cn/newsapp_ls/0/12418116195/0)
     ///   - 修复相对时间的vtt合并的一些错误逻辑(还存在问题)
+    /// 2020年9月19日
+    ///   - 在自定义KEY且未自定义IV情况下，自动读取m3u8中存在的IV
+    ///   - 支持阿房影视等ddyun m3u8解密
     /// </summary>
     /// 
 

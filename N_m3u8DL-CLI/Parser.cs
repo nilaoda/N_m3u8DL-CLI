@@ -96,7 +96,9 @@ namespace N_m3u8DL_CLI
             if (M3u8Url.StartsWith("http"))
             {
                 if (M3u8Url.Contains("nfmovies.com/hls"))
-                    m3u8Content = DecryptNfmovies.DecryptM3u8(Global.HttpDownloadFileToBytes(M3u8Url, headers));
+                    m3u8Content = DecodeNfmovies.DecryptM3u8(Global.HttpDownloadFileToBytes(M3u8Url, headers));
+                else if (M3u8Url.Contains("hls.ddyunp.com/ddyun"))
+                    m3u8Content = DecodeDdyun.DecryptM3u8(Global.HttpDownloadFileToBytes(DecodeDdyun.GetVaildM3u8Url(M3u8Url), headers));
                 else
                     m3u8Content = Global.GetWebSource(M3u8Url, headers);
             }
@@ -264,11 +266,23 @@ namespace N_m3u8DL_CLI
                     else if (line.StartsWith(HLSTags.ext_x_version)) ;
                     else if (line.StartsWith(HLSTags.ext_x_allow_cache)) ;
                     //解析KEY
-                    else if (line.StartsWith(HLSTags.ext_x_key) && string.IsNullOrEmpty(keyFile) && string.IsNullOrEmpty(keyBase64))
+                    else if (line.StartsWith(HLSTags.ext_x_key))
                     {
-                        m3u8CurrentKey = ParseKey(line);
-                        //存储为上一行的key信息
-                        lastKeyLine = line;
+                        //自定义KEY情况 判断是否需要读取IV
+                        if (!string.IsNullOrEmpty(keyFile) || !string.IsNullOrEmpty(keyBase64))
+                        {
+                            if (m3u8CurrentKey[2] == "" && line.Contains("IV=0x"))
+                            {
+                                var temp = ParseKey(line);
+                                m3u8CurrentKey[2] = temp[2]; //使用m3u8中的IV
+                            }
+                        }
+                        else
+                        {
+                            m3u8CurrentKey = ParseKey(line);
+                            //存储为上一行的key信息
+                            lastKeyLine = line;
+                        }
                     }
                     //解析分片时长(暂时不考虑标题属性)
                     else if (line.StartsWith(HLSTags.extinf))
