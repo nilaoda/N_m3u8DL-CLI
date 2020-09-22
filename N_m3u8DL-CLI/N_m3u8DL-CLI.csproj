@@ -40,8 +40,8 @@
   <ItemGroup>
     <Reference Include="Microsoft.JScript" />
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>..\..\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="NiL.JS, Version=2.5.1428.0, Culture=neutral, PublicKeyToken=fa941a7c2a4de689, processorArchitecture=MSIL">
       <HintPath>..\packages\NiL.JS.2.5.1428\lib\net45\NiL.JS.dll</HintPath>
@@ -63,9 +63,10 @@
     <Compile Include="CommandLineArgument.cs" />
     <Compile Include="CommandLineArgumentParser.cs" />
     <Compile Include="Decode51CtoKey.cs" />
+    <Compile Include="DecodeDdyun.cs" />
     <Compile Include="DecodeImooc.cs" />
+    <Compile Include="DecodeNfmovies.cs" />
     <Compile Include="Decrypter.cs" />
-    <Compile Include="DecryptNfmovies.cs" />
     <Compile Include="FFmpeg.cs" />
     <Compile Include="Global.cs" />
     <Compile Include="HLSLiveDownloader.cs" />
@@ -98,9 +99,6 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="bin\Debug\Newtonsoft.Json.dll" />
   </ItemGroup>
   <ItemGroup>
     <COMReference Include="Scripting">
