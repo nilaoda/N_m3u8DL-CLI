@@ -384,6 +384,10 @@ namespace N_m3u8DL_CLI
                         {
                             segUrl += new Regex("\\?__gda__.*").Match(M3u8Url).Value;
                         }
+                        if (M3u8Url.Contains("//dlsc.hcs.cmvideo.cn") && (segUrl.EndsWith(".ts") || segUrl.EndsWith(".mp4")))
+                        {
+                            segUrl += new Regex("\\?.*").Match(M3u8Url).Value;
+                        }
                         segInfo.Add("segUri", segUrl);
                         segments.Add(segInfo);
                         segInfo = new JObject();

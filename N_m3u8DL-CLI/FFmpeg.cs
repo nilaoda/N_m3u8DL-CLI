@@ -10,6 +10,8 @@ namespace N_m3u8DL_CLI
 {
     class FFmpeg
     {
+        public static string FFMPEG_PATH = "ffmpeg";
+
         private static string outPutPath = string.Empty;
         private static string reportFile = string.Empty;
         private static bool useAACFilter = false;  //是否启用滤镜
@@ -83,7 +85,7 @@ namespace N_m3u8DL_CLI
 
             }
 
-            Run("ffmpeg", command, Path.GetDirectoryName(files[0]));
+            Run(FFMPEG_PATH, command, Path.GetDirectoryName(files[0]));
             LOGGER.WriteLine(strings.ffmpegDone);
             //Console.WriteLine(command);
         }
@@ -92,7 +94,7 @@ namespace N_m3u8DL_CLI
         {
             if (Global.VIDEO_TYPE == "H264")
             {
-                Run("ffmpeg",
+                Run(FFMPEG_PATH,
                     "-loglevel quiet -i \"" + file + "\" -map 0 -c copy -copy_unknown -f mpegts -bsf:v h264_mp4toannexb \""
                     + Path.GetFileNameWithoutExtension(file) + "[MPEGTS].ts\"", 
                     Path.GetDirectoryName(file));
@@ -104,7 +106,7 @@ namespace N_m3u8DL_CLI
             }
             else if (Global.VIDEO_TYPE == "H265")
             {
-                Run("ffmpeg",
+                Run(FFMPEG_PATH,
                     "-loglevel quiet -i \"" + file + "\" -map 0 -c copy -copy_unknown -f mpegts -bsf:v hevc_mp4toannexb \""
                     + Path.GetFileNameWithoutExtension(file) + "[MPEGTS].ts\"",
                     Path.GetDirectoryName(file));

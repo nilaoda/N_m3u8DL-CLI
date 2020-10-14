@@ -290,6 +290,10 @@ namespace N_m3u8DL_CLI.NetCore
     /// 2020年9月19日
     ///   - 在自定义KEY且未自定义IV情况下，自动读取m3u8中存在的IV
     ///   - 支持阿房影视等ddyun m3u8解密
+    /// 2020年10月14日
+    ///   - 咪咕分片链接后拼接m3u8_url参数
+    ///   - 修复文件名过长导致的BUG
+    ///   - 优化ffmpeg调用逻辑
     /// </summary>
     /// 
 
@@ -355,7 +359,15 @@ namespace N_m3u8DL_CLI.NetCore
                 string fileName = "";
 
                 //寻找ffmpeg.exe
-                if (!File.Exists("ffmpeg.exe") && !File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe")))
+                if (File.Exists("ffmpeg.exe"))
+                {
+                    FFmpeg.FFMPEG_PATH = Path.Combine(Environment.CurrentDirectory, "ffmpeg.exe");
+                }
+                else if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe")))
+                {
+                    FFmpeg.FFMPEG_PATH = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe");
+                }
+                else
                 {
                     try
                     {
@@ -363,7 +375,10 @@ namespace N_m3u8DL_CLI.NetCore
                         foreach (var de in EnvironmentPath)
                         {
                             if (File.Exists(Path.Combine(de.Trim('\"').Trim(), "ffmpeg.exe")))
+                            {
+                                FFmpeg.FFMPEG_PATH = Path.Combine(de.Trim('\"').Trim(), "ffmpeg.exe");
                                 goto HasFFmpeg;
+                            }
                         }
                     }
                     catch (Exception)
@@ -377,8 +392,7 @@ namespace N_m3u8DL_CLI.NetCore
                     Console.ResetColor(); //将控制台的前景色和背景色设为默认值
                     Console.WriteLine(strings.ffmpegTip);
                     Console.WriteLine();
-                    Console.WriteLine("x86 https://ffmpeg.zeranoe.com/builds/win32/static/");
-                    Console.WriteLine("x64 https://ffmpeg.zeranoe.com/builds/win64/static/");
+                    Console.WriteLine("http://ffmpeg.org/download.html#build-windows");
                     Console.WriteLine();
                     Console.WriteLine(strings.pressAnyKeyExit);
                     Console.ReadKey();
@@ -651,6 +665,20 @@ namespace N_m3u8DL_CLI.NetCore
                 Console.CursorVisible = false;
                 LOGGER.PrintLine($"{strings.fileName}{fileName}");
                 LOGGER.PrintLine($"{strings.savePath}{Path.GetDirectoryName(Path.Combine(workDir, fileName))}");
+
+                //避免文件路径过长
+                if (workDir.Length >= 240)
+                {
+                    //目录不能随便改 直接抛出异常
+                    throw new Exception("保存目录过长!");
+                }
+                else if (workDir.Length + fileName.Length >= 250)
+                {
+                    while (workDir.Length + fileName.Length >= 250)
+                    {
+                        fileName = fileName.Substring(0, fileName.Length - 1);
+                    }
+                }
 
                 Parser parser = new Parser();
                 parser.DownName = fileName;
