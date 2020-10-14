@@ -659,26 +659,26 @@ namespace N_m3u8DL_CLI.NetCore
                 string m3u8Content = string.Empty;
                 bool isVOD = true;
 
+                //避免文件路径过长
+                if (workDir.Length >= 200)
+                {
+                    //目录不能随便改 直接抛出异常
+                    throw new Exception("保存目录过长!");
+                }
+                else if (workDir.Length + fileName.Length >= 200)
+                {
+                    //尝试缩短文件名
+                    while (workDir.Length + fileName.Length >= 200)
+                    {
+                        fileName = fileName.Substring(0, fileName.Length - 1);
+                    }
+                }
 
                 //开始解析
 
                 Console.CursorVisible = false;
                 LOGGER.PrintLine($"{strings.fileName}{fileName}");
                 LOGGER.PrintLine($"{strings.savePath}{Path.GetDirectoryName(Path.Combine(workDir, fileName))}");
-
-                //避免文件路径过长
-                if (workDir.Length >= 240)
-                {
-                    //目录不能随便改 直接抛出异常
-                    throw new Exception("保存目录过长!");
-                }
-                else if (workDir.Length + fileName.Length >= 250)
-                {
-                    while (workDir.Length + fileName.Length >= 250)
-                    {
-                        fileName = fileName.Substring(0, fileName.Length - 1);
-                    }
-                }
 
                 Parser parser = new Parser();
                 parser.DownName = fileName;
