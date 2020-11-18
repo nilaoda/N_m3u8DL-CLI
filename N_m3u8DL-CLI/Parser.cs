@@ -241,7 +241,13 @@ namespace N_m3u8DL_CLI
                         startIndex = segIndex;
                     }
                     else if (line.StartsWith(HLSTags.ext_x_discontinuity_sequence)) ;
-                    else if (line.StartsWith(HLSTags.ext_x_program_date_time)) ;
+                    else if (line.StartsWith(HLSTags.ext_x_program_date_time))
+                    {
+                        if (string.IsNullOrEmpty(FFmpeg.REC_TIME))
+                        {
+                            FFmpeg.REC_TIME = line.Replace(HLSTags.ext_x_program_date_time + ":", "").Trim();
+                        }
+                    }
                     //解析不连续标记，需要单独合并（timestamp不同）
                     else if (line.StartsWith(HLSTags.ext_x_discontinuity))
                     {
