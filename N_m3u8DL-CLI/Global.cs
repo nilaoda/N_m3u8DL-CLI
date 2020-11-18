@@ -108,7 +108,7 @@ namespace N_m3u8DL_CLI
                     HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
                     webRequest.Method = "GET";
                     if (NoProxy) webRequest.Proxy = null;
-                    webRequest.UserAgent = "Mozilla/4.0";
+                    webRequest.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
                     webRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
                     webRequest.Timeout = TimeOut;  //设置超时
                     webRequest.KeepAlive = false;
@@ -145,6 +145,10 @@ namespace N_m3u8DL_CLI
                         }
                     }
                     HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+
+                    //文件过大则认为不是m3u8
+                    if (webResponse.ContentLength != -1 && webRequest.ContentLength > 50 * 1024 * 1024) return "";
+
                     if (webResponse.ContentEncoding != null
                         && webResponse.ContentEncoding.ToLower() == "gzip") //如果使用了GZip则先解压
                     {
@@ -514,7 +518,7 @@ namespace N_m3u8DL_CLI
                     request.Headers.Add("Cookie", "MQGUID");
                 }
                 else
-                    request.UserAgent = "VLC/2.2.1 LibVLC/2.2.1";
+                    request.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
                 //下载部分字节
                 if (expectByte != -1)
                     request.AddRange("bytes", startByte, startByte + expectByte - 1);
@@ -800,9 +804,15 @@ namespace N_m3u8DL_CLI
                     }
                 }
 
-                if(res.Contains("Audio aac"))
+                if (res.Contains("Audio aac"))
                 {
                     FFmpeg.UseAACFilter = true;
+                }
+
+                //有非AAC音轨则关闭UseAACFilter
+                if (res.Contains("Audio") && !res.Contains("Audio aac"))
+                {
+                    FFmpeg.UseAACFilter = false;
                 }
 
                 if ((VIDEO_TYPE == "" || VIDEO_TYPE == "IGNORE") && res.Contains("Audio eac3")) 
