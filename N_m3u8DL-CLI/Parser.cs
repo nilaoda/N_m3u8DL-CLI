@@ -65,6 +65,8 @@ namespace N_m3u8DL_CLI
 
         public void Parse()
         {
+            FFmpeg.REC_TIME = "";
+
             m3u8SavePath = Path.Combine(DownDir, "raw.m3u8");
             jsonSavePath = Path.Combine(DownDir, "meta.json");
 
