@@ -118,6 +118,17 @@ namespace N_m3u8DL_CLI
                 m3u8Content = DecodeImooc.DecodeM3u8(m3u8Content);
             }
 
+            if (m3u8Content.Trim().StartsWith("<?xml version") && m3u8Content.Contains("<MPD"))
+            {
+                var mpdSavePath = Path.Combine(DownDir, "dash.mpd");
+                //输出mpd文件
+                File.WriteAllText(mpdSavePath, m3u8Content);
+                //分析mpd文件
+                var newUri = MPDParser.Parse(DownDir, M3u8Url, m3u8Content);
+                M3u8Url = newUri;
+                m3u8Content = File.ReadAllText(new Uri(M3u8Url).LocalPath);
+            }
+
             //输出m3u8文件
             File.WriteAllText(m3u8SavePath, m3u8Content);
 
