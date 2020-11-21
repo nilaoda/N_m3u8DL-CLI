@@ -73,6 +73,7 @@
     <Compile Include="HLSTags.cs" />
     <Compile Include="LOGGER.cs" />
     <Compile Include="DownloadManager.cs" />
+    <Compile Include="MPDParser.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
