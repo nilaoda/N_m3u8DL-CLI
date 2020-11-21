@@ -125,7 +125,7 @@ namespace N_m3u8DL_CLI
                 File.WriteAllText(mpdSavePath, m3u8Content);
                 //分析mpd文件
                 M3u8Url = Global.Get302(M3u8Url, Headers);
-                var newUri = MPDParser.Parse(DownDir, M3u8Url, m3u8Content);
+                var newUri = MPDParser.Parse(DownDir, M3u8Url, m3u8Content, BaseUrl);
                 M3u8Url = newUri;
                 m3u8Content = File.ReadAllText(new Uri(M3u8Url).LocalPath);
             }

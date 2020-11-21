@@ -112,8 +112,9 @@ namespace N_m3u8DL_CLI
         /// <param name="downDir">文件存储目录</param>
         /// <param name="mpdUrl">MPD链接</param>
         /// <param name="mpdContent">MPD内容</param>
+        /// <param name="customBase">自定义BaseUrl</param>
         /// <returns></returns>
-        public static string Parse(string downDir, string mpdUrl, string mpdContent)
+        public static string Parse(string downDir, string mpdUrl, string mpdContent, string customBase = "")
         {
             XmlDocument mpdDoc = new XmlDocument();
             mpdDoc.LoadXml(mpdContent);
@@ -193,7 +194,7 @@ namespace N_m3u8DL_CLI
                                 return url;
                             }
 
-                            var mpdBaseUrl = GetBaseUrl(mpdUrl);
+                            var mpdBaseUrl = string.IsNullOrEmpty(customBase) ? GetBaseUrl(mpdUrl) : customBase;
                             if (!string.IsNullOrEmpty(mpdBaseUrl) && !CheckBaseUrl())
                             {
                                 if (!mpdBaseUrl.EndsWith("/") && !baseUrl.StartsWith("/"))
