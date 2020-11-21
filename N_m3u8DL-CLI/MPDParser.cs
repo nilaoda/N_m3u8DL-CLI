@@ -605,7 +605,7 @@ namespace N_m3u8DL_CLI
         /// <param name="baseurl">Baseurl</param>
         /// <param name="url">RelativeUrl</param>
         /// <returns></returns>
-        public static string CombineURL(string baseurl, string url)
+        static string CombineURL(string baseurl, string url)
         {
             Uri uri1 = new Uri(baseurl);
             Uri uri2 = new Uri(uri1, url);

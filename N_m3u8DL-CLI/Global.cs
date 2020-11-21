@@ -560,7 +560,7 @@ namespace N_m3u8DL_CLI
                             totalLen = response.ContentLength;
                             byte[] bArr = new byte[1024];
                             int size = responseStream.Read(bArr, 0, (int)bArr.Length);
-                            if (!pngHeader && size > 3 && 137 == bArr[0] && 80 == bArr[1] && 78 == bArr[2] && 71 == bArr[3]) ;
+                            if (!pngHeader && size > 3 && 137 == bArr[0] && 80 == bArr[1] && 78 == bArr[2] && 71 == bArr[3]) 
                             {
                                 pngHeader = true;
                             }
