@@ -30,11 +30,11 @@ namespace N_m3u8DL_CLI
                         var SList = new List<Dictionary<string, dynamic>>();
                         foreach (XmlElement s in sE)
                         {
-                            var r = Convert.ToInt32(s.GetAttribute("r"));
+                            var r = string.IsNullOrEmpty(s.GetAttribute("r")) ? 0 : Convert.ToInt32(s.GetAttribute("r"));
                             MultisegmentInfo["TotalNumber"] += 1 + r;
                             SList.Add(new Dictionary<string, dynamic>()
                             {
-                                ["t"] = Convert.ToInt32(s.GetAttribute("t")),
+                                ["t"] = string.IsNullOrEmpty(s.GetAttribute("t")) ? 0 : Convert.ToInt32(s.GetAttribute("t")),
                                 ["d"] = Convert.ToInt32(s.GetAttribute("d")),
                                 ["r"] = r
                             });
@@ -334,7 +334,7 @@ namespace N_m3u8DL_CLI
                                         for (int i = 0; i < representationMsInfo["S"].Count; i++)
                                         {
                                             var s = representationMsInfo["S"][i];
-                                            segmentTime = s["t"] || segmentTime;
+                                            segmentTime = s["t"] == 0 ? segmentTime : s["t"];
                                             segmentD = s["d"];
                                             addSegmentUrl();
                                             segmentNumber++;
