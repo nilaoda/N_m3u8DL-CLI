@@ -567,7 +567,6 @@ namespace N_m3u8DL_CLI
                             //GIF HEADER检测
                             if (!pngHeader && size > 3 && 0x47 == bArr[0] && 0x49 == bArr[1] && 0x46 == bArr[2] && 0x38 == bArr[3])
                             {
-                                Console.Title = "111111";
                                 bArr = bArr.Skip(42).ToArray();
                                 size -= 42;
                                 downLen += 42;
