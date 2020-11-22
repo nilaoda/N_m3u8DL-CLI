@@ -332,7 +332,7 @@ namespace N_m3u8DL_CLI
                     else if (line.StartsWith(HLSTags.ext_x_i_frame_stream_inf)) ;
                     else if (line.StartsWith(HLSTags.ext_x_media))
                     {
-                        if (Global.GetTagAttribute(line, "TYPE") == "AUDIO")
+                        if (Global.GetTagAttribute(line, "TYPE") == "AUDIO" && !MEDIA_AUDIO.ContainsKey(Global.GetTagAttribute(line, "GROUP-ID")))
                             MEDIA_AUDIO.Add(Global.GetTagAttribute(line, "GROUP-ID"), CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI")));
                         if (Global.GetTagAttribute(line, "TYPE") == "SUBTITLES")
                         {
