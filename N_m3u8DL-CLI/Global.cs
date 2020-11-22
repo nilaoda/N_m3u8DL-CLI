@@ -101,18 +101,20 @@ namespace N_m3u8DL_CLI
         public static string GetWebSource(String url, string headers = "", int TimeOut = 60000)
         {
             string htmlCode = string.Empty;
-            for(int i = 0; i < 10; i++)
+            for (int i = 0; i < 10; i++)
             {
                 try
                 {
+                reProcess:
                     HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
                     webRequest.Method = "GET";
                     if (NoProxy) webRequest.Proxy = null;
                     webRequest.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
-                    webRequest.Headers.Add("Accept-Encoding", "gzip, deflate");
+                    webRequest.Accept = "*/*";
+                    webRequest.Headers.Add("Accept-Encoding", "gzip, deflate, br");
                     webRequest.Timeout = TimeOut;  //设置超时
                     webRequest.KeepAlive = false;
-                    webRequest.AllowAutoRedirect = true;  //自动跳转
+                    webRequest.AllowAutoRedirect = false; //手动处理重定向，否则会丢失Referer
                     if (url.Contains("pcvideo") && url.Contains(".titan.mgtv.com"))
                     {
                         webRequest.UserAgent = "";
@@ -145,6 +147,14 @@ namespace N_m3u8DL_CLI
                         }
                     }
                     HttpWebResponse webResponse = (HttpWebResponse)webRequest.GetResponse();
+
+                    //302
+                    if (webResponse.Headers.Get("Location") != null)
+                    {
+                        url = webResponse.Headers.Get("Location");
+                        webResponse.Close();
+                        goto reProcess;
+                    }
 
                     //文件过大则认为不是m3u8
                     if (webResponse.ContentLength != -1 && webRequest.ContentLength > 50 * 1024 * 1024) return "";
@@ -406,15 +416,17 @@ namespace N_m3u8DL_CLI
                 }
             }
 
+        reProcess:
             byte[] arraryByte;
             HttpWebRequest req = (HttpWebRequest)WebRequest.Create(url);
             req.Method = "GET";
             req.Timeout = timeOut;
             req.ReadWriteTimeout = timeOut; //重要
-            req.AllowAutoRedirect = true;
+            req.AllowAutoRedirect = false; //手动处理重定向，否则会丢失Referer
             if (NoProxy) req.Proxy = null;
             req.Headers.Add("Accept-Encoding", "gzip, deflate");
             req.Accept = "*/*";
+            req.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
             //添加headers
             if (headers != "")
             {
@@ -442,6 +454,13 @@ namespace N_m3u8DL_CLI
 
             using (HttpWebResponse wr = (HttpWebResponse)req.GetResponse())
             {
+                //302
+                if (wr.Headers.Get("Location") != null)
+                {
+                    url = wr.Headers.Get("Location");
+                    wr.Close();
+                    goto reProcess;
+                }
                 if (wr.ContentEncoding != null && wr.ContentEncoding.ToLower() == "gzip") //如果使用了GZip则先解压
                 {
                     using (Stream streamReceive = wr.GetResponseStream())
@@ -502,10 +521,11 @@ namespace N_m3u8DL_CLI
                 if (shouldStop)
                     return;
 
+                reProcess:
                 HttpWebRequest request = WebRequest.Create(url) as HttpWebRequest;
                 request.Timeout = timeOut;
                 request.ReadWriteTimeout = timeOut; //重要
-                request.AllowAutoRedirect = true;
+                request.AllowAutoRedirect = false; //手动处理重定向，否则会丢失Referer
                 request.KeepAlive = false;
                 request.Method = "GET";
                 if (NoProxy) request.Proxy = null;
@@ -553,6 +573,13 @@ namespace N_m3u8DL_CLI
                 bool pngHeader = false; //PNG HEADER检测
                 using (var response = (HttpWebResponse)request.GetResponse())
                 {
+                    //302
+                    if (response.Headers.Get("Location") != null)
+                    {
+                        url = response.Headers.Get("Location");
+                        response.Close();
+                        goto reProcess;
+                    }
                     using (var responseStream = response.GetResponseStream())
                     {
                         using (var stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.Write))
@@ -561,7 +588,7 @@ namespace N_m3u8DL_CLI
                             totalLen = response.ContentLength;
                             byte[] bArr = new byte[1024];
                             int size = responseStream.Read(bArr, 0, (int)bArr.Length);
-                            if (!pngHeader && size > 3 && 137 == bArr[0] && 80 == bArr[1] && 78 == bArr[2] && 71 == bArr[3]) 
+                            if (!pngHeader && size > 3 && 137 == bArr[0] && 80 == bArr[1] && 78 == bArr[2] && 71 == bArr[3])
                             {
                                 pngHeader = true;
                             }
@@ -594,10 +621,11 @@ namespace N_m3u8DL_CLI
                 }
                 if (shouldStop)
                     try { File.Delete(path); } catch (Exception) { }
-                if (totalLen != -1 && downLen != totalLen) 
+                if (totalLen != -1 && downLen != totalLen)
                     try { File.Delete(path); } catch (Exception) { }
                 if (pngHeader)
                     TrySkipPngHeader(path);
+
             }
             catch (Exception e)
             {
