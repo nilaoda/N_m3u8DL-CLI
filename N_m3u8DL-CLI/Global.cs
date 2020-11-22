@@ -30,8 +30,8 @@ namespace N_m3u8DL_CLI
 
 
         /*===============================================================================*/
-        static string nowVer = "2.8.1";
-        static string nowDate = "20201121";
+        static string nowVer = "2.8.2";
+        static string nowDate = "20201122";
         public static void WriteInit()
         {
             Console.Clear();
