@@ -43,6 +43,38 @@ namespace N_m3u8DL_CLI
         public static int PartsCount { get; set; } = 0;
         public static bool DisableIntegrityCheck { get; set; } = false; //关闭完整性检查
 
+        static CancellationTokenSource cts = new CancellationTokenSource();
+        //计算下载速度
+        static System.Timers.Timer timer = new System.Timers.Timer(1000 * CalcTime);   //实例化Timer类
+
+        public DownloadManager()
+        {
+            timer.AutoReset = true;
+            timer.Elapsed += delegate
+            {
+                Console.SetCursorPosition(0, 1);
+                Console.Write("Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s".PadRight(70));
+
+                if (Global.HadReadInfo && Global.BYTEDOWN <= Global.STOP_SPEED * 1024 * CalcTime)
+                {
+                    stopCount++;
+                    Console.SetCursorPosition(0, 1);
+                    Console.Write("Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s [" + stopCount + "]".PadRight(70));
+
+                    if (stopCount >= 12)
+                    {
+                        Global.ShouldStop = true;
+                        cts.Cancel();
+                    }
+                }
+                else
+                {
+                    stopCount = 0;
+                    Global.BYTEDOWN = 0;
+                }
+            };
+        }
+
         public void DoDownload()
         {
             jsonFile = Path.Combine(DownDir, "meta.json");
@@ -77,7 +109,6 @@ namespace N_m3u8DL_CLI
             PartsCount = parts.Count;
             segsPadZero = string.Empty.PadRight(oriCount.Length, '0');
             partsPadZero = string.Empty.PadRight(Convert.ToString(parts.Count).Length, '0');
-            CancellationTokenSource cts = new CancellationTokenSource();
 
             //是直播视频
             if (isVOD == "False")
@@ -94,35 +125,9 @@ namespace N_m3u8DL_CLI
             watcher.PartsCount = PartsCount;
             watcher.WatcherStrat();
 
-            //计算下载速度
-            System.Timers.Timer timer = new System.Timers.Timer(1000 * CalcTime);   //实例化Timer类
-            timer.AutoReset = true;
+            //开始计算速度
             timer.Enabled = true;
-            timer.Elapsed += delegate
-            {
-                Console.SetCursorPosition(0, 1);
-                Console.Write("Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s".PadRight(70));
-
-                if (Global.HadReadInfo && Global.BYTEDOWN <= Global.STOP_SPEED * 1024 * CalcTime)
-                {
-                    stopCount++;
-                    Console.SetCursorPosition(0, 1);
-                    Console.Write("Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s [" + stopCount + "]".PadRight(70));
-
-                    if (stopCount >= 12)
-                    {
-                        Global.ShouldStop = true;
-                        cts.Cancel();
-                        return;
-                    }
-                }
-                else
-                {
-                    stopCount = 0;
-                    Global.BYTEDOWN = 0;
-
-                }
-            };
+            cts = new CancellationTokenSource();
 
             //开始调用下载
             LOGGER.WriteLine(strings.startDownloading);
@@ -291,12 +296,8 @@ namespace N_m3u8DL_CLI
 
             watcher.WatcherStop();
 
-            //监控文件夹大小变化的收尾工作
+            //停止速度监测
             timer.Enabled = false;
-            timer.Close();
-            // cleanup COM
-            //System.Runtime.InteropServices.Marshal.ReleaseComObject(folder);
-            //System.Runtime.InteropServices.Marshal.ReleaseComObject(fso);
 
             //检测是否下完
             IsComplete(Convert.ToInt32(segCount));
