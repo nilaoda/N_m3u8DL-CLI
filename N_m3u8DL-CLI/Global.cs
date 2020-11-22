@@ -411,6 +411,7 @@ namespace N_m3u8DL_CLI
             req.Method = "GET";
             req.Timeout = timeOut;
             req.ReadWriteTimeout = timeOut; //重要
+            req.AllowAutoRedirect = true;
             if (NoProxy) req.Proxy = null;
             req.Headers.Add("Accept-Encoding", "gzip, deflate");
             req.Accept = "*/*";
