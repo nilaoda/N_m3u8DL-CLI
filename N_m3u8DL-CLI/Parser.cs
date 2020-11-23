@@ -864,9 +864,7 @@ namespace N_m3u8DL_CLI
         /// <returns></returns>
         public static string GetBaseUrl(string m3u8url, string headers)
         {
-            if (!isQiQiuYun && Global.Get302(m3u8url, headers) != m3u8url)
-                m3u8url = Global.Get302(m3u8url, headers);
-            string url = Global.Get302(m3u8url);
+            string url = Global.Get302(m3u8url, headers);
             if (url.Contains("?"))
                 url = url.Remove(url.LastIndexOf('?'));
             url = url.Substring(0, url.LastIndexOf('/') + 1);
