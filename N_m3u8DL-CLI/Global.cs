@@ -120,7 +120,7 @@ namespace N_m3u8DL_CLI
                     {
                         webRequest.UserAgent = "";
                         if (!url.Contains("/internettv/"))
-                            webRequest.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
+                            webRequest.Referer = "https://www.mgtv.com";
                         webRequest.Headers.Add("Cookie", "MQGUID");
                     }
                     //添加headers
@@ -158,7 +158,7 @@ namespace N_m3u8DL_CLI
                     }
 
                     //文件过大则认为不是m3u8
-                    if (webResponse.ContentLength != -1 && webRequest.ContentLength > 50 * 1024 * 1024) return "";
+                    if (webResponse.ContentLength != -1 && webResponse.ContentLength > 50 * 1024 * 1024) return "";
 
                     if (webResponse.ContentEncoding != null
                         && webResponse.ContentEncoding.ToLower() == "gzip") //如果使用了GZip则先解压
@@ -536,7 +536,7 @@ namespace N_m3u8DL_CLI
                 {
                     request.UserAgent = "";
                     if (!url.Contains("/internettv/"))
-                        request.Referer = "https://player.mgtv.com/mgtv_v6_player/PlayerCore.swf";
+                        request.Referer = "https://www.mgtv.com";
                     request.Headers.Add("Cookie", "MQGUID");
                 }
                 else
