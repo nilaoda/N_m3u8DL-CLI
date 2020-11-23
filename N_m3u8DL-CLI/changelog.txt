@@ -288,3 +288,6 @@
 2020年11月22日
   - 解决HTTPS协议自动重定向后，Referer丢失问题
   - 新的任务速度监控逻辑
+2020年11月23日
+  - 将默认UA修改为 Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+  - 修改芒果TV请求头
