@@ -110,7 +110,7 @@ namespace N_m3u8DL_CLI
                     HttpWebRequest webRequest = (System.Net.HttpWebRequest)System.Net.WebRequest.Create(url);
                     webRequest.Method = "GET";
                     if (NoProxy) webRequest.Proxy = null;
-                    webRequest.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
+                    webRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
                     webRequest.Accept = "*/*";
                     webRequest.Headers.Add("Accept-Encoding", "gzip, deflate, br");
                     webRequest.Timeout = TimeOut;  //设置超时
@@ -427,7 +427,7 @@ namespace N_m3u8DL_CLI
             if (NoProxy) req.Proxy = null;
             req.Headers.Add("Accept-Encoding", "gzip, deflate");
             req.Accept = "*/*";
-            req.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
+            req.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
             //添加headers
             if (headers != "")
             {
@@ -540,7 +540,7 @@ namespace N_m3u8DL_CLI
                     request.Headers.Add("Cookie", "MQGUID");
                 }
                 else
-                    request.UserAgent = "Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36";
+                    request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
                 //下载部分字节
                 if (expectByte != -1)
                     request.AddRange("bytes", startByte, startByte + expectByte - 1);
