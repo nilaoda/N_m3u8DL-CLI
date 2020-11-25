@@ -252,7 +252,8 @@ namespace N_m3u8DL_CLI
                                 var initializationUrl = "";
                                 if (initializationTemplate.Contains("{0:D"))
                                 {
-                                    initializationUrl = string.Format(initializationTemplate, bandwidth).Replace("{{Bandwidth}}", "");
+                                    if (initializationTemplate.Contains("{{Bandwidth}}"))
+                                        initializationUrl = string.Format(initializationTemplate, bandwidth).Replace("{{Bandwidth}}", "");
                                 }
                                 else
                                 {
@@ -260,6 +261,7 @@ namespace N_m3u8DL_CLI
                                 }
                                 representationMsInfo["InitializationUrl"] = CombineURL(baseUrl, initializationUrl);
                             }
+
                             string LocationKey(string location)
                             {
                                 return Regex.IsMatch(location, "^https?://") ? "url" : "path";
@@ -284,13 +286,15 @@ namespace N_m3u8DL_CLI
                                         var segUrl = "";
                                         if (mediaTemplate.Contains("{0:D"))
                                         {
-                                            segUrl = string.Format(mediaTemplate, bandwidth).Replace("{{Bandwidth}}", "");
-                                            segUrl = string.Format(mediaTemplate, i).Replace("{{Number}}", "");
+                                            if (mediaTemplate.Contains("{{Bandwidth}}"))
+                                                segUrl = string.Format(mediaTemplate, bandwidth).Replace("{{Bandwidth}}", "");
+                                            if (mediaTemplate.Contains("{{Number}}"))
+                                                segUrl = string.Format(mediaTemplate, i).Replace("{{Number}}", "");
                                         }
                                         else
                                         {
                                             segUrl = mediaTemplate.Replace("{{Bandwidth}}", bandwidth.ToString());
-                                            segUrl = mediaTemplate.Replace("{{Number}}", i.ToString());
+                                            segUrl = segUrl.Replace("{{Number}}", i.ToString());
                                         }
                                         fragments.Add(new Dictionary<string, dynamic>()
                                         {
@@ -313,15 +317,18 @@ namespace N_m3u8DL_CLI
                                         var segUrl = "";
                                         if (mediaTemplate.Contains("{0:D"))
                                         {
-                                            segUrl = string.Format(mediaTemplate, bandwidth).Replace("{{Bandwidth}}", "");
-                                            segUrl = string.Format(mediaTemplate, segmentNumber).Replace("{{Number}}", "");
-                                            segUrl = string.Format(mediaTemplate, segmentTime).Replace("{{Time}}", "");
+                                            if (mediaTemplate.Contains("{{Bandwidth}}"))
+                                                segUrl = string.Format(mediaTemplate, bandwidth).Replace("{{Bandwidth}}", "");
+                                            if (mediaTemplate.Contains("{{Number}}"))
+                                                segUrl = string.Format(mediaTemplate, segmentNumber).Replace("{{Number}}", "");
+                                            if (mediaTemplate.Contains("{{Time}}"))
+                                                segUrl = string.Format(mediaTemplate, segmentTime).Replace("{{Time}}", "");
                                         }
                                         else
                                         {
                                             segUrl = mediaTemplate.Replace("{{Bandwidth}}", bandwidth.ToString());
-                                            segUrl = mediaTemplate.Replace("{{Number}}", segmentNumber.ToString());
-                                            segUrl = mediaTemplate.Replace("{{Time}}", segmentTime.ToString());
+                                            segUrl = segUrl.Replace("{{Number}}", segmentNumber.ToString());
+                                            segUrl = segUrl.Replace("{{Time}}", segmentTime.ToString());
                                         }
                                         fragments.Add(new Dictionary<string, dynamic>()
                                         {
@@ -559,7 +566,7 @@ namespace N_m3u8DL_CLI
                 if (!Directory.Exists(downDir + "(Audio)"))
                     Directory.CreateDirectory(downDir + "(Audio)");
                 var _path = Path.Combine(downDir + "(Audio)", "mpdAudio.m3u8");
-                File.Copy(new Uri(audioPath).LocalPath, _path);
+                File.Copy(new Uri(audioPath).LocalPath, _path, true);
                 audioPath = new Uri(_path).ToString();
                 content = $"#EXTM3U\r\n" +
                     $"#EXT-X-MEDIA:TYPE=AUDIO,URI=\"{audioPath}\",GROUP-ID=\"default-audio-group\",NAME=\"stream_0\",AUTOSELECT=YES,CHANNELS=\"0\"\r\n" +
@@ -600,7 +607,7 @@ namespace N_m3u8DL_CLI
             {
                 var dur = seg.ContainsKey("duration") ? seg["duration"] : 0.0;
                 var url = seg.ContainsKey("url") ? seg["url"] : seg["path"];
-                sb.AppendLine($"#EXTINF:{dur}");
+                sb.AppendLine($"#EXTINF:{dur.ToString("0.00")}");
                 sb.AppendLine(url);
             }
 
