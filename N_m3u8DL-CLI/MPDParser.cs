@@ -548,6 +548,7 @@ namespace N_m3u8DL_CLI
                     if (f["Tbr"] > bandwidth)
                     {
                         best = f;
+                        bandwidth = f["Tbr"];
                     }
                 }
             }
@@ -569,6 +570,7 @@ namespace N_m3u8DL_CLI
                     if (f["Tbr"] > bandwidth)
                     {
                         best = f;
+                        bandwidth = f["Tbr"];
                     }
                 }
             }
