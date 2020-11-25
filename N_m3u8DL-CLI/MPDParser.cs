@@ -112,9 +112,9 @@ namespace N_m3u8DL_CLI
         /// <param name="downDir">文件存储目录</param>
         /// <param name="mpdUrl">MPD链接</param>
         /// <param name="mpdContent">MPD内容</param>
-        /// <param name="customBase">自定义BaseUrl</param>
+        /// <param name="defaultBase">BaseUrl</param>
         /// <returns></returns>
-        public static string Parse(string downDir, string mpdUrl, string mpdContent, string customBase = "")
+        public static string Parse(string downDir, string mpdUrl, string mpdContent, string defaultBase = "")
         {
             XmlDocument mpdDoc = new XmlDocument();
             mpdDoc.LoadXml(mpdContent);
@@ -194,7 +194,7 @@ namespace N_m3u8DL_CLI
                                 return url;
                             }
 
-                            var mpdBaseUrl = string.IsNullOrEmpty(customBase) ? GetBaseUrl(mpdUrl) : customBase;
+                            var mpdBaseUrl = string.IsNullOrEmpty(defaultBase) ? GetBaseUrl(mpdUrl) : defaultBase;
                             if (!string.IsNullOrEmpty(mpdBaseUrl) && !CheckBaseUrl())
                             {
                                 if (!mpdBaseUrl.EndsWith("/") && !baseUrl.StartsWith("/"))
@@ -214,7 +214,7 @@ namespace N_m3u8DL_CLI
                                 ["Height"] = IntOrNull(GetAttribute("height")),
                                 ["Tbr"] = DoubleOrNull(bandwidth, 1000),
                                 ["Asr"] = IntOrNull(GetAttribute("audioSamplingRate")),
-                                ["Fps"] = IntOrNull(GetAttribute("audioSamplingRate")),
+                                ["Fps"] = IntOrNull(GetAttribute("frameRate")),
                                 ["Language"] = lang,
                                 ["Codecs"] = GetAttribute("codecs")
                             };
@@ -429,8 +429,67 @@ namespace N_m3u8DL_CLI
                 }
             }
 
+            //排序
+            formatList.Sort((a, b) =>
+            {
+                return (a["Width"] + a["Height"]) * 1000 + a["Tbr"] > (b["Width"] + b["Height"]) * 1000 + b["Tbr"] ? -1 : 1;
+            });
+
+            //默认为最高码率的视频和音频
             var bestVideo = SelectBestVideo(formatList);
             var bestAudio = SelectBestAudio(formatList);
+
+            var audioLangList = new List<string>();
+            formatList.ForEach(f =>
+            {
+                if (f["Width"] == -1 && !audioLangList.Contains(f["Language"])) audioLangList.Add(f["Language"]);
+            });
+
+            if (audioLangList.Count > 1)
+            {
+                string Stringify(Dictionary<string, dynamic> f)
+                {
+                    var type = f["Width"] == -1 && f["Height"] == -1 ? "Audio" : "Video";
+                    var res = type == "Video" ? $"[{f["Width"]}x{f["Height"]}]" : "";
+                    var id = $"[{f["FormatId"]}] ";
+                    var tbr = $"[{((int)f["Tbr"]).ToString().PadLeft(4)} Kbps] ";
+                    var asr = f["Asr"] != -1 ? $"[{f["Asr"]} Hz] " : "";
+                    var fps = f["Fps"] != -1 ? $"[{f["Fps"]} fps] " : "";
+                    var lang = string.IsNullOrEmpty(f["Language"]) ? "" : $"[{f["Language"]}] ";
+                    var codecs = $"[{f["Codecs"]}] ";
+                    return $"{type} => {id}{tbr}{asr}{fps}{lang}{codecs}{res}";
+                }
+
+                for (int i = 0; i < formatList.Count; i++)
+                {
+                    Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {Stringify(formatList[i])}");
+                    LOGGER.CursorIndex++;
+                }
+                Console.CursorVisible = true;
+                LOGGER.PrintLine("Found Multiple Language Audio Tracks.\r\n" + "".PadRight(13) + "Please Select What You Want(Up to 1 Video and 1 Audio).");
+                Console.Write("".PadRight(13) + "Enter Numbers Separated By A Space: ");
+                var input = Console.ReadLine();
+                LOGGER.CursorIndex += 2;
+                Console.CursorVisible = false;
+                if (!string.IsNullOrEmpty(input))
+                {
+                    bestVideo = new Dictionary<string, dynamic>() { ["Tbr"] = 0 };
+                    bestAudio = new Dictionary<string, dynamic>() { ["Tbr"] = 0 };
+                    foreach (var index in input.Split())
+                    {
+                        var n = 0;
+                        int.TryParse(index, out n);
+                        if (formatList[n]["Width"] == -1)
+                        {
+                            bestAudio = formatList[n];
+                        }
+                        else
+                        {
+                            bestVideo = formatList[n];
+                        }
+                    }
+                }
+            }
 
             if (bestVideo.Keys.Count > 1 && bestAudio.Keys.Count > 1)  //音视频
             {
@@ -442,7 +501,7 @@ namespace N_m3u8DL_CLI
             }
             else if (bestVideo.Keys.Count > 1)  //仅有视频
             {
-                return GenerateMasterList(downDir, bestAudio);
+                return GenerateMasterList(downDir, bestVideo);
             }
             else
             {
@@ -472,26 +531,42 @@ namespace N_m3u8DL_CLI
                 //Video
                 if (m3u8.Contains("#EXT-VIDEO-WIDTH"))
                 {
-                    var _path = Path.Combine(downDir, "bestVideo.m3u8");
+                    var _path = Path.Combine(downDir, "mpdVideo.m3u8");
                     File.WriteAllText(_path, m3u8);
                     videoPath = new Uri(_path).ToString();
                     res = f["Width"] + "x" + f["Height"];
                 }
                 else
                 {
-                    if (!Directory.Exists(downDir + "(Audio)"))
-                        Directory.CreateDirectory(downDir + "(Audio)");
-                    var _path = Path.Combine(downDir + "(Audio)", "bestAudio.m3u8");
+                    var _path = Path.Combine(downDir, "mpdAudio.m3u8");
                     File.WriteAllText(_path, m3u8);
                     audioPath = new Uri(_path).ToString();
                 }
                 codecsList.Add(f["Codecs"]);
             }
 
-            var content = $"#EXTM3U\r\n" +
-                $"#EXT-X-MEDIA:TYPE=AUDIO,URI=\"{audioPath}\",GROUP-ID=\"default-audio-group\",NAME=\"stream_0\",AUTOSELECT=YES,CHANNELS=\"0\"\r\n" +
-                $"#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},CODECS=\"{string.Join(",", codecsList)}\",RESOLUTION={res},AUDIO=\"default-audio-group\"\r\n" +
-                $"{videoPath}";
+            var content = "";
+            if (videoPath == "" && audioPath != "")
+            {
+                return audioPath;
+            }
+            else if (audioPath == "" && videoPath != "")
+            {
+                return videoPath;
+            }
+            else
+            {
+                if (!Directory.Exists(downDir + "(Audio)"))
+                    Directory.CreateDirectory(downDir + "(Audio)");
+                var _path = Path.Combine(downDir + "(Audio)", "mpdAudio.m3u8");
+                File.Copy(new Uri(audioPath).LocalPath, _path);
+                audioPath = new Uri(_path).ToString();
+                content = $"#EXTM3U\r\n" +
+                    $"#EXT-X-MEDIA:TYPE=AUDIO,URI=\"{audioPath}\",GROUP-ID=\"default-audio-group\",NAME=\"stream_0\",AUTOSELECT=YES,CHANNELS=\"0\"\r\n" +
+                    $"#EXT-X-STREAM-INF:BANDWIDTH={bandwidth},CODECS=\"{string.Join(",", codecsList)}\",RESOLUTION={res},AUDIO=\"default-audio-group\"\r\n" +
+                    $"{videoPath}";
+            }
+
             var _masterPath = Path.Combine(downDir, "master.m3u8");
             File.WriteAllText(_masterPath, content);
             return new Uri(_masterPath).ToString();
