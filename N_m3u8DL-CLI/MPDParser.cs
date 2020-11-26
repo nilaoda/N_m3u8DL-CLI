@@ -30,12 +30,12 @@ namespace N_m3u8DL_CLI
                         var SList = new List<Dictionary<string, dynamic>>();
                         foreach (XmlElement s in sE)
                         {
-                            var r = string.IsNullOrEmpty(s.GetAttribute("r")) ? 0 : Convert.ToInt32(s.GetAttribute("r"));
+                            var r = string.IsNullOrEmpty(s.GetAttribute("r")) ? 0 : Convert.ToInt64(s.GetAttribute("r"));
                             MultisegmentInfo["TotalNumber"] += 1 + r;
                             SList.Add(new Dictionary<string, dynamic>()
                             {
-                                ["t"] = string.IsNullOrEmpty(s.GetAttribute("t")) ? 0 : Convert.ToInt32(s.GetAttribute("t")),
-                                ["d"] = Convert.ToInt32(s.GetAttribute("d")),
+                                ["t"] = string.IsNullOrEmpty(s.GetAttribute("t")) ? 0 : Convert.ToInt64(s.GetAttribute("t")),
+                                ["d"] = Convert.ToInt64(s.GetAttribute("d")),
                                 ["r"] = r
                             });
                         }
@@ -246,6 +246,23 @@ namespace N_m3u8DL_CLI
                                 return str;
                             }
 
+                            string PadNumber(string template, string key, long value)
+                            {
+                                string ReplaceFirst(string text, string search, string replace)
+                                {
+                                    int pos = text.IndexOf(search);
+                                    if (pos < 0)
+                                    {
+                                        return text;
+                                    }
+                                    return text.Substring(0, pos) + replace + text.Substring(pos + search.Length);
+                                }
+
+                                template = template.Replace("{{" + key + "}}", "");
+                                var m = Regex.Match(template, "{0:D(\\d+)}");
+                                return ReplaceFirst(template, m.Value, value.ToString("0".PadRight(Convert.ToInt32(m.Groups[1].Value), '0')));
+                            }
+
                             if (representationMsInfo.ContainsKey("Initialization"))
                             {
                                 var initializationTemplate = PrepareTemplate("Initialization", new string[] { "Bandwidth" });
@@ -253,7 +270,7 @@ namespace N_m3u8DL_CLI
                                 if (initializationTemplate.Contains("{0:D"))
                                 {
                                     if (initializationTemplate.Contains("{{Bandwidth}}"))
-                                        initializationUrl = string.Format(initializationTemplate, bandwidth).Replace("{{Bandwidth}}", "");
+                                        initializationUrl = PadNumber(initializationTemplate, "Bandwidth", bandwidth);
                                 }
                                 else
                                 {
@@ -287,9 +304,9 @@ namespace N_m3u8DL_CLI
                                         if (mediaTemplate.Contains("{0:D"))
                                         {
                                             if (mediaTemplate.Contains("{{Bandwidth}}"))
-                                                segUrl = string.Format(mediaTemplate, bandwidth).Replace("{{Bandwidth}}", "");
+                                                segUrl = PadNumber(mediaTemplate, "Bandwidth", bandwidth);
                                             if (mediaTemplate.Contains("{{Number}}"))
-                                                segUrl = string.Format(mediaTemplate, i).Replace("{{Number}}", "");
+                                                segUrl = PadNumber(mediaTemplate, "Number", i);
                                         }
                                         else
                                         {
@@ -308,8 +325,8 @@ namespace N_m3u8DL_CLI
                                 {
                                     var fragments = new List<Dictionary<string, dynamic>>();
 
-                                    var segmentTime = 0;
-                                    var segmentD = 0;
+                                    var segmentTime = 0L;
+                                    var segmentD = 0L;
                                     var segmentNumber = representationMsInfo["StartNumber"];
 
                                     void addSegmentUrl()
@@ -318,11 +335,11 @@ namespace N_m3u8DL_CLI
                                         if (mediaTemplate.Contains("{0:D"))
                                         {
                                             if (mediaTemplate.Contains("{{Bandwidth}}"))
-                                                segUrl = string.Format(mediaTemplate, bandwidth).Replace("{{Bandwidth}}", "");
+                                                segUrl = PadNumber(mediaTemplate, "Bandwidth", bandwidth);
                                             if (mediaTemplate.Contains("{{Number}}"))
-                                                segUrl = string.Format(mediaTemplate, segmentNumber).Replace("{{Number}}", "");
+                                                segUrl = PadNumber(mediaTemplate, "Number", segmentNumber);
                                             if (mediaTemplate.Contains("{{Time}}"))
-                                                segUrl = string.Format(mediaTemplate, segmentTime).Replace("{{Time}}", "");
+                                                segUrl = PadNumber(mediaTemplate, "Time", segmentTime);
                                         }
                                         else
                                         {
