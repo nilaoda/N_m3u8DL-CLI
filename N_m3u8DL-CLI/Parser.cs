@@ -118,7 +118,7 @@ namespace N_m3u8DL_CLI
                 m3u8Content = DecodeImooc.DecodeM3u8(m3u8Content);
             }
 
-            if (m3u8Content.Trim().StartsWith("<?xml version") && m3u8Content.Contains("<MPD"))
+            if (m3u8Content.Contains("</MPD>") && m3u8Content.Contains("<MPD"))
             {
                 var mpdSavePath = Path.Combine(DownDir, "dash.mpd");
                 //输出mpd文件
