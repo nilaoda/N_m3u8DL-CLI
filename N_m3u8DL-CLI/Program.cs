@@ -51,20 +51,10 @@ namespace N_m3u8DL_CLI.NetCore
         {
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
-            string loc = "zh-CN";
+            string loc = "en-US";
             string currLoc = Thread.CurrentThread.CurrentUICulture.Name;
-            if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO")
-            {
-                loc = "zh-TW";
-            }
-            else if (loc == "zh-CN" || loc == "zh-SG")
-            {
-                loc = "zh-CN";
-            }
-            else
-            {
-                loc = "en-US";
-            }
+            if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO") loc = "zh-TW";
+            else if (currLoc == "zh-CN" || currLoc == "zh-SG") loc = "zh-CN";
             //设置语言
             CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(loc);
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(loc);
