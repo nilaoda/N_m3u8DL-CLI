@@ -38,6 +38,9 @@
     <ApplicationIcon>logo_3Iv_icon.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Costura, Version=4.1.0.0, Culture=neutral, PublicKeyToken=9919ef960d84173d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Costura.Fody.4.1.0\lib\net40\Costura.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.JScript" />
     <Reference Include="netstandard, Version=2.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -114,8 +117,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo_3Iv_icon.ico" />
-    <Content Include="FodyWeavers.xml" />
-    <Content Include="FodyWeavers.xsd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="strings.en-US.resx">
