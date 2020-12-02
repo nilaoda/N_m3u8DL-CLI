@@ -32,7 +32,7 @@ namespace N_m3u8DL_CLI
         /*===============================================================================*/
         static Version ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         static string nowVer = $"{ver.Major}.{ver.Minor}.{ver.Build}";
-        static string nowDate = "20201126";
+        static string nowDate = "20201202";
         public static void WriteInit()
         {
             Console.Clear();
