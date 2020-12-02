@@ -114,6 +114,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="logo_3Iv_icon.ico" />
+    <Content Include="FodyWeavers.xml" />
+    <Content Include="FodyWeavers.xsd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="strings.en-US.resx">
