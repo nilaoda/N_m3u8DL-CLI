@@ -660,7 +660,7 @@ namespace N_m3u8DL_CLI
                         string keyUrl = key[1];
                         if (isQiQiuYun)
                         {
-                            string encKey = Encoding.Default.GetString(Global.HttpDownloadFileToBytes(keyUrl, Headers));
+                            /*string encKey = Encoding.Default.GetString(Global.HttpDownloadFileToBytes(keyUrl, Headers));
                             var indexs = "0-1-2-3-4-5-6-7-8-10-11-12-14-15-16-18".Split('-');
                             if (encKey.Length == 20)
                             {
@@ -740,7 +740,9 @@ namespace N_m3u8DL_CLI
                             {
                                 decKey += encKey[Convert.ToInt32(_i)];
                             }
-                            key[1] = Convert.ToBase64String(Encoding.Default.GetBytes(decKey));
+                            key[1] = Convert.ToBase64String(Encoding.Default.GetBytes(decKey));*/
+
+                            key[1] = Convert.ToBase64String(Global.HttpDownloadFileToBytes(keyUrl, "User-Agent:Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36"));
                         } //气球云
                         else if (key[1].Contains("imooc.com/"))
                         {
