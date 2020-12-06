@@ -47,8 +47,8 @@ namespace N_m3u8DL_CLI {
         }
         
         /// <summary>
-        ///   重写当前线程的 CurrentUICulture 属性
-        ///   重写当前线程的 CurrentUICulture 属性。
+        ///   重写当前线程的 CurrentUICulture 属性，对
+        ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
@@ -232,7 +232,7 @@ namespace N_m3u8DL_CLI {
         }
         
         /// <summary>
-        ///   查找类似 文件名称： 的本地化字符串。
+        ///   查找类似 文件名称{0}： 的本地化字符串。
         /// </summary>
         internal static string fileName {
             get {
@@ -269,7 +269,8 @@ namespace N_m3u8DL_CLI {
         ///    --minThreads Thread         设定程序的最小线程数(默认为16)
         ///    --retryCount Count          设定程序的重试次数(默认为15)
         ///    --timeOut    Sec            设定程序网络请求的超时时间(单位为秒，默认为10秒)
-        ///    --muxSetJson File           使用外部json文件定义混流选项        /// [字符串的其余部分被截断]&quot;; 的本地化字符串。
+        ///    --muxSetJson File           使用外部json文件定义混流选项
+        ///    --useK [字符串的其余部分被截断]&quot;; 的本地化字符串。
         /// </summary>
         internal static string helpInfo {
             get {

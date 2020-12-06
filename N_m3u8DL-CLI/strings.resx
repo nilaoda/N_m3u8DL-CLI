@@ -175,7 +175,7 @@
     <value>文件时长：</value>
   </data>
   <data name="fileName" xml:space="preserve">
-    <value>文件名称：</value>
+    <value>文件名称{0}：</value>
   </data>
   <data name="hasExternalAudioTrack" xml:space="preserve">
     <value>识别到外挂音频轨道</value>

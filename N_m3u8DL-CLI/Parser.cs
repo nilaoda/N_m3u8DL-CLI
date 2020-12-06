@@ -240,7 +240,10 @@ namespace N_m3u8DL_CLI
                         segIndex = Convert.ToInt64(line.Replace(HLSTags.ext_x_media_sequence + ":", "").Trim());
                         startIndex = segIndex;
                     }
-                    else if (line.StartsWith(HLSTags.ext_x_discontinuity_sequence)) ;
+                    else if (line.StartsWith(HLSTags.ext_x_discontinuity_sequence))
+                    {
+
+                    }
                     else if (line.StartsWith(HLSTags.ext_x_program_date_time))
                     {
                         if (string.IsNullOrEmpty(FFmpeg.REC_TIME))
@@ -266,7 +269,10 @@ namespace N_m3u8DL_CLI
                             segments = new JArray();
                         }
                     }
-                    else if (line.StartsWith(HLSTags.ext_x_cue_out)) ;
+                    else if (line.StartsWith(HLSTags.ext_x_cue_out))
+                    {
+                        ;
+                    }
                     else if (line.StartsWith(HLSTags.ext_x_cue_out_start)) ;
                     else if (line.StartsWith(HLSTags.ext_x_cue_span)) ;
                     else if (line.StartsWith(HLSTags.ext_x_version)) ;
@@ -279,13 +285,13 @@ namespace N_m3u8DL_CLI
                         {
                             if (m3u8CurrentKey[2] == "" && line.Contains("IV=0x"))
                             {
-                                var temp = ParseKey(line);
+                                var temp = ParseKey(line);//{METHOD,Key,IV}
                                 m3u8CurrentKey[2] = temp[2]; //使用m3u8中的IV
                             }
                         }
                         else
                         {
-                            m3u8CurrentKey = ParseKey(line);
+                            m3u8CurrentKey = ParseKey(line);//获取method,key,iv
                             //存储为上一行的key信息
                             lastKeyLine = line;
                         }
@@ -631,24 +637,24 @@ namespace N_m3u8DL_CLI
             string[] tmp = line.Replace(HLSTags.ext_x_key + ":", "").Split(',');
             string[] key = new string[] { "NONE", "", "" };
             string u_l = Global.GetTagAttribute(lastKeyLine.Replace(HLSTags.ext_x_key + ":", ""), "URI");
-            string m = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "METHOD");
-            string u = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "URI");
-            string i = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "IV");
+            string method = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "METHOD");
+            string uri = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "URI");
+            string iv = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "IV");
 
             //存在加密
-            if (m != "")
+            if (method != "")
             {
-                if (m != "AES-128")
+                if (method != "AES-128")
                 {
-                    LOGGER.PrintLine(string.Format(strings.notSupportMethod, m), LOGGER.Error);
+                    LOGGER.PrintLine(string.Format(strings.notSupportMethod, method), LOGGER.Error);
                     DownloadManager.BinaryMerge = true;
-                    return new string[] { $"{m}(NOTSUPPORTED)", "", "" };
+                    return new string[] { $"{method}(NOTSUPPORTED)", "", "" };
                 }
                 //METHOD
-                key[0] = m;
+                key[0] = method;
                 //URI
-                key[1] = u;
-                if (u_l == u)
+                key[1] = uri;
+                if (u_l == uri)
                 {
                     key[1] = m3u8CurrentKey[1];
                 }
@@ -772,12 +778,12 @@ namespace N_m3u8DL_CLI
                         }
                         else
                         {
-                            key[1] = Convert.ToBase64String(Global.HttpDownloadFileToBytes(keyUrl, Headers));
+                            key[1] = Convert.ToBase64String(Global.HttpDownloadFileToBytes(keyUrl, Headers));//keyUrl读取key
                         }
                     }
                 }
                 //IV
-                key[2] = i;
+                key[2] = iv;
             }
 
             return key;

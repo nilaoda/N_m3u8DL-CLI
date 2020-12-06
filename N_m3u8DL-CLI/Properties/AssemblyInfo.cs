@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("一款命令行m3u8下载器")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("nilaoda")]
-[assembly: AssemblyProduct("N_m3u8DL-CLI")]
+[assembly: AssemblyProduct("在https://github.com/nilaoda/N_m3u8DL-CLI基础上修改")]
 [assembly: AssemblyCopyright("Copyright ©  2020")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

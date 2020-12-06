@@ -24,6 +24,7 @@ namespace N_m3u8DL_CLI
         string externalSubUrl = "";
         string fflogName = "_ffreport.log";
         public static bool BinaryMerge = false;
+        public static int ListCount = 1;
 
         public int Threads { get; set; } = 1;
         public int RetryCount { get; set; } = 5;
@@ -35,7 +36,22 @@ namespace N_m3u8DL_CLI
         public bool MuxFastStart { get; set; } = true;
         public string MuxSetJson { get; set; } = string.Empty;
         public int TimeOut { get; set; } = 10000;         //超时设置
+
+        /// <summary>
+        /// 已下载大小
+        /// </summary>
         public static double DownloadedSize { get; set; } = 0;   //已下载大小
+
+        /// <summary>
+        /// 最新的一个已下载片段文件的大小
+        /// </summary>
+        public static double LatestFileSize { get; set; } = 0;
+
+        /// <summary>
+        /// 最新一个已下载片段文件的时长
+        /// </summary>
+        public static double LatestFileDuration { get; set; } = 0;
+
         public static bool HasSetDir { get; set; } = false;
         public bool NoMerge { get; set; } = false;
         public static int CalcTime { get; set; } = 1;            //计算速度的间隔
@@ -43,12 +59,23 @@ namespace N_m3u8DL_CLI
         public static int PartsCount { get; set; } = 0;
         public static bool DisableIntegrityCheck { get; set; } = false; //关闭完整性检查
 
+        public int KeyLength { get; set; } = 0;
+
         static CancellationTokenSource cts = new CancellationTokenSource();
         //计算下载速度
-        static System.Timers.Timer timer = new System.Timers.Timer(1000 * CalcTime);   //实例化Timer类
+        static System.Timers.Timer timer;//= new System.Timers.Timer(1000 * CalcTime);   //实例化Timer类
 
         public DownloadManager()
         {
+            timer = new System.Timers.Timer(1000 * CalcTime);   //实例化Timer类
+
+            DownloadedSize = 0;
+            Count = 0;
+            PartsCount = 0;
+            Global.BYTEDOWN = 0;
+            stopCount = 0;
+            //DownloadedSize = 0;
+
             timer.AutoReset = true;
             timer.Elapsed += delegate
             {
@@ -75,8 +102,9 @@ namespace N_m3u8DL_CLI
             };
         }
 
-        public void DoDownload()
+        public void DoDownload(int listCount = 1)
         {
+            ListCount = listCount;
             jsonFile = Path.Combine(DownDir, "meta.json");
             if (!File.Exists(jsonFile))
                 return;
@@ -89,20 +117,24 @@ namespace N_m3u8DL_CLI
             string isVOD = initJson["m3u8Info"]["vod"].ToString();
             try
             {
-                if (initJson["m3u8Info"]["audio"].ToString() != "")
+                if (initJson["m3u8Info"]["audio"] != null && initJson["m3u8Info"]["audio"].ToString() != "")
+                {
                     externalAudio = true;
-                externalAudioUrl = initJson["m3u8Info"]["audio"].ToString();
-                LOGGER.WriteLine(strings.hasExternalAudioTrack);
-                LOGGER.PrintLine(strings.hasExternalAudioTrack, LOGGER.Warning);
+                    externalAudioUrl = initJson["m3u8Info"]["audio"].ToString();
+                    LOGGER.WriteLine(strings.hasExternalAudioTrack);//识别到外挂音频轨道
+                    LOGGER.PrintLine(strings.hasExternalAudioTrack, LOGGER.Warning);
+                }
             }
-            catch (Exception) {}
+            catch (Exception) { }
             try
             {
-                if (initJson["m3u8Info"]["sub"].ToString() != "")
+                if (initJson["m3u8Info"]["sub"] != null && initJson["m3u8Info"]["sub"].ToString() != "")
+                {
                     externalSub = true;
-                externalSubUrl = initJson["m3u8Info"]["sub"].ToString();
-                LOGGER.WriteLine(strings.hasExternalSubtitleTrack);
-                LOGGER.PrintLine(strings.hasExternalSubtitleTrack, LOGGER.Warning);
+                    externalSubUrl = initJson["m3u8Info"]["sub"].ToString();
+                    LOGGER.WriteLine(strings.hasExternalSubtitleTrack);//识别到外挂字幕轨道
+                    LOGGER.PrintLine(strings.hasExternalSubtitleTrack, LOGGER.Warning);
+                }
             }
             catch (Exception) { }
             total = Convert.ToInt32(segCount);
@@ -168,6 +200,7 @@ namespace N_m3u8DL_CLI
                 try
                 {
                     Downloader sd = new Downloader();
+                    sd.KeyLength = KeyLength;
                     sd.TimeOut = TimeOut;
                     sd.SegDur = firstSeg["duration"].Value<double>();
                     if (sd.SegDur < 0) sd.SegDur = 0; //防止负数
@@ -252,10 +285,11 @@ namespace N_m3u8DL_CLI
                             loopstate.Stop();
                         else
                         {
+                            sd.KeyLength = KeyLength;
                             sd.TimeOut = TimeOut;
                             sd.SegDur = info["duration"].Value<double>();
                             if (sd.SegDur < 0) sd.SegDur = 0; //防止负数
-                                sd.FileUrl = info["segUri"].Value<string>();
+                            sd.FileUrl = info["segUri"].Value<string>();
                             //VTT字幕
                             if (isVTT == false && (sd.FileUrl.Trim('\"').EndsWith(".vtt") || sd.FileUrl.Trim('\"').EndsWith(".webvtt")))
                                 isVTT = true;
@@ -275,7 +309,7 @@ namespace N_m3u8DL_CLI
                                 File.Delete(sd.SavePath);
                             if (!Global.ShouldStop)
                                 sd.Down();  //开始下载
-                            }
+                        }
                         return sd;
                     },
                     (sd) => { });
@@ -302,7 +336,7 @@ namespace N_m3u8DL_CLI
             //检测是否下完
             IsComplete(Convert.ToInt32(segCount));
         }
-        
+
         public void IsComplete(int segCount)
         {
             int tsCount = 0;
@@ -313,12 +347,12 @@ namespace N_m3u8DL_CLI
                 goto ll;
             }
 
-            for (int i = 0; i < PartsCount; i++) 
+            for (int i = 0; i < PartsCount; i++)
             {
                 tsCount += Global.GetFileCount(DownDir + "\\Part_" + i.ToString(partsPadZero), ".ts");
             }
 
-        ll:
+            ll:
             if (tsCount != segCount)
             {
                 LOGGER.PrintLine(strings.downloadedCount + tsCount + " / " + segCount);
@@ -329,7 +363,7 @@ namespace N_m3u8DL_CLI
                     LOGGER.WriteLine(strings.retryCount + Count + " / " + RetryCount);
                     LOGGER.PrintLine(strings.retryCount + Count + " / " + RetryCount, LOGGER.Warning);
                     Thread.Sleep(6000);
-                    DoDownload();
+                    DoDownload(ListCount);
                 }
             }
             else  //开始合并
@@ -366,7 +400,7 @@ namespace N_m3u8DL_CLI
                             LOGGER.PrintLine(strings.binaryMergingPleaseWait);
                             MuxFormat = "ts";
                             //有MAP文件，一般为mp4，采取默认动作
-                            if(File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
+                            if (File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
                                 MuxFormat = "mp4";
 
                             if (Global.AUDIO_TYPE != "")
@@ -467,7 +501,7 @@ namespace N_m3u8DL_CLI
                             Global.HadReadInfo = false;
                             Global.VIDEO_TYPE = "";
                             Global.AUDIO_TYPE = "";
-                            DoDownload();
+                            DoDownload(ListCount);
                         }
                         if (externalSub)  //下载独立字幕
                         {
@@ -492,12 +526,20 @@ namespace N_m3u8DL_CLI
                             Global.HadReadInfo = false;
                             Global.VIDEO_TYPE = "";
                             Global.AUDIO_TYPE = "";
-                            DoDownload();
+                            DoDownload(ListCount);
                         }
-                        LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
-                        Console.CursorVisible = true;
-                        Environment.Exit(0);  //正常退出程序
-                        Console.Clear();
+                        if (ListCount == 1)
+                        {
+                            LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
+                            Console.CursorVisible = true;
+                            Environment.Exit(0);  //正常退出程序
+                            Console.Clear();
+                        }
+                        else
+                        {
+                            Console.SetCursorPosition(0, 5);
+                        }
+
                         return;
                     }
 
@@ -519,14 +561,14 @@ namespace N_m3u8DL_CLI
                         }
                         catch (Exception) { }
                     }
-                    
+
 
                     if (BinaryMerge)
                     {
                         LOGGER.PrintLine(strings.binaryMergingPleaseWait);
                         MuxFormat = "ts";
                         //有MAP文件，一般为mp4，采取默认动作
-                        if (File.Exists(DownDir + "\\!MAP.ts")) 
+                        if (File.Exists(DownDir + "\\!MAP.ts"))
                             MuxFormat = "mp4";
                         Global.CombineMultipleFilesIntoSingleFile(Global.GetFiles(DownDir, ".ts"), FFmpeg.OutPutPath + $".{MuxFormat}");
                     }
@@ -599,10 +641,10 @@ namespace N_m3u8DL_CLI
                         Parser parser = new Parser();
                         parser.Headers = Headers; //继承Header
                         parser.BaseUrl = "";
-                        parser.M3u8Url = externalAudioUrl;
+                        parser.M3u8Url = externalAudioUrl;//外挂音频轨道
                         parser.DownName = DownName + "(Audio)";
                         parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
-                        LOGGER.WriteLine(strings.startParsing + externalAudioUrl);
+                        LOGGER.WriteLine(strings.startParsing + externalAudioUrl);//开始解析 外挂音频轨道
                         LOGGER.WriteLine(strings.downloadingExternalAudioTrack);
                         DownName = parser.DownName;
                         fflogName = "_ffreport(Audio).log";
@@ -613,7 +655,7 @@ namespace N_m3u8DL_CLI
                         Global.HadReadInfo = false;
                         Global.VIDEO_TYPE = "";
                         Global.AUDIO_TYPE = "";
-                        DoDownload();
+                        DoDownload(ListCount);
                     }
                     if (externalSub)  //下载独立字幕
                     {
@@ -624,10 +666,10 @@ namespace N_m3u8DL_CLI
                         Parser parser = new Parser();
                         parser.Headers = Headers; //继承Header
                         parser.BaseUrl = "";
-                        parser.M3u8Url = externalSubUrl;
+                        parser.M3u8Url = externalSubUrl;//外挂字幕轨道
                         parser.DownName = DownName.Replace("(Audio)", "") + "(Subtitle)";
                         parser.DownDir = Path.Combine(Path.GetDirectoryName(DownDir), parser.DownName);
-                        LOGGER.WriteLine(strings.startParsing + externalSubUrl);
+                        LOGGER.WriteLine(strings.startParsing + externalSubUrl);//开始解析 外挂字幕轨道
                         LOGGER.WriteLine(strings.downloadingExternalSubtitleTrack);
                         DownName = parser.DownName;
                         fflogName = "_ffreport(Subtitle).log";
@@ -638,7 +680,7 @@ namespace N_m3u8DL_CLI
                         Global.HadReadInfo = false;
                         Global.VIDEO_TYPE = "";
                         Global.AUDIO_TYPE = "";
-                        DoDownload();
+                        DoDownload(ListCount);
                     }
                     LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
                     Console.CursorVisible = true;

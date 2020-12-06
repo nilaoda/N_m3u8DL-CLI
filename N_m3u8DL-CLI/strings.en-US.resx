@@ -175,7 +175,7 @@
     <value>File Duration: </value>
   </data>
   <data name="fileName" xml:space="preserve">
-    <value>File Name: </value>
+    <value>File Name{0}: </value>
   </data>
   <data name="hasExternalAudioTrack" xml:space="preserve">
     <value>Has External Audio Track</value>

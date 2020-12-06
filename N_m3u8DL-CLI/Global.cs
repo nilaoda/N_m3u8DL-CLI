@@ -605,6 +605,8 @@ namespace N_m3u8DL_CLI
                                 stream.Write(bArr, 0, size);
                                 downLen += size;
                                 BYTEDOWN += size; //计算下载速度
+                                //LOGGER.PrintLine($"下载速度{BYTEDOWN}");
+
                                 if (MAX_SPEED != 0)
                                     while (BYTEDOWN >= MAX_SPEED * 1024 * DownloadManager.CalcTime)  //限速
                                     {

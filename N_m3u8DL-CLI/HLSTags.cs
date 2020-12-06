@@ -10,6 +10,9 @@ namespace N_m3u8DL_CLI
     {
         public static string ext_m3u = "#EXTM3U";
         public static string ext_x_targetduration = "#EXT-X-TARGETDURATION";
+        /// <summary>
+        /// 第一个URL片段文件的序列号 #EXT-X-MEDIA-SEQUENCE
+        /// </summary>
         public static string ext_x_media_sequence = "#EXT-X-MEDIA-SEQUENCE";
         public static string ext_x_discontinuity_sequence = "#EXT-X-DISCONTINUITY-SEQUENCE";
         public static string ext_x_program_date_time = "#EXT-X-PROGRAM-DATE-TIME";
