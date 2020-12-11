@@ -447,7 +447,23 @@ namespace N_m3u8DL_CLI
                                 };
                             }
 
-                            formatList.Add(f);
+                            //处理同一ID分散在不同Period的情况
+                            if (formatList.Any(_f => _f["FormatId"] == f["FormatId"] && _f["Width"] == f["Width"]))
+                            {
+                                for (int i = 0; i < formatList.Count; i++)
+                                {
+                                    if (formatList[i]["FormatId"] == f["FormatId"] && formatList[i]["Width"] == f["Width"])
+                                    {
+                                        formatList[i]["Fragments"].AddRange(f["Fragments"]);
+                                        break;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                formatList.Add(f);
+                            }
+
                         }
                     }
                 }
@@ -637,6 +653,7 @@ namespace N_m3u8DL_CLI
         {
             var best = new Dictionary<string, dynamic>() { ["Tbr"] = 0 };
             var bandwidth = best["Tbr"];
+            var width = 0;
 
             foreach (var f in fs)
             {
@@ -644,10 +661,11 @@ namespace N_m3u8DL_CLI
                 var h = f["Height"];
                 if (w != -1 && h != -1)
                 {
-                    if (f["Tbr"] > bandwidth)
+                    if (f["Tbr"] > bandwidth && w > width)
                     {
                         best = f;
                         bandwidth = f["Tbr"];
+                        width = w;
                     }
                 }
             }
