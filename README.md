@@ -41,6 +41,8 @@
   * 支持仅合并为音频
   * 自动使用系统代理（可禁止）
   * 提供SimpleG简易的`GUI`生成常用参数
+  * 支持批量下载（list.txt）
+  * 支持指定密钥字节数(16、24、32)
 
 
 
@@ -48,7 +50,7 @@
 
 # 命令行选项
 ```
-N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]  
+N_m3u8DL-CLI.exe <URL|JSON|FILE|list.txt> [OPTIONS]  
 
     --workDir    Directory      设定程序工作目录
     --saveName   Filename       设定存储文件名(不包括后缀)
@@ -75,6 +77,7 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --noMerge                   禁用自动合并
     --noProxy                   不自动使用系统代理
     --disableIntegrityCheck     不检测分片数量是否完整
+    --keyLength                 Key字节长度
 ```
 
 # 用户文档
