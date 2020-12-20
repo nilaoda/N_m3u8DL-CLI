@@ -1,16 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace N_m3u8DL_CLI
 {
     class Decrypter
     {
-        public static byte[] AES128Decrypt(string filePath, byte[] keyByte, byte[] ivByte, CipherMode mode = CipherMode.CBC)
+        public static byte[] AES128Decrypt(string filePath, byte[] keyByte, byte[] ivByte, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
         {
             FileStream fs = new FileStream(filePath, FileMode.Open);
             //获取文件大小
@@ -25,14 +21,14 @@ namespace N_m3u8DL_CLI
             dcpt.Key = keyByte;
             dcpt.IV = ivByte;
             dcpt.Mode = mode;
-            dcpt.Padding = PaddingMode.PKCS7;
+            dcpt.Padding = padding;
 
             ICryptoTransform cTransform = dcpt.CreateDecryptor();
             Byte[] resultArray = cTransform.TransformFinalBlock(inBuff, 0, inBuff.Length);
             return resultArray;
         }
 
-        public static byte[] AES128Decrypt(byte[] encryptedBuff, byte[] keyByte, byte[] ivByte, CipherMode mode = CipherMode.CBC)
+        public static byte[] AES128Decrypt(byte[] encryptedBuff, byte[] keyByte, byte[] ivByte, CipherMode mode = CipherMode.CBC, PaddingMode padding = PaddingMode.PKCS7)
         {
             byte[] inBuff = encryptedBuff;
 
@@ -42,7 +38,7 @@ namespace N_m3u8DL_CLI
             dcpt.Key = keyByte;
             dcpt.IV = ivByte;
             dcpt.Mode = mode;
-            dcpt.Padding = PaddingMode.PKCS7;
+            dcpt.Padding = padding;
 
             ICryptoTransform cTransform = dcpt.CreateDecryptor();
             Byte[] resultArray = cTransform.TransformFinalBlock(inBuff, 0, inBuff.Length);
@@ -56,7 +52,7 @@ namespace N_m3u8DL_CLI
                 return new byte[0];
             }
 
-            if (hexStr.StartsWith("0x") || hexStr.StartsWith("0X")) 
+            if (hexStr.StartsWith("0x") || hexStr.StartsWith("0X"))
             {
                 hexStr = hexStr.Remove(0, 2);
             }

@@ -70,6 +70,7 @@
     <Compile Include="CommandLineArgumentParser.cs" />
     <Compile Include="Decode51CtoKey.cs" />
     <Compile Include="DecodeDdyun.cs" />
+    <Compile Include="DecodeHuke88Key.cs" />
     <Compile Include="DecodeImooc.cs" />
     <Compile Include="DecodeNfmovies.cs" />
     <Compile Include="Decrypter.cs" />

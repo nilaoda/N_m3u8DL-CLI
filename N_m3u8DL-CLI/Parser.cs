@@ -748,6 +748,22 @@ namespace N_m3u8DL_CLI
                         {
                             key[1] = DecodeImooc.DecodeKey(Global.GetWebSource(key[1], Headers));
                         }
+                        else if (key[1] == "https://hls.ventunotech.com/m3u8/pc_videosecurevtnkey.key")
+                        {
+                            string temp = Global.GetWebSource(keyUrl, Headers);
+                            LOGGER.PrintLine(temp);
+                            byte[] tempKey = new byte[16];
+                            for (int d = 0; d < 16; d++)
+                            {
+                                tempKey[d] = Convert.ToByte(temp.Substring(2 * d, 2), 16);
+                            }
+                            key[1] = Convert.ToBase64String(tempKey);
+                        }
+                        else if (key[1].Contains("drm.vod2.myqcloud.com/getlicense"))
+                        {
+                            var temp = Global.HttpDownloadFileToBytes(keyUrl, Headers);
+                            key[1] = DecodeHuke88Key.DecodeKey(key[1], temp);
+                        }
                         else
                         {
                             if (keyUrl.Contains("https://keydeliver.linetv.tw/jurassicPark"))  //linetv
