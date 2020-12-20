@@ -116,6 +116,10 @@ namespace N_m3u8DL_CLI
         /// <returns></returns>
         public static string Parse(string downDir, string mpdUrl, string mpdContent, string defaultBase = "")
         {
+            //XiGua
+            if (mpdContent.Contains("<mas:") && !mpdContent.Contains("xmlns:mas"))
+                mpdContent = mpdContent.Replace("<MPD ", "<MPD xmlns:mas=\"urn:marlin:mas:1-0:services:schemas:mpd\" ");
+
             XmlDocument mpdDoc = new XmlDocument();
             mpdDoc.LoadXml(mpdContent);
 
