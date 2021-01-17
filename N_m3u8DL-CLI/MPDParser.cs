@@ -61,14 +61,18 @@ namespace N_m3u8DL_CLI
 
             void ExtractInitialization(XmlNode source)
             {
-                var initialization = source.SelectSingleNode("//ns:Initialization", nsMgr);
+                var initialization = source.SelectSingleNode("ns:Initialization", nsMgr);
                 if (initialization != null)
                 {
                     MultisegmentInfo["InitializationUrl"] = ((XmlElement)initialization).GetAttribute("sourceURL");
+                    if (((XmlElement)initialization).HasAttribute("range"))
+                    {
+                        MultisegmentInfo["InitializationUrl"] += "$$Range=" + ((XmlElement)initialization).GetAttribute("range");
+                    }
                 }
             }
 
-            var segmentList = Period.SelectSingleNode("//ns:SegmentList", nsMgr);
+            var segmentList = Period.SelectSingleNode("ns:SegmentList", nsMgr);
             if (segmentList != null)
             {
                 ExtractCommon(segmentList);
@@ -77,7 +81,14 @@ namespace N_m3u8DL_CLI
                 MultisegmentInfo["SegmentUrls"] = new List<string>();
                 foreach (XmlElement segment in segmentUrlsE)
                 {
-                    MultisegmentInfo["SegmentUrls"].Add(segment.GetAttribute("media"));
+                    if (segment.HasAttribute("mediaRange"))
+                    {
+                        MultisegmentInfo["SegmentUrls"].Add("$$Range=" + segment.GetAttribute("mediaRange"));
+                    }
+                    else
+                    {
+                        MultisegmentInfo["SegmentUrls"].Add(segment.GetAttribute("media"));
+                    }
                 }
             }
             else
@@ -212,6 +223,7 @@ namespace N_m3u8DL_CLI
                             var bandwidth = IntOrNull(GetAttribute("bandwidth"));
                             var f = new Dictionary<string, dynamic>
                             {
+                                ["ContentType"] = contentType,
                                 ["FormatId"] = representationId,
                                 ["ManifestUrl"] = mpdUrl,
                                 ["Width"] = IntOrNull(GetAttribute("width")),
@@ -436,6 +448,10 @@ namespace N_m3u8DL_CLI
                                 if (representationMsInfo.ContainsKey("InitializationUrl"))
                                 {
                                     f["InitializationUrl"] = representationMsInfo["InitializationUrl"];
+                                    if (f["InitializationUrl"].StartsWith("$$Range"))
+                                    {
+                                        f["InitializationUrl"] = CombineURL(baseUrl, f["InitializationUrl"]);
+                                    }
                                     f["Fragments"] = representationMsInfo["Fragments"];
                                 }
                             }
@@ -452,11 +468,11 @@ namespace N_m3u8DL_CLI
                             }
 
                             //处理同一ID分散在不同Period的情况
-                            if (formatList.Any(_f => _f["FormatId"] == f["FormatId"] && _f["Width"] == f["Width"]))
+                            if (formatList.Any(_f => _f["FormatId"] == f["FormatId"] && _f["Width"] == f["Width"] && _f["ContentType"] == f["ContentType"]))
                             {
                                 for (int i = 0; i < formatList.Count; i++)
                                 {
-                                    if (formatList[i]["FormatId"] == f["FormatId"] && formatList[i]["Width"] == f["Width"])
+                                    if (formatList[i]["FormatId"] == f["FormatId"] && formatList[i]["Width"] == f["Width"] && formatList[i]["ContentType"] == f["ContentType"])
                                     {
                                         formatList[i]["Fragments"].AddRange(f["Fragments"]);
                                         break;
@@ -486,14 +502,14 @@ namespace N_m3u8DL_CLI
             var audioLangList = new List<string>();
             formatList.ForEach(f =>
             {
-                if (f["Width"] == -1 && !audioLangList.Contains(f["Language"])) audioLangList.Add(f["Language"]);
+                if (f["ContentType"] == "audio" && !audioLangList.Contains(f["Language"])) audioLangList.Add(f["Language"]);
             });
 
             if (audioLangList.Count > 1)
             {
                 string Stringify(Dictionary<string, dynamic> f)
                 {
-                    var type = f["Width"] == -1 && f["Height"] == -1 ? "Audio" : "Video";
+                    var type = f["ContentType"] == "aduio" ? "Audio" : "Video";
                     var res = type == "Video" ? $"[{f["Width"]}x{f["Height"]}]" : "";
                     var id = $"[{f["FormatId"]}] ";
                     var tbr = $"[{((int)f["Tbr"]).ToString().PadLeft(4)} Kbps] ";
@@ -523,7 +539,7 @@ namespace N_m3u8DL_CLI
                     {
                         var n = 0;
                         int.TryParse(index, out n);
-                        if (formatList[n]["Width"] == -1)
+                        if (formatList[n]["ContentType"] == "audio")
                         {
                             bestAudio = formatList[n];
                         }
@@ -625,7 +641,7 @@ namespace N_m3u8DL_CLI
             sb.AppendLine("#CREATED-BY:N_m3u8DL-CLI");
 
             //Video
-            if (f["Width"] != -1 && f["Height"] != -1)
+            if (f["ContentType"] != "audio")
             {
                 sb.AppendLine($"#EXT-VIDEO-WIDTH:{f["Width"]}");
                 sb.AppendLine($"#EXT-VIDEO-HEIGHT:{f["Height"]}");
@@ -635,7 +651,19 @@ namespace N_m3u8DL_CLI
             sb.AppendLine($"#EXT-TBR:{f["Tbr"]}");
             if (f.ContainsKey("InitializationUrl"))
             {
-                sb.AppendLine($"#EXT-X-MAP:URI=\"{f["InitializationUrl"]}\"");
+                string initUrl = f["InitializationUrl"];
+                if (Regex.IsMatch(initUrl, "\\$\\$Range=(\\d+)-(\\d+)"))
+                {
+                    var match = Regex.Match(initUrl, "\\$\\$Range=(\\d+)-(\\d+)");
+                    string rangeStr = match.Value;
+                    long start = Convert.ToInt64(match.Groups[1].Value);
+                    long end = Convert.ToInt64(match.Groups[2].Value);
+                    sb.AppendLine($"#EXT-X-MAP:URI=\"{initUrl.Replace(rangeStr, "")}\",BYTERANGE=\"{end}@{start}\"");
+                }
+                else
+                {
+                    sb.AppendLine($"#EXT-X-MAP:URI=\"{initUrl}\"");
+                }
             }
             sb.AppendLine("#EXT-X-KEY:METHOD=PLZ-KEEP-RAW,URI=\"None\""); //使下载器使用二进制合并
 
@@ -645,7 +673,19 @@ namespace N_m3u8DL_CLI
                 var dur = seg.ContainsKey("duration") ? seg["duration"] : 0.0;
                 var url = seg.ContainsKey("url") ? seg["url"] : seg["path"];
                 sb.AppendLine($"#EXTINF:{dur.ToString("0.00")}");
-                sb.AppendLine(url);
+                if (Regex.IsMatch(url, "\\$\\$Range=(\\d+)-(\\d+)"))
+                {
+                    var match = Regex.Match(url, "\\$\\$Range=(\\d+)-(\\d+)");
+                    string rangeStr = match.Value;
+                    long start = Convert.ToInt64(match.Groups[1].Value);
+                    long end = Convert.ToInt64(match.Groups[2].Value);
+                    sb.AppendLine($"#EXT-X-BYTERANGE:{end + 1 - start}@{start}");
+                    sb.AppendLine(url.Replace(rangeStr, ""));
+                }
+                else
+                {
+                    sb.AppendLine(url);
+                }
             }
 
             sb.AppendLine("#EXT-X-ENDLIST");
@@ -663,7 +703,7 @@ namespace N_m3u8DL_CLI
             {
                 var w = f["Width"];
                 var h = f["Height"];
-                if (w != -1 && h != -1)
+                if (f["ContentType"] == "video")
                 {
                     if (f["Tbr"] > bandwidth && w > width)
                     {
@@ -684,9 +724,7 @@ namespace N_m3u8DL_CLI
 
             foreach (var f in fs)
             {
-                var w = f["Width"];
-                var h = f["Height"];
-                if (w == -1 && h == -1)
+                if (f["ContentType"] == "audio")
                 {
                     if (f["Tbr"] > bandwidth)
                     {
@@ -731,6 +769,10 @@ namespace N_m3u8DL_CLI
         /// <returns></returns>
         static string CombineURL(string baseurl, string url)
         {
+            if (url.StartsWith("$$Range"))
+            {
+                return baseurl + url;
+            }
             Uri uri1 = new Uri(baseurl);
             Uri uri2 = new Uri(uri1, url);
             url = uri2.ToString();
