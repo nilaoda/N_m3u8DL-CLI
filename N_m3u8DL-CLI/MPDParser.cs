@@ -658,7 +658,7 @@ namespace N_m3u8DL_CLI
                     string rangeStr = match.Value;
                     long start = Convert.ToInt64(match.Groups[1].Value);
                     long end = Convert.ToInt64(match.Groups[2].Value);
-                    sb.AppendLine($"#EXT-X-MAP:URI=\"{initUrl.Replace(rangeStr, "")}\",BYTERANGE=\"{end}@{start}\"");
+                    sb.AppendLine($"#EXT-X-MAP:URI=\"{initUrl.Replace(rangeStr, "")}\",BYTERANGE=\"{end + 1 - start}@{start}\"");
                 }
                 else
                 {
