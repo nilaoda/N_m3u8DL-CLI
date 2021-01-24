@@ -368,6 +368,8 @@ namespace N_m3u8DL_CLI
                             //有MAP文件，一般为mp4，采取默认动作
                             if(File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
                                 MuxFormat = "mp4";
+                            if (isVTT)
+                                MuxFormat = "vtt";
 
                             if (Global.AUDIO_TYPE != "")
                                 MuxFormat = Global.AUDIO_TYPE;
@@ -528,6 +530,8 @@ namespace N_m3u8DL_CLI
                         //有MAP文件，一般为mp4，采取默认动作
                         if (File.Exists(DownDir + "\\!MAP.ts")) 
                             MuxFormat = "mp4";
+                        if (isVTT)
+                            MuxFormat = "vtt";
                         Global.CombineMultipleFilesIntoSingleFile(Global.GetFiles(DownDir, ".ts"), FFmpeg.OutPutPath + $".{MuxFormat}");
                     }
                     else
