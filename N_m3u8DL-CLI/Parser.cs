@@ -11,6 +11,29 @@ namespace N_m3u8DL_CLI
 {
     class Parser
     {
+        struct Audio
+        {
+            public string Name;
+            public string Language;
+            public string Uri;
+            public string Channels;
+            public override string ToString()
+            {
+                return $"[{Name}] [{Language}] [{(string.IsNullOrEmpty(Channels) ? "" : $"{Channels}ch")}]".Replace("[]", "");
+            }
+        }
+
+        struct Subtitle
+        {
+            public string Name;
+            public string Language;
+            public string Uri;
+            public override string ToString()
+            {
+                return $"[{Name}] [{Language}]";
+            }
+        }
+
         //存储上一行key的信息，如果一样，就跳过下载key这一步
         private string lastKeyLine = string.Empty;
         //METHOD, KEY, IV
@@ -21,9 +44,9 @@ namespace N_m3u8DL_CLI
         private string bestUrl = string.Empty;
         private string bestUrlAudio = string.Empty;
         private string bestUrlSub = string.Empty;
-        Dictionary<string, string> MEDIA_AUDIO = new Dictionary<string, string>();
+        Dictionary<string, List<Audio>> MEDIA_AUDIO_GROUP = new Dictionary<string, List<Audio>>(); //外挂音频所有分组信息
         private string audioUrl = string.Empty; //音轨地址
-        Dictionary<string, string> MEDIA_SUB = new Dictionary<string, string>();
+        Dictionary<string, List<Subtitle>> MEDIA_SUB_GROUP = new Dictionary<string, List<Subtitle>>(); //外挂字幕所有分组信息
         private string subUrl = string.Empty; //字幕地址
         //存放多轨道的信息
         private ArrayList extLists = new ArrayList();
@@ -65,6 +88,8 @@ namespace N_m3u8DL_CLI
             JArray segments = new JArray();
             JObject segInfo = new JObject();
             extLists.Clear();
+            MEDIA_AUDIO_GROUP.Clear();
+            MEDIA_SUB_GROUP.Clear();
             string m3u8Content = string.Empty;
             string m3u8Method = string.Empty;
             string[] extMAP = { "", "" };
@@ -140,6 +165,16 @@ namespace N_m3u8DL_CLI
                 foreach (Match m in ykmap.Matches(m3u8Content))
                 {
                     m3u8Content = m3u8Content.Replace(m.Value, $"#EXTINF:0.000000,\n#EXT-X-BYTERANGE:{m.Groups[2].Value}\n{m.Groups[1].Value}");
+                }
+            }
+
+            //正对Disney+修正
+            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && M3u8Url.Contains("media.dssott.com/"))
+            {
+                Regex ykmap = new Regex("#EXT-X-MAP:URI=\\\".*?BUMPER/[\\s\\S]+?#EXT-X-DISCONTINUITY");
+                if (ykmap.IsMatch(m3u8Content))
+                {
+                    m3u8Content = m3u8Content.Replace(ykmap.Match(m3u8Content).Value, "#XXX");
                 }
             }
 
@@ -332,12 +367,37 @@ namespace N_m3u8DL_CLI
                     else if (line.StartsWith(HLSTags.ext_x_i_frame_stream_inf)) ;
                     else if (line.StartsWith(HLSTags.ext_x_media))
                     {
-                        if (Global.GetTagAttribute(line, "TYPE") == "AUDIO" && !MEDIA_AUDIO.ContainsKey(Global.GetTagAttribute(line, "GROUP-ID")))
-                            MEDIA_AUDIO.Add(Global.GetTagAttribute(line, "GROUP-ID"), CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI")));
-                        if (Global.GetTagAttribute(line, "TYPE") == "SUBTITLES")
+                        var groupId = Global.GetTagAttribute(line, "GROUP-ID");
+                        if (Global.GetTagAttribute(line, "TYPE") == "AUDIO")
                         {
-                            if (!MEDIA_SUB.ContainsKey(Global.GetTagAttribute(line, "GROUP-ID")))
-                                MEDIA_SUB.Add(Global.GetTagAttribute(line, "GROUP-ID"), CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI")));
+                            var audio = new Audio();
+                            audio.Channels = Global.GetTagAttribute(line, "CHANNELS");
+                            audio.Language = Global.GetTagAttribute(line, "LANGUAGE");
+                            audio.Name = Global.GetTagAttribute(line, "NAME");
+                            audio.Uri = CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI"));
+                            if (!MEDIA_AUDIO_GROUP.ContainsKey(groupId))
+                            {
+                                MEDIA_AUDIO_GROUP.Add(groupId, new List<Audio>() { audio });
+                            }
+                            else
+                            {
+                                MEDIA_AUDIO_GROUP[groupId].Add(audio);
+                            }
+                        }
+                        else if (Global.GetTagAttribute(line, "TYPE") == "SUBTITLES")
+                        {
+                            var sub = new Subtitle();
+                            sub.Language = Global.GetTagAttribute(line, "LANGUAGE");
+                            sub.Name = Global.GetTagAttribute(line, "NAME");
+                            sub.Uri = CombineURL(BaseUrl, Global.GetTagAttribute(line, "URI"));
+                            if (!MEDIA_SUB_GROUP.ContainsKey(groupId))
+                            {
+                                MEDIA_SUB_GROUP.Add(groupId, new List<Subtitle>() { sub });
+                            }
+                            else
+                            {
+                                MEDIA_SUB_GROUP[groupId].Add(sub);
+                            }
                         }
                     }
                     else if (line.StartsWith(HLSTags.ext_x_playlist_type)) ;
@@ -504,13 +564,71 @@ namespace N_m3u8DL_CLI
             jsonM3u8Info.Add("vod", isEndlist);
             jsonM3u8Info.Add("targetDuration", targetDuration);
             jsonM3u8Info.Add("totalDuration", totalDuration);
-            if (bestUrlAudio != "" && MEDIA_AUDIO.ContainsKey(bestUrlAudio))
+            if (audioUrl != "")
+                jsonM3u8Info.Add("audio", audioUrl);
+            if (subUrl != "")
+                jsonM3u8Info.Add("sub", subUrl);
+            if (bestUrlAudio != "" && MEDIA_AUDIO_GROUP.ContainsKey(bestUrlAudio))
             {
-                jsonM3u8Info.Add("audio", MEDIA_AUDIO[bestUrlAudio]);
+                if (MEDIA_AUDIO_GROUP[bestUrlAudio].Count == 1)
+                {
+                    audioUrl = MEDIA_AUDIO_GROUP[bestUrlAudio][0].Uri;
+                }
+                //多种音频语言 让用户选择
+                else
+                {
+                    var startCursorIndex = LOGGER.CursorIndex;
+                    LOGGER.PrintLine("Found Multiple Language Audio Tracks.", LOGGER.Warning);
+                    for (int i = 0; i < MEDIA_AUDIO_GROUP[bestUrlAudio].Count; i++)
+                    {
+                        Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {bestUrlAudio} => {MEDIA_AUDIO_GROUP[bestUrlAudio][i]}");
+                        LOGGER.CursorIndex++;
+                    }
+                    Console.CursorVisible = true;
+                    LOGGER.PrintLine("Please Select What You Want.(Up To 1 Track)");
+                    Console.Write("".PadRight(13) + "Enter Number: ");
+                    var input = Console.ReadLine();
+                    LOGGER.CursorIndex += 2;
+                    Console.CursorVisible = false;
+                    for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
+                    {
+                        Console.SetCursorPosition(0, i);
+                        Console.Write("".PadRight(300));
+                    }
+                    LOGGER.CursorIndex = startCursorIndex;
+                    audioUrl = MEDIA_AUDIO_GROUP[bestUrlAudio][int.Parse(input)].Uri;
+                }
             }
-            if (bestUrlSub != "" && MEDIA_SUB.ContainsKey(bestUrlSub)) 
+            if (bestUrlSub != "" && MEDIA_SUB_GROUP.ContainsKey(bestUrlSub))
             {
-                jsonM3u8Info.Add("sub", MEDIA_SUB[bestUrlSub]);
+                if (MEDIA_SUB_GROUP[bestUrlSub].Count == 1)
+                {
+                    subUrl = MEDIA_SUB_GROUP[bestUrlSub][0].Uri;
+                }
+                //多种字幕语言 让用户选择
+                else
+                {
+                    var startCursorIndex = LOGGER.CursorIndex;
+                    LOGGER.PrintLine("Found Multiple Language Subtitle Tracks.", LOGGER.Warning);
+                    for (int i = 0; i < MEDIA_SUB_GROUP[bestUrlSub].Count; i++)
+                    {
+                        Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {bestUrlSub} => {MEDIA_SUB_GROUP[bestUrlSub][i]}");
+                        LOGGER.CursorIndex++;
+                    }
+                    Console.CursorVisible = true;
+                    LOGGER.PrintLine("Please Select What You Want.(Up To 1 Track)");
+                    Console.Write("".PadRight(13) + "Enter Number: ");
+                    var input = Console.ReadLine();
+                    LOGGER.CursorIndex += 2;
+                    Console.CursorVisible = false;
+                    for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
+                    {
+                        Console.SetCursorPosition(0, i);
+                        Console.Write("".PadRight(300));
+                    }
+                    LOGGER.CursorIndex = startCursorIndex;
+                    subUrl = MEDIA_SUB_GROUP[bestUrlSub][int.Parse(input)].Uri;
+                }
             }
             if (extMAP[0] != "")
             {
@@ -807,13 +925,24 @@ namespace N_m3u8DL_CLI
                 File.Copy(m3u8SavePath, Path.GetDirectoryName(m3u8SavePath) + "\\master.m3u8", true);
                 LOGGER.WriteLine("Master List Found");
                 LOGGER.PrintLine(strings.masterListFound, LOGGER.Warning);
-                string t = "{" + "\"masterUri\":\"" + M3u8Url + "\","
-                    + "\"updateTime\":\"" + DateTime.Now.ToString("o") + "\","
-                    + "\"playLists:\":[" + string.Join(",", extLists.ToArray()) + "]" + "}";
+                var json = new JObject();
+                json.Add("masterUri", M3u8Url);
+                json.Add("updateTime", DateTime.Now.ToString("o"));
+                json.Add("playLists", JArray.Parse("[" + string.Join(",", extLists.ToArray()) + "]"));
+                if (MEDIA_AUDIO_GROUP.Keys.Count > 0)
+                {
+                    var audioGroup = JObject.FromObject(MEDIA_AUDIO_GROUP);
+                    json.Add("audioTracks", audioGroup);
+                }
+                if (MEDIA_SUB_GROUP.Keys.Count > 0)
+                {
+                    var subGroup = JObject.FromObject(MEDIA_SUB_GROUP);
+                    json.Add("subtitleTracks", subGroup);
+                }
                 //输出json文件
                 LOGGER.WriteLine(strings.wrtingMasterMeta);
                 LOGGER.PrintLine(strings.wrtingMasterMeta);
-                File.WriteAllText(Path.GetDirectoryName(jsonSavePath) + "\\playLists.json", Global.ConvertJsonString(t));
+                File.WriteAllText(Path.GetDirectoryName(jsonSavePath) + "\\playLists.json", json.ToString());
                 LOGGER.WriteLine(strings.selectPlaylist + ": " + bestUrl);
                 LOGGER.PrintLine(strings.selectPlaylist);
                 LOGGER.WriteLine(strings.startReParsing);
