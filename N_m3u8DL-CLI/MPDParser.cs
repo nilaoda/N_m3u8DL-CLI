@@ -520,6 +520,7 @@ namespace N_m3u8DL_CLI
                     return $"{type} => {id}{tbr}{asr}{fps}{lang}{codecs}{res}";
                 }
 
+                var startCursorIndex = LOGGER.CursorIndex;
                 for (int i = 0; i < formatList.Count; i++)
                 {
                     Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {Stringify(formatList[i])}");
@@ -531,6 +532,12 @@ namespace N_m3u8DL_CLI
                 var input = Console.ReadLine();
                 LOGGER.CursorIndex += 2;
                 Console.CursorVisible = false;
+                for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
+                {
+                    Console.SetCursorPosition(0, i);
+                    Console.Write("".PadRight(300));
+                }
+                LOGGER.CursorIndex = startCursorIndex;
                 if (!string.IsNullOrEmpty(input))
                 {
                     bestVideo = new Dictionary<string, dynamic>() { ["Tbr"] = 0 };
