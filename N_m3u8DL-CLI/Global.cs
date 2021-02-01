@@ -666,7 +666,7 @@ namespace N_m3u8DL_CLI
             {
                 //确定是PNG但是需要手动查询结尾标记 0x47 出现两次
                 int skip = 0;
-                for (int i = 4; i < u.Length - 188x2; i++)
+                for (int i = 4; i < u.Length - 188*2; i++)
                 {
                     if (u[i] == 0x47 && u[i + 188] == 0x47 && u[i + 188 + 188] == 0x47)
                     {
