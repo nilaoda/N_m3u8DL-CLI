@@ -110,7 +110,7 @@ namespace N_m3u8DL_CLI
             {
                 if (M3u8Url.Contains("nfmovies.com/hls"))
                     m3u8Content = DecodeNfmovies.DecryptM3u8(Global.HttpDownloadFileToBytes(M3u8Url, Headers));
-                else if (M3u8Url.Contains("hls.ddyunp.com/ddyun"))
+                else if (M3u8Url.Contains("hls.ddyunp.com/ddyun") || M3u8Url.Contains("hls.90mm.me/ddyun"))
                     m3u8Content = DecodeDdyun.DecryptM3u8(Global.HttpDownloadFileToBytes(DecodeDdyun.GetVaildM3u8Url(M3u8Url), Headers));
                 else
                     m3u8Content = Global.GetWebSource(M3u8Url, Headers);

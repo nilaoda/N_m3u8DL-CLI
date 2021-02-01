@@ -32,7 +32,7 @@ namespace N_m3u8DL_CLI
         /*===============================================================================*/
         static Version ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         static string nowVer = $"{ver.Major}.{ver.Minor}.{ver.Build}";
-        static string nowDate = "20210124";
+        static string nowDate = "20210201";
         public static void WriteInit()
         {
             Console.Clear();
@@ -666,7 +666,7 @@ namespace N_m3u8DL_CLI
             {
                 //确定是PNG但是需要手动查询结尾标记 0x47 出现两次
                 int skip = 0;
-                for (int i = 4; i < u.Length - 188*2; i++)
+                for (int i = 4; i < u.Length - 188 * 2; i++)
                 {
                     if (u[i] == 0x47 && u[i + 188] == 0x47 && u[i + 188 + 188] == 0x47)
                     {
