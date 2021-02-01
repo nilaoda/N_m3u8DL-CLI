@@ -314,8 +314,8 @@ namespace N_m3u8DL_CLI
                         {
                             if (m3u8CurrentKey[2] == "" && line.Contains("IV=0x"))
                             {
-                                var temp = ParseKey(line);
-                                m3u8CurrentKey[2] = temp[2]; //使用m3u8中的IV
+                                var temp = Global.GetTagAttribute(line.Replace(HLSTags.ext_x_key + ":", ""), "IV");
+                                m3u8CurrentKey[2] = temp; //使用m3u8中的IV
                             }
                         }
                         else
