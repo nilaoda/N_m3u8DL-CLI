@@ -664,13 +664,13 @@ namespace N_m3u8DL_CLI
             }
             else if (137 == u[0] && 80 == u[1] && 78 == u[2] && 71 == u[3])
             {
-                //确定是PNG但是需要手动查询结尾标记(0x60 0x82 0x47)
+                //确定是PNG但是需要手动查询结尾标记 0x47 出现两次
                 int skip = 0;
-                for (int i = 4; i < u.Length - 3; i++)
+                for (int i = 4; i < u.Length - 188x2; i++)
                 {
-                    if (u[i] == 0x60 && u[i + 1] == 0x82 && u[i + 2] == 0x47)
+                    if (u[i] == 0x47 && u[i + 188] == 0x47 && u[i + 188 + 188] == 0x47)
                     {
-                        skip = i + 2;
+                        skip = i;
                         break;
                     }
                 }
