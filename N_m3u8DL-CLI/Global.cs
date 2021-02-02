@@ -539,6 +539,10 @@ namespace N_m3u8DL_CLI
                         request.Referer = "https://www.mgtv.com";
                     request.Headers.Add("Cookie", "MQGUID");
                 }
+                else if (url.Contains(".xboku.com/")) //独播库
+                {
+                    request.Referer = "https://my.duboku.vip/static/player/videojs.html";
+                }
                 else
                     request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
                 //下载部分字节
