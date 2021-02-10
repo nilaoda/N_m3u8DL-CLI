@@ -216,7 +216,7 @@ namespace N_m3u8DL_CLI
                                 {
                                     mpdBaseUrl += "/";
                                 }
-                                baseUrl = mpdBaseUrl + baseUrl;
+                                baseUrl = CombineURL(mpdBaseUrl, baseUrl);
                             }
                             var representationId = GetAttribute("id");
                             var lang = GetAttribute("lang");
