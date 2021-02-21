@@ -47,8 +47,8 @@ namespace N_m3u8DL_CLI {
         }
         
         /// <summary>
-        ///   重写当前线程的 CurrentUICulture 属性
-        ///   重写当前线程的 CurrentUICulture 属性。
+        ///   重写当前线程的 CurrentUICulture 属性，对
+        ///   使用此强类型资源类的所有资源查找执行重写。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
@@ -66,6 +66,15 @@ namespace N_m3u8DL_CLI {
         internal static string binaryMergingPleaseWait {
             get {
                 return ResourceManager.GetString("binaryMergingPleaseWait", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 正在判断尾分片是否有效... 的本地化字符串。
+        /// </summary>
+        internal static string checkingLast {
+            get {
+                return ResourceManager.GetString("checkingLast", resourceCulture);
             }
         }
         
@@ -490,6 +499,15 @@ namespace N_m3u8DL_CLI {
         internal static string startParsing {
             get {
                 return ResourceManager.GetString("startParsing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   查找类似 开始解析MPD内容... 的本地化字符串。
+        /// </summary>
+        internal static string startParsingMpd {
+            get {
+                return ResourceManager.GetString("startParsingMpd", resourceCulture);
             }
         }
         

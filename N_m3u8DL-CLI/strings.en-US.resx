@@ -298,4 +298,10 @@
   <data name="wrtingMeta" xml:space="preserve">
     <value>Writing Json: [meta.json]</value>
   </data>
+  <data name="startParsingMpd" xml:space="preserve">
+    <value>Start Parsing MPD Content...</value>
+  </data>
+  <data name="checkingLast" xml:space="preserve">
+    <value>Checking Whether The Last Fragment Is Valid...</value>
+  </data>
 </root>

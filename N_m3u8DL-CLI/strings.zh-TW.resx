@@ -299,4 +299,10 @@
   <data name="wrtingMeta" xml:space="preserve">
     <value>寫出meta.json</value>
   </data>
+  <data name="startParsingMpd" xml:space="preserve">
+    <value>開始解析MPD內容...</value>
+  </data>
+  <data name="checkingLast" xml:space="preserve">
+    <value>正在判斷尾分片是否有效...</value>
+  </data>
 </root>
