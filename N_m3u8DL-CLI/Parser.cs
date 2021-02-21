@@ -150,6 +150,8 @@ namespace N_m3u8DL_CLI
 
             if (m3u8Content.Contains("</MPD>") && m3u8Content.Contains("<MPD"))
             {
+                LOGGER.PrintLine(strings.startParsingMpd, LOGGER.Warning);
+                LOGGER.WriteLine(strings.startParsingMpd);
                 var mpdSavePath = Path.Combine(DownDir, "dash.mpd");
                 //输出mpd文件
                 File.WriteAllText(mpdSavePath, m3u8Content);

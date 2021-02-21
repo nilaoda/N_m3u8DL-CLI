@@ -700,6 +700,8 @@ namespace N_m3u8DL_CLI
                 //普通分段才判断
                 if (urlLast.StartsWith("http") && !Regex.IsMatch(urlLast, "\\$\\$Range=(\\d+)-(\\d+)"))
                 {
+                    LOGGER.PrintLine(strings.checkingLast + (f["ContentType"] != "audio" ? "(Video)" : "(Audio)"));
+                    LOGGER.WriteLine(strings.checkingLast + (f["ContentType"] != "audio" ? "(Video)" : "(Audio)"));
                     //倒数第二段正常，倒数第一段不正常
                     if (checkValid(urlSecondToLast) && !checkValid(urlLast))
                         fragments.RemoveAt(fragments.Count - 1);
