@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -674,8 +675,39 @@ namespace N_m3u8DL_CLI
             }
             sb.AppendLine("#EXT-X-KEY:METHOD=PLZ-KEEP-RAW,URI=\"None\""); //使下载器使用二进制合并
 
+            List<Dictionary<string, dynamic>> fragments = f["Fragments"];
+
+            //检测最后一片的有效性
+            if (fragments.Count > 1)
+            {
+                bool checkValid(string url)
+                {
+                    try
+                    {
+                        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(new Uri(url));
+                        request.Timeout = 120000;
+                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                        if (((int)response.StatusCode).ToString().StartsWith("2")) return true;
+                        else return false;
+                    }
+                    catch (Exception) { return false; }
+                }
+
+                var last = fragments.Last();
+                var secondToLast = fragments[fragments.Count - 2];
+                var urlLast = last.ContainsKey("url") ? last["url"] : last["path"];
+                var urlSecondToLast = secondToLast.ContainsKey("url") ? secondToLast["url"] : secondToLast["path"];
+                //普通分段才判断
+                if (urlLast.StartsWith("http") && !Regex.IsMatch(urlLast, "\\$\\$Range=(\\d+)-(\\d+)"))
+                {
+                    //倒数第二段正常，倒数第一段不正常
+                    if (checkValid(urlSecondToLast) && !checkValid(urlLast))
+                        fragments.RemoveAt(fragments.Count - 1);
+                }
+            }
+
             //添加分段
-            foreach (var seg in f["Fragments"])
+            foreach (var seg in fragments)
             {
                 var dur = seg.ContainsKey("duration") ? seg["duration"] : 0.0;
                 var url = seg.ContainsKey("url") ? seg["url"] : seg["path"];
