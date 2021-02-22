@@ -202,6 +202,7 @@
     --liveRecDur HH:MM:SS       直播錄制時，達到此長度自動退出軟件
     --stopSpeed  Number         當速度低於此值時，重試(單位為KB/s)
     --maxSpeed   Number         設置下載速度上限(單位為KB/s)
+    --proxyAddress http://xx    設置HTTP代理, 如 http://127.0.0.1:8080
     --enableDelAfterDone        開啟下載後刪除臨時文件夾的功能
     --enableMuxFastStart        開啟混流mp4的FastStart特性
     --enableBinaryMerge         開啟二進制合並分片
