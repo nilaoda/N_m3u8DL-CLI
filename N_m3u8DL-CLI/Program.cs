@@ -180,7 +180,9 @@ namespace N_m3u8DL_CLI.NetCore
                 }
                 if (arguments.Has("--proxyAddress"))
                 {
-                    Global.UseProxyAddress = arguments.Get("--proxyAddress").Next;
+                    var proxy = arguments.Get("--proxyAddress").Next.ToString();
+                    if (proxy.StartsWith("http://"))
+                        Global.UseProxyAddress = proxy;
                 }
                 if (arguments.Has("--headers"))
                 {
