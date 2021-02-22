@@ -47,6 +47,7 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --downloadRange Range       Set range for a video
     --stopSpeed  Number         Speed below this, retry(KB/s)
     --maxSpeed   Number         Set max download speed(KB/s)
+    --proxyAddress http://xx    Set HTTP Proxy, like http://127.0.0.1:8080
     --enableDelAfterDone        Enable delete clips after download completed
     --enableMuxFastStart        Enable fast start for mp4
     --enableBinaryMerge         Enable use binary merge instead ffmpeg
