@@ -178,6 +178,10 @@ namespace N_m3u8DL_CLI.NetCore
                 {
                     Global.NoProxy = true;
                 }
+                if (arguments.Has("--proxyAddress"))
+                {
+                    Global.UseProxyAddress = arguments.Get("--proxyAddress").Next;
+                }
                 if (arguments.Has("--headers"))
                 {
                     reqHeaders = arguments.Get("--headers").Next;
