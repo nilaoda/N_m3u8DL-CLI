@@ -50,7 +50,6 @@ namespace N_m3u8DL_CLI
         private string subUrl = string.Empty; //字幕地址
         //存放多轨道的信息
         private ArrayList extLists = new ArrayList();
-        private static bool isQiQiuYun = false;
         //标记是否已清除优酷广告分片
         private static bool hasAd = false;
 
@@ -131,9 +130,6 @@ namespace N_m3u8DL_CLI
 
             if (m3u8Content == "")
                 return;
-
-            if (m3u8Content.Contains("qiqiuyun.net/") || m3u8Content.Contains("aliyunedu.net/") || m3u8Content.Contains("qncdn.edusoho.net/")) //气球云
-                isQiQiuYun = true;
 
             if (M3u8Url.Contains("tlivecloud-playback-cdn.ysp.cctv.cn") && M3u8Url.Contains("endtime="))
                 isEndlist = true;
@@ -559,6 +555,25 @@ namespace N_m3u8DL_CLI
             if (parts.HasValues == false)
                 parts.Add(segments);
 
+            //处理外挂音轨的AudioOnly逻辑
+            if (audioUrl != "" && Global.VIDEO_TYPE == "IGNORE")
+            {
+                LOGGER.WriteLine(strings.startParsing + audioUrl);
+                LOGGER.WriteLine(strings.downloadingExternalAudioTrack);
+                LOGGER.PrintLine(strings.downloadingExternalAudioTrack, LOGGER.Warning);
+                try
+                {
+                    DirectoryInfo directoryInfo = new DirectoryInfo(DownDir);
+                    directoryInfo.Delete(true);
+                }
+                catch (Exception) { }
+                M3u8Url = audioUrl;
+                BaseUrl = "";
+                audioUrl = "";
+                bestUrlAudio = "";
+                Parse();
+                return;
+            }
 
             //构造JSON文件
             JObject jsonResult = new JObject();
@@ -571,10 +586,6 @@ namespace N_m3u8DL_CLI
             jsonM3u8Info.Add("vod", isEndlist);
             jsonM3u8Info.Add("targetDuration", targetDuration);
             jsonM3u8Info.Add("totalDuration", totalDuration);
-            if (audioUrl != "")
-                jsonM3u8Info.Add("audio", audioUrl);
-            if (subUrl != "")
-                jsonM3u8Info.Add("sub", subUrl);
             if (bestUrlAudio != "" && MEDIA_AUDIO_GROUP.ContainsKey(bestUrlAudio))
             {
                 if (MEDIA_AUDIO_GROUP[bestUrlAudio].Count == 1)
@@ -637,6 +648,10 @@ namespace N_m3u8DL_CLI
                     subUrl = MEDIA_SUB_GROUP[bestUrlSub][int.Parse(input)].Uri;
                 }
             }
+            if (audioUrl != "")
+                jsonM3u8Info.Add("audio", audioUrl);
+            if (subUrl != "")
+                jsonM3u8Info.Add("sub", subUrl);
             if (extMAP[0] != "")
             {
                 if (extMAP[1] == "")
@@ -783,11 +798,7 @@ namespace N_m3u8DL_CLI
                     if (key[1].StartsWith("http"))
                     {
                         string keyUrl = key[1];
-                        if (isQiQiuYun)
-                        {
-                            key[1] = DecodeQiqiuyun.DecodeKeyV1(Global.GetWebSource(keyUrl, Headers));
-                        } //气球云
-                        else if (key[1].Contains("imooc.com/"))
+                        if (key[1].Contains("imooc.com/"))
                         {
                             key[1] = DecodeImooc.DecodeKey(Global.GetWebSource(key[1], Headers));
                         }
