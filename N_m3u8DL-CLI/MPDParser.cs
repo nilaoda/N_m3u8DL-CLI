@@ -614,7 +614,7 @@ namespace N_m3u8DL_CLI
             }
 
             var content = "";
-            if (videoPath == "" && audioPath != "")
+            if ((videoPath == "" && audioPath != "") || Global.VIDEO_TYPE == "IGNORE")
             {
                 return audioPath;
             }
