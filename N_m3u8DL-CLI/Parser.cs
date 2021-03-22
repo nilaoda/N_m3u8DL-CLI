@@ -171,13 +171,26 @@ namespace N_m3u8DL_CLI
                 }
             }
 
-            //正对Disney+修正
+            //针对Disney+修正
             if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && M3u8Url.Contains("media.dssott.com/"))
             {
                 Regex ykmap = new Regex("#EXT-X-MAP:URI=\\\".*?BUMPER/[\\s\\S]+?#EXT-X-DISCONTINUITY");
                 if (ykmap.IsMatch(m3u8Content))
                 {
                     m3u8Content = m3u8Content.Replace(ykmap.Match(m3u8Content).Value, "#XXX");
+                }
+            }
+
+            //针对AppleTv修正
+            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && M3u8Url.Contains(".apple.com/"))
+            {
+                //第一个不连续标记之后
+                var sub = m3u8Content.Substring(m3u8Content.IndexOf("#EXT-X-DISCONTINUITY"));
+                Regex ykmap = new Regex("#EXT-X-MAP:URI=\\\"(.*?)\\\"");
+                if (ykmap.IsMatch(sub))
+                {
+                    var nSub = Regex.Replace(sub, "#EXT-X-MAP:URI=\\\"(.*?)\\\"", "#EXTINF:0,\r\n$1");
+                    m3u8Content = m3u8Content.Replace(sub, nSub).Replace("#EXT-X-DISCONTINUITY", "");
                 }
             }
 
