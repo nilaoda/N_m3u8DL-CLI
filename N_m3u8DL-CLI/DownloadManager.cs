@@ -65,12 +65,14 @@ namespace N_m3u8DL_CLI
                     {
                         Global.ShouldStop = true;
                         cts.Cancel();
+                        timer.Enabled = false;
                     }
                 }
                 else
                 {
                     stopCount = 0;
                     Global.BYTEDOWN = 0;
+                    Global.ShouldStop = false;
                 }
             };
         }
@@ -328,7 +330,7 @@ namespace N_m3u8DL_CLI
                     Count++;
                     LOGGER.WriteLine(strings.retryCount + Count + " / " + RetryCount);
                     LOGGER.PrintLine(strings.retryCount + Count + " / " + RetryCount, LOGGER.Warning);
-                    Thread.Sleep(6000);
+                    Thread.Sleep(3000);
                     DoDownload();
                 }
             }
