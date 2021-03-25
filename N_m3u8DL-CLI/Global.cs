@@ -34,7 +34,7 @@ namespace N_m3u8DL_CLI
         /*===============================================================================*/
         static Version ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         static string nowVer = $"{ver.Major}.{ver.Minor}.{ver.Build}";
-        static string nowDate = "20210201";
+        static string nowDate = "20210325";
         public static void WriteInit()
         {
             Console.Clear();
@@ -104,7 +104,7 @@ namespace N_m3u8DL_CLI
         public static string GetWebSource(String url, string headers = "", int TimeOut = 60000)
         {
             string htmlCode = string.Empty;
-            for (int i = 0; i < 10; i++)
+            for (int i = 0; i < 5; i++)
             {
                 try
                 {
@@ -209,6 +209,7 @@ namespace N_m3u8DL_CLI
                 }
                 catch (Exception e)  //捕获所有异常
                 {
+                    LOGGER.WriteLine(e.Message);
                     LOGGER.WriteLineError(e.Message);
                     Thread.Sleep(1000); //1秒后重试
                     continue;
@@ -544,6 +545,8 @@ namespace N_m3u8DL_CLI
         /// </summary>
         public static void HttpDownloadFile(string url, string path, int timeOut = 20000, string headers = "", long startByte = 0, long expectByte = -1)
         {
+            int retry = 0;
+            reDownload:
             try
             {
                 if (File.Exists(path))
@@ -674,6 +677,12 @@ namespace N_m3u8DL_CLI
             {
                 LOGGER.WriteLineError("DOWN: " + e.Message + " " + url);
                 try { File.Delete(path); } catch (Exception) { }
+                if (retry++ < 3)
+                {
+                    Thread.Sleep(1000);
+                    LOGGER.WriteLineError($"DOWN: AUTO RETRY {retry}/3 " + url);
+                    goto reDownload;
+                }
             }
         }
 
