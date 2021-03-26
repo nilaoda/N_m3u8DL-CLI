@@ -61,3 +61,6 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
   
 ## Document
   https://nilaoda.github.io/N_m3u8DL-CLI/
+
+## Chit-chat
+https://discord.gg/W5tvcRJDPs
