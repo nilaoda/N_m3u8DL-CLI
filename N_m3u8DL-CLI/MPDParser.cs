@@ -527,12 +527,10 @@ namespace N_m3u8DL_CLI
                     Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {Stringify(formatList[i])}");
                     LOGGER.CursorIndex++;
                 }
-                Console.CursorVisible = true;
                 LOGGER.PrintLine("Found Multiple Language Audio Tracks.\r\n" + "".PadRight(13) + "Please Select What You Want(Up to 1 Video and 1 Audio).");
                 Console.Write("".PadRight(13) + "Enter Numbers Separated By A Space: ");
                 var input = Console.ReadLine();
                 LOGGER.CursorIndex += 2;
-                Console.CursorVisible = false;
                 for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
                 {
                     Console.SetCursorPosition(0, i);

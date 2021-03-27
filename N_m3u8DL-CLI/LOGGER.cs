@@ -78,19 +78,23 @@ namespace N_m3u8DL_CLI
             switch (printLevel)
             {
                 case 0:
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                     Console.WriteLine(" ".PadRight(12) + " " + text);
                     break;
                 case 1:
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                     Console.Write(DateTime.Now.ToString("HH:mm:ss.fff") + " ");
                     Console.WriteLine(text);
                     break;
                 case 2:
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                     Console.Write(DateTime.Now.ToString("HH:mm:ss.fff") + " ");
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(text);
                     Console.ResetColor();
                     break;
                 case 3:
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
                     Console.Write(DateTime.Now.ToString("HH:mm:ss.fff") + " ");
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     Console.WriteLine(text);
@@ -118,7 +122,7 @@ namespace N_m3u8DL_CLI
             }
             catch (Exception)
             {
-                
+
             }
             finally
             {
@@ -143,7 +147,7 @@ namespace N_m3u8DL_CLI
             }
             catch (Exception)
             {
-                
+
             }
             finally
             {
@@ -156,7 +160,7 @@ namespace N_m3u8DL_CLI
         {
             Console.ForegroundColor = ConsoleColor.Red;
             Console.WriteLine(DateTime.Now.ToString("o") + "  " + text);
-            while (Console.ForegroundColor == ConsoleColor.Red) 
+            while (Console.ForegroundColor == ConsoleColor.Red)
                 Console.ResetColor();
         }
     }

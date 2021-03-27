@@ -613,12 +613,10 @@ namespace N_m3u8DL_CLI
                         Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {bestUrlAudio} => {MEDIA_AUDIO_GROUP[bestUrlAudio][i]}");
                         LOGGER.CursorIndex++;
                     }
-                    Console.CursorVisible = true;
                     LOGGER.PrintLine("Please Select What You Want.(Up To 1 Track)");
                     Console.Write("".PadRight(13) + "Enter Number: ");
                     var input = Console.ReadLine();
                     LOGGER.CursorIndex += 2;
-                    Console.CursorVisible = false;
                     for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
                     {
                         Console.SetCursorPosition(0, i);
@@ -644,12 +642,10 @@ namespace N_m3u8DL_CLI
                         Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {bestUrlSub} => {MEDIA_SUB_GROUP[bestUrlSub][i]}");
                         LOGGER.CursorIndex++;
                     }
-                    Console.CursorVisible = true;
                     LOGGER.PrintLine("Please Select What You Want.(Up To 1 Track)");
                     Console.Write("".PadRight(13) + "Enter Number: ");
                     var input = Console.ReadLine();
                     LOGGER.CursorIndex += 2;
-                    Console.CursorVisible = false;
                     for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
                     {
                         Console.SetCursorPosition(0, i);

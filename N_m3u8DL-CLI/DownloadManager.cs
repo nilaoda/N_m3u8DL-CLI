@@ -36,6 +36,7 @@ namespace N_m3u8DL_CLI
         public string MuxSetJson { get; set; } = string.Empty;
         public int TimeOut { get; set; } = 10000;         //超时设置
         public static double DownloadedSize { get; set; } = 0;   //已下载大小
+        public static double ToDoSize { get; set; } = 0;   //待下载大小
         public static bool HasSetDir { get; set; } = false;
         public bool NoMerge { get; set; } = false;
         public static int CalcTime { get; set; } = 1;            //计算速度的间隔
@@ -52,14 +53,30 @@ namespace N_m3u8DL_CLI
             timer.AutoReset = true;
             timer.Elapsed += delegate
             {
+                var eta = "";
+                if (ToDoSize != 0)
+                {
+                    eta = ", ETA: " + Global.FormatTime(Convert.ToInt32(ToDoSize / (Global.BYTEDOWN / CalcTime)));
+                }
+                var print = "Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s" + eta;
                 Console.SetCursorPosition(0, 1);
-                Console.Write("Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s".PadRight(70));
+                Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
+                Console.Write(print);
+                Console.SetCursorPosition(0, 1);
 
                 if (Global.HadReadInfo && Global.BYTEDOWN <= Global.STOP_SPEED * 1024 * CalcTime)
                 {
                     stopCount++;
+                    eta = "";
+                    if (ToDoSize != 0)
+                    {
+                        eta = ", ETA: " + Global.FormatTime(Convert.ToInt32(ToDoSize / (Global.BYTEDOWN / CalcTime)));
+                    }
+                    print = "Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s [" + stopCount + "]" + eta;
                     Console.SetCursorPosition(0, 1);
-                    Console.Write("Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s [" + stopCount + "]".PadRight(70));
+                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
+                    Console.Write(print);
+                    Console.SetCursorPosition(0, 1);
 
                     if (stopCount >= 12)
                     {
@@ -499,7 +516,6 @@ namespace N_m3u8DL_CLI
                             DoDownload();
                         }
                         LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
-                        Console.CursorVisible = true;
                         Environment.Exit(0);  //正常退出程序
                         Console.Clear();
                         return;
@@ -647,7 +663,6 @@ namespace N_m3u8DL_CLI
                         DoDownload();
                     }
                     LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
-                    Console.CursorVisible = true;
                     Environment.Exit(0);  //正常退出程序
 
                     Console.Clear();
