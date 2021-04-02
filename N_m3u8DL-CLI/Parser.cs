@@ -50,6 +50,7 @@ namespace N_m3u8DL_CLI
         private string subUrl = string.Empty; //字幕地址
         //存放多轨道的信息
         private ArrayList extLists = new ArrayList();
+        private static bool isQiQiuYun = false;
         //标记是否已清除优酷广告分片
         private static bool hasAd = false;
 
@@ -78,8 +79,8 @@ namespace N_m3u8DL_CLI
             m3u8SavePath = Path.Combine(DownDir, "raw.m3u8");
             jsonSavePath = Path.Combine(DownDir, "meta.json");
 
-            if (!Directory.Exists(DownDir))//若文件夹不存在则新建文件夹   
-                Directory.CreateDirectory(DownDir); //新建文件夹  
+            if (!Directory.Exists(DownDir))//若文件夹不存在则新建文件夹
+                Directory.CreateDirectory(DownDir); //新建文件夹
 
             //存放分部的所有信息(#EXT-X-DISCONTINUITY)
             JArray parts = new JArray();
@@ -130,6 +131,9 @@ namespace N_m3u8DL_CLI
 
             if (m3u8Content == "")
                 return;
+
+            if (m3u8Content.Contains("qiqiuyun.net/") || m3u8Content.Contains("aliyunedu.net/") || m3u8Content.Contains("qncdn.edusoho.net/")) //气球云
+                isQiQiuYun = true;
 
             if (M3u8Url.Contains("tlivecloud-playback-cdn.ysp.cctv.cn") && M3u8Url.Contains("endtime="))
                 isEndlist = true;
@@ -805,7 +809,11 @@ namespace N_m3u8DL_CLI
                     if (key[1].StartsWith("http"))
                     {
                         string keyUrl = key[1];
-                        if (key[1].Contains("imooc.com/"))
+                        if (isQiQiuYun)
+                        {
+                            key[1] = Convert.ToBase64String(Global.HttpDownloadFileToBytes(keyUrl, "User-Agent:Mozilla/5.0 (Linux; U; Android 7.0; zh-cn; 15 Plus Build/NRD90M) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/66.0.3359.126 MQQBrowser/9.4 Mobile Safari/537.36"));
+                        } // 气球云
+                        else if (key[1].Contains("imooc.com/"))
                         {
                             key[1] = DecodeImooc.DecodeKey(Global.GetWebSource(key[1], Headers));
                         }
@@ -925,13 +933,13 @@ namespace N_m3u8DL_CLI
 
 
             Uri uri1 = new Uri(baseurl);  //这里直接传完整的URL即可
-            Uri uri2 = new Uri(uri1, url);  
+            Uri uri2 = new Uri(uri1, url);
             ForceCanonicalPathAndQuery(uri2);  //兼容XP的低版本.Net
             url = uri2.ToString();
 
 
             /*
-            if (!url.StartsWith("http")) 
+            if (!url.StartsWith("http"))
             {
                 if (url.StartsWith("/"))
                 {
@@ -946,7 +954,7 @@ namespace N_m3u8DL_CLI
 
             return url;
         }
-        
+
         /// <summary>
         /// 从url中截取字符串充当baseurl
         /// </summary>
