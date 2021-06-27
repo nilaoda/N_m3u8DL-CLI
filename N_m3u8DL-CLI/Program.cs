@@ -277,6 +277,7 @@ namespace N_m3u8DL_CLI.NetCore
                         {
                             Parser.DurStart = reg2.Match(p).Groups[1].Value;
                             Parser.DurEnd = reg2.Match(p).Groups[5].Value;
+                            if (Parser.DurEnd == "00:00:00") Parser.DurEnd = "";
                             Parser.DelAd = false;
                         }
                     }
