@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using BrotliSharpLib;
+using Newtonsoft.Json;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -59,8 +60,8 @@ namespace N_m3u8DL_CLI
                     Console.Title = string.Format(strings.newerVisionDetected, latestVer);
                     try
                     {
-                        //尝试下载新版本(去码云)
-                        string url = $"https://gitee.com/nilaoda/N_m3u8DL-CLI/raw/master/N_m3u8DL-CLI_v{latestVer}.exe";
+                        //尝试下载新版本
+                        string url = $"https://mirror.ghproxy.com/https://github.com/nilaoda/N_m3u8DL-CLI/releases/download/{latestVer}/N_m3u8DL-CLI_v{latestVer}.exe";
                         if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), $"N_m3u8DL-CLI_v{latestVer}.exe")))
                         {
                             Console.Title = string.Format(strings.newerVerisonDownloaded, latestVer);
@@ -180,6 +181,20 @@ namespace N_m3u8DL_CLI
                                 new System.IO.Compression.GZipStream(streamReceive, System.IO.Compression.CompressionMode.Decompress))
                             {
                                 using (StreamReader sr = new StreamReader(zipStream, Encoding.UTF8))
+                                {
+                                    htmlCode = sr.ReadToEnd();
+                                }
+                            }
+                        }
+                    }
+                    else if (webResponse.ContentEncoding != null
+                        && webResponse.ContentEncoding.ToLower() == "br") //如果使用了Brotli则先解压
+                    {
+                        using (Stream streamReceive = webResponse.GetResponseStream())
+                        {
+                            using (var bs = new BrotliStream(streamReceive, CompressionMode.Decompress))
+                            {
+                                using (StreamReader sr = new StreamReader(bs, Encoding.UTF8))
                                 {
                                     htmlCode = sr.ReadToEnd();
                                 }
