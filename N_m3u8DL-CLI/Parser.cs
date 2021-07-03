@@ -105,6 +105,11 @@ namespace N_m3u8DL_CLI
             if (!LiveStream)
                 LOGGER.PrintLine(strings.downloadingM3u8, LOGGER.Warning);
 
+            if (M3u8Url.Contains(".cntv."))
+            {
+                M3u8Url = M3u8Url.Replace("/h5e/", "/");
+            }
+
             if (M3u8Url.StartsWith("http"))
             {
                 if (M3u8Url.Contains("nfmovies.com/hls"))
@@ -139,11 +144,6 @@ namespace N_m3u8DL_CLI
                 m3u8Content = DecodeImooc.DecodeM3u8(m3u8Content);
             }
 
-            if (M3u8Url.Contains("cntv.qcloudcdn.com"))
-            {
-                M3u8Url = M3u8Url.Replace("/h5e/", "/");
-            }
-
             if (m3u8Content.Contains("</MPD>") && m3u8Content.Contains("<MPD"))
             {
                 LOGGER.PrintLine(strings.startParsingMpd, LOGGER.Warning);
@@ -154,6 +154,17 @@ namespace N_m3u8DL_CLI
                 //分析mpd文件
                 M3u8Url = Global.Get302(M3u8Url, Headers);
                 var newUri = MPDParser.Parse(DownDir, M3u8Url, m3u8Content, BaseUrl);
+                M3u8Url = newUri;
+                m3u8Content = File.ReadAllText(new Uri(M3u8Url).LocalPath);
+            }
+
+            if (m3u8Content.StartsWith("{\"payload\""))
+            {
+                var iqJsonPath = Path.Combine(DownDir, "iq.json");
+                //输出mpd文件
+                File.WriteAllText(iqJsonPath, m3u8Content);
+                //分析json文件
+                var newUri = IqJsonParser.Parse(DownDir, m3u8Content);
                 M3u8Url = newUri;
                 m3u8Content = File.ReadAllText(new Uri(M3u8Url).LocalPath);
             }
@@ -542,7 +553,7 @@ namespace N_m3u8DL_CLI
                         }
                         sb.Append("}");
                         extLists.Add(sb.ToString().Replace(",}", "}"));
-                        if (Convert.ToInt64(extList[0]) > bestBandwidth)
+                        if (Convert.ToInt64(extList[0]) >= bestBandwidth)
                         {
                             bestBandwidth = Convert.ToInt64(extList[0]);
                             bestUrl = listUrl;

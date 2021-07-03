@@ -87,6 +87,7 @@
     <Compile Include="Global.cs" />
     <Compile Include="HLSLiveDownloader.cs" />
     <Compile Include="HLSTags.cs" />
+    <Compile Include="IqJsonParser.cs" />
     <Compile Include="LOGGER.cs" />
     <Compile Include="DownloadManager.cs" />
     <Compile Include="MPDParser.cs" />
