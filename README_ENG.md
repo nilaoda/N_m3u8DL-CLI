@@ -8,10 +8,10 @@
 ╚═╝  ╚═══╝╚══════╝╚═╝     ╚═╝╚═════╝  ╚═════╝  ╚════╝ ╚═════╝ ╚══════╝  ╚═════╝╚══════╝╚═╝
                                                                                           
 ```
-This is a m3u8 downloader.  
+This is an m3u8 downloader.  
 ## Summary
 Supports: 
-  * Auto deceypt for `AES-128-CBC`
+  * Auto decrypt for `AES-128-CBC`
   * `Master List`
   * Live stream recording(`BETA`)
   * Customize HTTP headers
@@ -20,8 +20,8 @@ Supports:
   * Network driver on Windows OS
   * Alternative audio/video track
   * Mux without video track
-  * Costom HTTP proxy or Use system proxy
-  * Optimization for Chinese streaming platform
+  * Custom HTTP proxy or Use system proxy
+  * Optimization for Chinese streaming platforms
   
   ![ScreenShot](https://nilaoda.github.io/N_m3u8DL-CLI/source/images/%E7%9B%B4%E6%8E%A5%E4%BD%BF%E7%94%A8.gif)  
   
@@ -50,7 +50,7 @@ N_m3u8DL-CLI.exe <URL|JSON|FILE> [OPTIONS]
     --proxyAddress http://xx    Set HTTP Proxy, like http://127.0.0.1:8080
     --enableDelAfterDone        Enable delete clips after download completed
     --enableMuxFastStart        Enable fast start for mp4
-    --enableBinaryMerge         Enable use binary merge instead ffmpeg
+    --enableBinaryMerge         Enable use binary merge instead of ffmpeg
     --enableParseOnly           Enable parse mode
     --enableAudioOnly           Enable only audio track when mux use ffmpeg
     --disableDateInfo           Disable write date info when mux use ffmpeg
