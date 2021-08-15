@@ -93,6 +93,7 @@
     <Compile Include="MPDParser.cs" />
     <Compile Include="Parser.cs" />
     <Compile Include="Program.cs" />
+    <Compile Include="ProgressReporter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Downloader.cs" />
     <Compile Include="strings.Designer.cs">

@@ -38,14 +38,9 @@ namespace N_m3u8DL_CLI
         static string nowDate = "20210325";
         public static void WriteInit()
         {
-            Console.Clear();
-            Console.SetCursorPosition(0, 0);
-            Console.BackgroundColor = ConsoleColor.Blue; //设置背景色
-            Console.ForegroundColor = ConsoleColor.White; //设置前景色，即字体颜色
-            Console.WriteLine($"N_m3u8DL-CLI v{nowVer} {nowDate}...");
-            Console.ResetColor(); //将控制台的前景色和背景色设为默认值
-            Console.WriteLine("Speed: waiting");
-            Console.WriteLine("Progress: waiting");
+            Console.WriteLine();
+            Console.WriteLine($"N_m3u8DL-CLI version {nowVer} 2018-2021");
+            Console.WriteLine($"  built date: {nowDate}");
             Console.WriteLine();
         }
 

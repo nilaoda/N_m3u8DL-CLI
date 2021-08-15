@@ -102,8 +102,8 @@ namespace N_m3u8DL_CLI
 
 
             //获取m3u8内容
-            if (!LiveStream)
-                LOGGER.PrintLine(strings.downloadingM3u8, LOGGER.Warning);
+            //if (!LiveStream)
+            //    LOGGER.PrintLine(strings.downloadingM3u8, LOGGER.Warning);
 
             if (M3u8Url.Contains(".cntv."))
             {
@@ -146,8 +146,8 @@ namespace N_m3u8DL_CLI
 
             if (m3u8Content.Contains("</MPD>") && m3u8Content.Contains("<MPD"))
             {
-                LOGGER.PrintLine(strings.startParsingMpd, LOGGER.Warning);
-                LOGGER.WriteLine(strings.startParsingMpd);
+                //LOGGER.PrintLine(strings.startParsingMpd, LOGGER.Warning);
+                //LOGGER.WriteLine(strings.startParsingMpd);
                 var mpdSavePath = Path.Combine(DownDir, "dash.mpd");
                 //输出mpd文件
                 File.WriteAllText(mpdSavePath, m3u8Content);
@@ -212,11 +212,11 @@ namespace N_m3u8DL_CLI
                     BaseUrl = GetBaseUrl(M3u8Url, Headers);
             }
 
-            if (!LiveStream)
-            {
-                LOGGER.WriteLine(strings.parsingM3u8);
-                LOGGER.PrintLine(strings.parsingM3u8);
-            }
+            //if (!LiveStream)
+            //{
+            //    LOGGER.WriteLine(strings.parsingM3u8);
+            //    LOGGER.PrintLine(strings.parsingM3u8);
+            //}
 
             if (!string.IsNullOrEmpty(KeyBase64))
             {
@@ -617,23 +617,23 @@ namespace N_m3u8DL_CLI
                 //多种音频语言 让用户选择
                 else
                 {
-                    var startCursorIndex = LOGGER.CursorIndex;
+                    var startCursorIndex = Console.CursorTop;
+                    var cursorIndex = startCursorIndex;
                     LOGGER.PrintLine("Found Multiple Language Audio Tracks.", LOGGER.Warning);
                     for (int i = 0; i < MEDIA_AUDIO_GROUP[bestUrlAudio].Count; i++)
                     {
                         Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {bestUrlAudio} => {MEDIA_AUDIO_GROUP[bestUrlAudio][i]}");
-                        LOGGER.CursorIndex++;
+                        cursorIndex++;
                     }
                     LOGGER.PrintLine("Please Select What You Want.(Up To 1 Track)");
                     Console.Write("".PadRight(13) + "Enter Number: ");
                     var input = Console.ReadLine();
-                    LOGGER.CursorIndex += 2;
-                    for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
+                    cursorIndex += 2;
+                    for (int i = startCursorIndex; i < cursorIndex; i++)
                     {
                         Console.SetCursorPosition(0, i);
                         Console.Write("".PadRight(300));
                     }
-                    LOGGER.CursorIndex = startCursorIndex;
                     audioUrl = MEDIA_AUDIO_GROUP[bestUrlAudio][int.Parse(input)].Uri;
                 }
             }
@@ -646,23 +646,23 @@ namespace N_m3u8DL_CLI
                 //多种字幕语言 让用户选择
                 else
                 {
-                    var startCursorIndex = LOGGER.CursorIndex;
+                    var startCursorIndex = Console.CursorTop;
+                    var cursorIndex = startCursorIndex;
                     LOGGER.PrintLine("Found Multiple Language Subtitle Tracks.", LOGGER.Warning);
                     for (int i = 0; i < MEDIA_SUB_GROUP[bestUrlSub].Count; i++)
                     {
                         Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {bestUrlSub} => {MEDIA_SUB_GROUP[bestUrlSub][i]}");
-                        LOGGER.CursorIndex++;
+                        cursorIndex++;
                     }
                     LOGGER.PrintLine("Please Select What You Want.(Up To 1 Track)");
                     Console.Write("".PadRight(13) + "Enter Number: ");
                     var input = Console.ReadLine();
-                    LOGGER.CursorIndex += 2;
-                    for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
+                    cursorIndex += 2;
+                    for (int i = startCursorIndex; i < cursorIndex; i++)
                     {
                         Console.SetCursorPosition(0, i);
                         Console.Write("".PadRight(300));
                     }
-                    LOGGER.CursorIndex = startCursorIndex;
                     subUrl = MEDIA_SUB_GROUP[bestUrlSub][int.Parse(input)].Uri;
                 }
             }

@@ -56,13 +56,10 @@ namespace N_m3u8DL_CLI
                 var eta = "";
                 if (ToDoSize != 0)
                 {
-                    eta = ", ETA: " + Global.FormatTime(Convert.ToInt32(ToDoSize / (Global.BYTEDOWN / CalcTime)));
+                    eta = " @ " + Global.FormatTime(Convert.ToInt32(ToDoSize / (Global.BYTEDOWN / CalcTime)));
                 }
-                var print = "Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s" + eta;
-                Console.SetCursorPosition(0, 1);
-                Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
-                Console.Write(print);
-                Console.SetCursorPosition(0, 1);
+                var print = Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + "/s" + eta;
+                ProgressReporter.Report("", "(" + print + ")");
 
                 if (Global.HadReadInfo && Global.BYTEDOWN <= Global.STOP_SPEED * 1024 * CalcTime)
                 {
@@ -70,13 +67,10 @@ namespace N_m3u8DL_CLI
                     eta = "";
                     if (ToDoSize != 0)
                     {
-                        eta = ", ETA: " + Global.FormatTime(Convert.ToInt32(ToDoSize / (Global.BYTEDOWN / CalcTime)));
+                        eta = " @ " + Global.FormatTime(Convert.ToInt32(ToDoSize / (Global.BYTEDOWN / CalcTime)));
                     }
-                    print = "Speed: " + Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + " / s [" + stopCount + "]" + eta;
-                    Console.SetCursorPosition(0, 1);
-                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
-                    Console.Write(print);
-                    Console.SetCursorPosition(0, 1);
+                    print = Global.FormatFileSize((Global.BYTEDOWN) / CalcTime) + "/s [" + stopCount + "]" + eta;
+                    ProgressReporter.Report("", "(" + print + ")");
 
                     if (stopCount >= 12)
                     {
@@ -354,7 +348,6 @@ namespace N_m3u8DL_CLI
             else  //开始合并
             {
                 LOGGER.PrintLine(strings.downloadComplete + (DisableIntegrityCheck ? "(" + strings.disableIntegrityCheck + ")" : ""));
-                Console.WriteLine();
                 if (NoMerge == false)
                 {
                     string exePath = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
@@ -398,7 +391,6 @@ namespace N_m3u8DL_CLI
                         {
                             if (Global.VIDEO_TYPE != "DV") //不是杜比视界
                             {
-                                LOGGER.FFmpegCorsorIndex = LOGGER.CursorIndex;
                                 //检测是否为MPEG-TS封装，不是的话就转换为TS封装
                                 foreach (string s in Global.GetFiles(DownDir + "\\Part_0", ".ts"))
                                 {
@@ -484,7 +476,6 @@ namespace N_m3u8DL_CLI
                             DownDir = parser.DownDir;
                             parser.Parse();  //开始解析
                             Thread.Sleep(1000);
-                            LOGGER.CursorIndex = 5;
                             Global.HadReadInfo = false;
                             Global.VIDEO_TYPE = "";
                             Global.AUDIO_TYPE = "";
@@ -509,7 +500,6 @@ namespace N_m3u8DL_CLI
                             DownDir = parser.DownDir;
                             parser.Parse();  //开始解析
                             Thread.Sleep(1000);
-                            LOGGER.CursorIndex = 5;
                             Global.HadReadInfo = false;
                             Global.VIDEO_TYPE = "";
                             Global.AUDIO_TYPE = "";
@@ -517,7 +507,6 @@ namespace N_m3u8DL_CLI
                         }
                         LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
                         Environment.Exit(0);  //正常退出程序
-                        Console.Clear();
                         return;
                     }
 
@@ -556,7 +545,6 @@ namespace N_m3u8DL_CLI
                     {
                         if (Global.VIDEO_TYPE != "DV")  //不是爱奇艺杜比视界
                         {
-                            LOGGER.FFmpegCorsorIndex = LOGGER.CursorIndex;
                             //检测是否为MPEG-TS封装，不是的话就转换为TS封装
                             foreach (string s in Global.GetFiles(DownDir, ".ts"))
                             {
@@ -631,7 +619,6 @@ namespace N_m3u8DL_CLI
                         DownDir = parser.DownDir;
                         parser.Parse();  //开始解析
                         Thread.Sleep(1000);
-                        LOGGER.CursorIndex = 5;
                         Global.HadReadInfo = false;
                         Global.VIDEO_TYPE = "";
                         Global.AUDIO_TYPE = "";
@@ -656,7 +643,6 @@ namespace N_m3u8DL_CLI
                         DownDir = parser.DownDir;
                         parser.Parse();  //开始解析
                         Thread.Sleep(1000);
-                        LOGGER.CursorIndex = 5;
                         Global.HadReadInfo = false;
                         Global.VIDEO_TYPE = "";
                         Global.AUDIO_TYPE = "";
@@ -664,8 +650,6 @@ namespace N_m3u8DL_CLI
                     }
                     LOGGER.PrintLine(strings.taskDone, LOGGER.Warning);
                     Environment.Exit(0);  //正常退出程序
-
-                    Console.Clear();
                 }
                 else
                 {

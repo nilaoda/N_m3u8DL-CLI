@@ -521,22 +521,22 @@ namespace N_m3u8DL_CLI
                     return $"{type} => {id}{tbr}{asr}{fps}{lang}{codecs}{res}";
                 }
 
-                var startCursorIndex = LOGGER.CursorIndex;
+                var startCursorIndex = Console.CursorTop;
+                var cursorIndex = startCursorIndex;
                 for (int i = 0; i < formatList.Count; i++)
                 {
                     Console.WriteLine("".PadRight(13) + $"[{i.ToString().PadLeft(2)}]. {Stringify(formatList[i])}");
-                    LOGGER.CursorIndex++;
+                    cursorIndex++;
                 }
                 LOGGER.PrintLine("Found Multiple Language Audio Tracks.\r\n" + "".PadRight(13) + "Please Select What You Want(Up to 1 Video and 1 Audio).");
                 Console.Write("".PadRight(13) + "Enter Numbers Separated By A Space: ");
                 var input = Console.ReadLine();
-                LOGGER.CursorIndex += 2;
-                for (int i = startCursorIndex; i < LOGGER.CursorIndex; i++)
+                cursorIndex += 2;
+                for (int i = startCursorIndex; i < cursorIndex; i++)
                 {
                     Console.SetCursorPosition(0, i);
                     Console.Write("".PadRight(300));
                 }
-                LOGGER.CursorIndex = startCursorIndex;
                 if (!string.IsNullOrEmpty(input))
                 {
                     bestVideo = new Dictionary<string, dynamic>() { ["Tbr"] = 0 };

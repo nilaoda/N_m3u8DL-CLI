@@ -28,12 +28,10 @@ namespace N_m3u8DL_CLI.NetCore
                 case 0:
                     LOGGER.WriteLine(strings.ExitedCtrlC
                     + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")); //Ctrl+C关闭
-                    Console.SetCursorPosition(0, LOGGER.CursorIndex);
                     break;
                 case 2:
                     LOGGER.WriteLine(strings.ExitedForce
                     + "\r\n\r\nTask End: " + DateTime.Now.ToString("yyyy/MM/dd HH:mm:ss")); //按控制台关闭按钮关闭
-                    Console.SetCursorPosition(0, LOGGER.CursorIndex);
                     break;
             }
             return false;
@@ -340,6 +338,7 @@ namespace N_m3u8DL_CLI.NetCore
                     Console.Write(" > ");
 
                     args = Global.ParseArguments(Console.ReadLine()).ToArray();  //解析命令行
+                    Console.Clear();
                     Global.WriteInit();
                     goto parseArgs;
                 }
@@ -390,7 +389,7 @@ namespace N_m3u8DL_CLI.NetCore
                 LOGGER.LOGFILE = Path.Combine(exePath, "Logs", DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss-fff") + ".log");
                 LOGGER.InitLog();
                 LOGGER.WriteLine(strings.startParsing + testurl);
-                LOGGER.PrintLine(strings.startParsing, LOGGER.Warning);
+                LOGGER.PrintLine(strings.startParsing + " " + testurl, LOGGER.Warning);
                 if (testurl.EndsWith(".json") && File.Exists(testurl))  //可直接跳过解析
                 {
                     if (!Directory.Exists(Path.Combine(workDir, fileName)))//若文件夹不存在则新建文件夹   
@@ -424,7 +423,6 @@ namespace N_m3u8DL_CLI.NetCore
                     DirectoryInfo directoryInfo = new DirectoryInfo(Path.Combine(workDir, fileName));
                     directoryInfo.Delete(true);
                     LOGGER.PrintLine(strings.InvalidUri, LOGGER.Error);
-                    LOGGER.CursorIndex = 5;
                     inputRetryCount--;
                     goto input;
                 }

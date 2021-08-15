@@ -11,8 +11,6 @@ namespace N_m3u8DL_CLI
 {
     class LOGGER
     {
-        public static int CursorIndex = 5;
-        public static int FFmpegCorsorIndex = 5;
         public const int Default = 1;
         public const int Error = 2;
         public const int Warning = 3;
@@ -57,24 +55,8 @@ namespace N_m3u8DL_CLI
         //读写锁机制，当资源被占用，其他线程等待
         static ReaderWriterLockSlim LogWriteLock = new ReaderWriterLockSlim();
 
-        public static void PrintLine(string text, int printLevel = 1, int cursorIndex = 0)
+        public static void PrintLine(string text, int printLevel = 1)
         {
-            try
-            {
-                if (CursorIndex > 1000)
-                {
-                    Console.Clear();
-                    CursorIndex = 0;
-                }
-                if (cursorIndex == 0)
-                    Console.SetCursorPosition(0, CursorIndex++);
-                else
-                    Console.SetCursorPosition(0, cursorIndex);
-            }
-            catch (Exception)
-            {
-                ;
-            }
             switch (printLevel)
             {
                 case 0:
