@@ -43,6 +43,7 @@ namespace N_m3u8DL_CLI
         public static int Count { get; set; } = 0;
         public static int PartsCount { get; set; } = 0;
         public static bool DisableIntegrityCheck { get; set; } = false; //关闭完整性检查
+        public static bool HasExtMap { get; set; } = false; //是否有MAP
 
         static CancellationTokenSource cts = new CancellationTokenSource();
         //计算下载速度
@@ -138,8 +139,6 @@ namespace N_m3u8DL_CLI
             watcher.PartsCount = PartsCount;
             watcher.WatcherStrat();
 
-            //开始计算速度
-            timer.Enabled = true;
             cts = new CancellationTokenSource();
 
             //开始调用下载
@@ -147,8 +146,10 @@ namespace N_m3u8DL_CLI
             LOGGER.PrintLine(strings.startDownloading, LOGGER.Warning);
 
             //下载MAP文件（若有）
-            try
+            downloadMap:
+            if (HasExtMap)
             {
+                LOGGER.PrintLine(strings.downloadingMapFile);
                 Downloader sd = new Downloader();
                 sd.TimeOut = TimeOut;
                 sd.FileUrl = initJson["m3u8Info"]["extMAP"].Value<string>();
@@ -166,12 +167,12 @@ namespace N_m3u8DL_CLI
                     File.Delete(sd.SavePath);
                 if (File.Exists(DownDir + "\\Part_0\\!MAP.ts"))
                     File.Delete(DownDir + "\\Part_0\\!MAP.ts");
-                LOGGER.PrintLine(strings.downloadingMapFile);
                 sd.Down();  //开始下载
-            }
-            catch (Exception e)
-            {
-                //LOG.WriteLineError(e.ToString());
+                if (!File.Exists(DownDir + "\\!MAP.ts")) //检测是否成功下载
+                {
+                    Thread.Sleep(1000);
+                    goto downloadMap;
+                }
             }
 
             //首先下载第一个分片
@@ -203,6 +204,8 @@ namespace N_m3u8DL_CLI
                     if (File.Exists(sd.SavePath))
                         File.Delete(sd.SavePath);
                     LOGGER.PrintLine(strings.downloadingFirstSegement);
+                    //开始计算速度
+                    timer.Enabled = true;
                     if (!Global.ShouldStop)
                         sd.Down();  //开始下载
                 }

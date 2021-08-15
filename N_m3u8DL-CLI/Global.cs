@@ -38,7 +38,6 @@ namespace N_m3u8DL_CLI
         static string nowDate = "20210325";
         public static void WriteInit()
         {
-            Console.WriteLine();
             Console.WriteLine($"N_m3u8DL-CLI version {nowVer} 2018-2021");
             Console.WriteLine($"  built date: {nowDate}");
             Console.WriteLine();

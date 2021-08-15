@@ -672,10 +672,15 @@ namespace N_m3u8DL_CLI
                 jsonM3u8Info.Add("sub", subUrl);
             if (extMAP[0] != "")
             {
+                DownloadManager.HasExtMap = true;
                 if (extMAP[1] == "")
                     jsonM3u8Info.Add("extMAP", extMAP[0]);
                 else
                     jsonM3u8Info.Add("extMAP", extMAP[0] + "|" + extMAP[1]);
+            }
+            else
+            {
+                DownloadManager.HasExtMap = false;
             }
 
             //根据DurRange来生成分片Range
