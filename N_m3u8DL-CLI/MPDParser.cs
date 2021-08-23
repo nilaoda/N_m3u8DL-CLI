@@ -135,7 +135,16 @@ namespace N_m3u8DL_CLI
             XmlDocument mpdDoc = new XmlDocument();
             mpdDoc.LoadXml(mpdContent);
 
-            XmlNode xn = mpdDoc.LastChild;
+            XmlNode xn = null;
+            //Select MPD node
+            foreach (XmlNode node in mpdDoc.ChildNodes)
+            {
+                if (node.NodeType == XmlNodeType.Element && node.Name == "MPD")
+                {
+                    xn = node;
+                    break;
+                }
+            }
             var mediaPresentationDuration = ((XmlElement)xn).GetAttribute("mediaPresentationDuration");
             var ns = ((XmlElement)xn).GetAttribute("xmlns");
 
@@ -510,7 +519,7 @@ namespace N_m3u8DL_CLI
             {
                 string Stringify(Dictionary<string, dynamic> f)
                 {
-                    var type = f["ContentType"] == "aduio" ? "Audio" : "Video";
+                    var type = f["ContentType"] == "audio" ? "Audio" : "Video";
                     var res = type == "Video" ? $"[{f["Width"]}x{f["Height"]}]" : "";
                     var id = $"[{f["FormatId"]}] ";
                     var tbr = $"[{((int)f["Tbr"]).ToString().PadLeft(4)} Kbps] ";
