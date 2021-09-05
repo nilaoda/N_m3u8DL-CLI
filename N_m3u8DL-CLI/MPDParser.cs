@@ -154,9 +154,11 @@ namespace N_m3u8DL_CLI
             TimeSpan ts = XmlConvert.ToTimeSpan(mediaPresentationDuration); //时长
 
             var formatList = new List<Dictionary<string, dynamic>>(); //存放所有音视频清晰度
+            var periodIndex = 0; //解决同一个period且同id导致被重复添加分片
 
             foreach (XmlElement period in xn.SelectNodes("ns:Period", nsMgr))
             {
+                periodIndex++;
                 var periodDuration = string.IsNullOrEmpty(period.GetAttribute("duration")) ? XmlConvert.ToTimeSpan(mediaPresentationDuration) : XmlConvert.ToTimeSpan(period.GetAttribute("duration"));
                 var periodMsInfo = ExtractMultisegmentInfo(period, nsMgr, new Dictionary<string, dynamic>()
                 {
@@ -233,6 +235,7 @@ namespace N_m3u8DL_CLI
                             var bandwidth = IntOrNull(GetAttribute("bandwidth"));
                             var f = new Dictionary<string, dynamic>
                             {
+                                ["PeriodIndex"] = periodIndex,
                                 ["ContentType"] = contentType,
                                 ["FormatId"] = representationId,
                                 ["ManifestUrl"] = mpdUrl,
@@ -482,7 +485,8 @@ namespace N_m3u8DL_CLI
                             {
                                 for (int i = 0; i < formatList.Count; i++)
                                 {
-                                    if (formatList[i]["FormatId"] == f["FormatId"] && formatList[i]["Width"] == f["Width"] && formatList[i]["ContentType"] == f["ContentType"])
+                                    //参数相同但不在同一个Period才可以
+                                    if (formatList[i]["FormatId"] == f["FormatId"] && formatList[i]["Width"] == f["Width"] && formatList[i]["ContentType"] == f["ContentType"] && formatList[i]["PeriodIndex"] != f["PeriodIndex"]) 
                                     {
                                         formatList[i]["Fragments"].AddRange(f["Fragments"]);
                                         break;
