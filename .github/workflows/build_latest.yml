@@ -31,4 +31,4 @@ jobs:
       uses: actions/upload-artifact@v1.0.0
       with:
         name: N_m3u8DL-CLI_latest
-        path: N_m3u8DL-CLI\bin\Release\
+        path: N_m3u8DL-CLI\bin\Release\N_m3u8DL-CLI.exe
