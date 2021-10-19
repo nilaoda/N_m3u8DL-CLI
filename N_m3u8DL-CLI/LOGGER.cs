@@ -34,8 +34,13 @@ namespace N_m3u8DL_CLI
         {
             if (!Directory.Exists(Path.GetDirectoryName(LOGFILE)))//若文件夹不存在则新建文件夹   
                 Directory.CreateDirectory(Path.GetDirectoryName(LOGFILE)); //新建文件夹
-            if (File.Exists(LOGFILE))//若文件存在则删除
-                File.Delete(LOGFILE);
+            //若文件存在则加序号
+            int index = 1;
+            var fileName = Path.GetFileNameWithoutExtension(LOGFILE);
+            while (File.Exists(LOGFILE))
+            {
+                LOGFILE = Path.Combine(Path.GetDirectoryName(LOGFILE), $"{fileName}-{index++}.log");
+            }
             string file = LOGFILE;
             string now = DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
             string init = "LOG " + DateTime.Now.ToString("yyyy/MM/dd") + "\r\n"
