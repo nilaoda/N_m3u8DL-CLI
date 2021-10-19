@@ -550,6 +550,7 @@ namespace N_m3u8DL_CLI
                     Console.SetCursorPosition(0, i);
                     Console.Write("".PadRight(300));
                 }
+                Console.SetCursorPosition(0, startCursorIndex);
                 if (!string.IsNullOrEmpty(input))
                 {
                     bestVideo = new Dictionary<string, dynamic>() { ["Tbr"] = 0 };

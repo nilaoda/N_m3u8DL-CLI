@@ -193,7 +193,7 @@ namespace N_m3u8DL_CLI
             }
 
             //针对AppleTv修正
-            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && (M3u8Url.Contains(".apple.com/") || Regex.IsMatch(m3u8Content, "#EXT-X-MAP.*\\.apple.com/"))) 
+            if (m3u8Content.Contains("#EXT-X-DISCONTINUITY") && m3u8Content.Contains("#EXT-X-MAP") && (M3u8Url.Contains(".apple.com/") || Regex.IsMatch(m3u8Content, "#EXT-X-MAP.*\\.apple\\.com/"))) 
             {
                 //只取加密部分即可
                 Regex ykmap = new Regex("(#EXT-X-KEY:[\\s\\S]*?)(#EXT-X-DISCONTINUITY|#EXT-X-ENDLIST)");
@@ -634,6 +634,7 @@ namespace N_m3u8DL_CLI
                         Console.SetCursorPosition(0, i);
                         Console.Write("".PadRight(300));
                     }
+                    Console.SetCursorPosition(0, startCursorIndex);
                     audioUrl = MEDIA_AUDIO_GROUP[bestUrlAudio][int.Parse(input)].Uri;
                 }
             }
@@ -663,6 +664,7 @@ namespace N_m3u8DL_CLI
                         Console.SetCursorPosition(0, i);
                         Console.Write("".PadRight(300));
                     }
+                    Console.SetCursorPosition(0, startCursorIndex);
                     subUrl = MEDIA_SUB_GROUP[bestUrlSub][int.Parse(input)].Uri;
                 }
             }
