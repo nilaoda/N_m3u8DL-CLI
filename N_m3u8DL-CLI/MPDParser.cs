@@ -460,7 +460,7 @@ namespace N_m3u8DL_CLI
                                 f["FragmentBaseUrl"] = baseUrl;
                                 if (representationMsInfo.ContainsKey("InitializationUrl"))
                                 {
-                                    f["InitializationUrl"] = representationMsInfo["InitializationUrl"];
+                                    f["InitializationUrl"] = CombineURL(baseUrl, representationMsInfo["InitializationUrl"]);
                                     if (f["InitializationUrl"].StartsWith("$$Range"))
                                     {
                                         f["InitializationUrl"] = CombineURL(baseUrl, f["InitializationUrl"]);
