@@ -139,6 +139,8 @@ namespace N_m3u8DL_CLI
             watcher.PartsCount = PartsCount;
             watcher.WatcherStrat();
 
+            //开始计算速度
+            timer.Enabled = true;
             cts = new CancellationTokenSource();
 
             //开始调用下载
@@ -204,8 +206,6 @@ namespace N_m3u8DL_CLI
                     if (File.Exists(sd.SavePath))
                         File.Delete(sd.SavePath);
                     LOGGER.PrintLine(strings.downloadingFirstSegement);
-                    //开始计算速度
-                    timer.Enabled = true;
                     if (!Global.ShouldStop)
                         sd.Down();  //开始下载
                 }
