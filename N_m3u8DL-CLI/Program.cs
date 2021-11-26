@@ -170,44 +170,43 @@ namespace N_m3u8DL_CLI.NetCore
             {
                 //当前程序路径（末尾有\）
                 string CURRENT_PATH = Directory.GetCurrentDirectory();
-            string fileName = Global.GetValidFileName(o.SaveName);
-            string reqHeaders = o.Headers;
-            string muxSetJson = o.MuxSetJson ?? "MUXSETS.json";
-            string workDir = CURRENT_PATH + "\\Downloads";
-            string keyFile = "";
-            string keyBase64 = "";
-            string keyIV = "";
-            string baseUrl = "";
-            Global.STOP_SPEED = o.StopSpeed;
-            Global.MAX_SPEED = o.MaxSpeed;
-            if (!string.IsNullOrEmpty(o.UseKeyBase64)) keyBase64 = o.UseKeyBase64;
-            if (!string.IsNullOrEmpty(o.UseKeyIV)) keyIV = o.UseKeyIV;
-            if (!string.IsNullOrEmpty(o.BaseUrl)) baseUrl = o.BaseUrl;
-            if (o.EnableBinaryMerge) DownloadManager.BinaryMerge = true;
-            if (o.DisableDateInfo) FFmpeg.WriteDate = false;
-            if (o.NoProxy) Global.NoProxy = true;
-            if (o.DisableIntegrityCheck) DownloadManager.DisableIntegrityCheck = true;
-            if (o.EnableAudioOnly) Global.VIDEO_TYPE = "IGNORE";
-            if (!string.IsNullOrEmpty(o.WorkDir))
-            {
-                DownloadManager.HasSetDir = true;
-            }
+                string fileName = Global.GetValidFileName(o.SaveName);
+                string reqHeaders = o.Headers;
+                string muxSetJson = o.MuxSetJson ?? "MUXSETS.json";
+                string workDir = CURRENT_PATH + "\\Downloads";
+                string keyFile = "";
+                string keyBase64 = "";
+                string keyIV = "";
+                string baseUrl = "";
+                Global.STOP_SPEED = o.StopSpeed;
+                Global.MAX_SPEED = o.MaxSpeed;
+                if (!string.IsNullOrEmpty(o.UseKeyBase64)) keyBase64 = o.UseKeyBase64;
+                if (!string.IsNullOrEmpty(o.UseKeyIV)) keyIV = o.UseKeyIV;
+                if (!string.IsNullOrEmpty(o.BaseUrl)) baseUrl = o.BaseUrl;
+                if (o.EnableBinaryMerge) DownloadManager.BinaryMerge = true;
+                if (o.DisableDateInfo) FFmpeg.WriteDate = false;
+                if (o.NoProxy) Global.NoProxy = true;
+                if (o.DisableIntegrityCheck) DownloadManager.DisableIntegrityCheck = true;
+                if (o.EnableAudioOnly) Global.VIDEO_TYPE = "IGNORE";
+                if (!string.IsNullOrEmpty(o.WorkDir))
+                {
+                    workDir = o.WorkDir;
+                    DownloadManager.HasSetDir = true;
+                }
 
-            //Proxy
-            if (!string.IsNullOrEmpty(o.ProxyAddress))
-            {
-                var proxy = o.ProxyAddress;
-                if (proxy.StartsWith("http://"))
-                    Global.UseProxyAddress = proxy;
-            }
-            //Key
-            if (!string.IsNullOrEmpty(o.UseKeyFile))
-            {
-                if (File.Exists(o.UseKeyFile))
-                    keyFile = o.UseKeyFile;
-            }
-
-
+                //Proxy
+                if (!string.IsNullOrEmpty(o.ProxyAddress))
+                {
+                    var proxy = o.ProxyAddress;
+                    if (proxy.StartsWith("http://"))
+                        Global.UseProxyAddress = proxy;
+                }
+                //Key
+                if (!string.IsNullOrEmpty(o.UseKeyFile))
+                {
+                    if (File.Exists(o.UseKeyFile))
+                        keyFile = o.UseKeyFile;
+                }
 
                 if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "headers.txt")))
                     reqHeaders = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "headers.txt"));
@@ -261,12 +260,9 @@ namespace N_m3u8DL_CLI.NetCore
                     }
                 }
 
-
-
                 int inputRetryCount = 20;
             input:
                 string testurl = o.Input;
-
 
                 //重试太多次，退出
                 if (inputRetryCount == 0)
