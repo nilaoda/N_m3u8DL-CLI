@@ -134,7 +134,9 @@ namespace N_m3u8DL_CLI.NetCore
                 Console.ResetColor();
                 Console.Write(" > ");
 
-                args = Global.ParseArguments(Console.ReadLine()).ToArray();  //解析命令行
+                var cmd = Console.ReadLine();
+                if (string.IsNullOrEmpty(cmd)) Environment.Exit(0);
+                args = Global.ParseArguments(cmd).ToArray();  //解析命令行
                 Console.Clear();
             }
             //如果只有URL，没有附加参数，则尝试解析配置文件
