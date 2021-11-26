@@ -1,6 +1,9 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using CommandLine;
+using CommandLine.Text;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
@@ -45,216 +48,173 @@ namespace N_m3u8DL_CLI.NetCore
 
         static void Main(string[] args)
         {
+            /******************************************************/
             SetConsoleCtrlHandler(cancelHandler, true);
             ServicePointManager.ServerCertificateValidationCallback = ValidateServerCertificate;
-            string loc = "en-US";
-            string currLoc = Thread.CurrentThread.CurrentUICulture.Name;
-            if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO") loc = "zh-TW";
-            else if (currLoc == "zh-CN" || currLoc == "zh-SG") loc = "zh-CN";
-            //设置语言
-            CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(loc);
-            Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(loc);
+            ServicePointManager.DefaultConnectionLimit = 1024;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3
+                                   | SecurityProtocolType.Tls
+                                   | (SecurityProtocolType)0x300 //Tls11  
+                                   | (SecurityProtocolType)0xC00; //Tls12  
+            /******************************************************/
 
             try
             {
-                //goto httplitsen;
-                //当前程序路径（末尾有\）
-                string CURRENT_PATH = Directory.GetCurrentDirectory();
-                string fileName = "";
+                string loc = "en-US";
+                string currLoc = Thread.CurrentThread.CurrentUICulture.Name;
+                if (currLoc == "zh-TW" || currLoc == "zh-HK" || currLoc == "zh-MO") loc = "zh-TW";
+                else if (currLoc == "zh-CN" || currLoc == "zh-SG") loc = "zh-CN";
+                //设置语言
+                CultureInfo.DefaultThreadCurrentCulture = new CultureInfo(loc);
+                Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(loc);
+            }
+            catch (Exception) {; }
 
-                //寻找ffmpeg.exe
-                if (File.Exists("ffmpeg.exe"))
+            //寻找ffmpeg.exe
+            if (File.Exists("ffmpeg.exe"))
+            {
+                FFmpeg.FFMPEG_PATH = Path.Combine(Environment.CurrentDirectory, "ffmpeg.exe");
+            }
+            else if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe")))
+            {
+                FFmpeg.FFMPEG_PATH = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe");
+            }
+            else
+            {
+                try
                 {
-                    FFmpeg.FFMPEG_PATH = Path.Combine(Environment.CurrentDirectory, "ffmpeg.exe");
-                }
-                else if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe")))
-                {
-                    FFmpeg.FFMPEG_PATH = Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "ffmpeg.exe");
-                }
-                else
-                {
-                    try
+                    string[] EnvironmentPath = Environment.GetEnvironmentVariable("Path").Split(';');
+                    foreach (var de in EnvironmentPath)
                     {
-                        string[] EnvironmentPath = Environment.GetEnvironmentVariable("Path").Split(';');
-                        foreach (var de in EnvironmentPath)
+                        if (File.Exists(Path.Combine(de.Trim('\"').Trim(), "ffmpeg.exe")))
                         {
-                            if (File.Exists(Path.Combine(de.Trim('\"').Trim(), "ffmpeg.exe")))
-                            {
-                                FFmpeg.FFMPEG_PATH = Path.Combine(de.Trim('\"').Trim(), "ffmpeg.exe");
-                                goto HasFFmpeg;
-                            }
+                            FFmpeg.FFMPEG_PATH = Path.Combine(de.Trim('\"').Trim(), "ffmpeg.exe");
+                            goto HasFFmpeg;
                         }
                     }
-                    catch (Exception)
-                    {
-                        ;
-                    }
-
-                    Console.BackgroundColor = ConsoleColor.Red; //设置背景色
-                    Console.ForegroundColor = ConsoleColor.White; //设置前景色，即字体颜色
-                    Console.WriteLine(strings.ffmpegLost);
-                    Console.ResetColor(); //将控制台的前景色和背景色设为默认值
-                    Console.WriteLine(strings.ffmpegTip);
-                    Console.WriteLine();
-                    Console.WriteLine("http://ffmpeg.org/download.html#build-windows");
-                    Console.WriteLine();
-                    Console.WriteLine(strings.pressAnyKeyExit);
-                    Console.ReadKey();
-                    Environment.Exit(-1);
                 }
-
-            HasFFmpeg:
-                Global.WriteInit();
-                if (!File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "NO_UPDATE"))) 
+                catch (Exception)
                 {
-                    Thread checkUpdate = new Thread(() =>
-                    {
-                        Global.CheckUpdate();
-                    });
-                    checkUpdate.IsBackground = true;
-                    checkUpdate.Start();
+                    ;
                 }
 
-                int maxThreads = Environment.ProcessorCount;
-                int minThreads = 16;
-                int retryCount = 15;
-                int timeOut = 10; //默认10秒
-                string baseUrl = "";
-                string reqHeaders = "";
-                string keyFile = "";
-                string keyBase64 = "";
-                string keyIV = "";
-                string muxSetJson = "MUXSETS.json";
-                string workDir = CURRENT_PATH + "\\Downloads";
-                bool muxFastStart = false;
-                bool delAfterDone = false;
-                bool parseOnly = false;
-                bool noMerge = false;
+                Console.BackgroundColor = ConsoleColor.Red; //设置背景色
+                Console.ForegroundColor = ConsoleColor.White; //设置前景色，即字体颜色
+                Console.WriteLine(strings.ffmpegLost);
+                Console.ResetColor(); //将控制台的前景色和背景色设为默认值
+                Console.WriteLine(strings.ffmpegTip);
+                Console.WriteLine();
+                Console.WriteLine("http://ffmpeg.org/download.html#build-windows");
+                Console.WriteLine();
+                Console.WriteLine(strings.pressAnyKeyExit);
+                Console.ReadKey();
+                Environment.Exit(-1);
+            }
 
-                /******************************************************/
-                ServicePointManager.DefaultConnectionLimit = 1024;
-                ServicePointManager.SecurityProtocol = SecurityProtocolType.Ssl3
-                                       | SecurityProtocolType.Tls
-                                       | (SecurityProtocolType)0x300 //Tls11  
-                                       | (SecurityProtocolType)0xC00; //Tls12  
-                /******************************************************/
+        HasFFmpeg:
+            if (!File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "NO_UPDATE")))
+            {
+                Thread checkUpdate = new Thread(() =>
+                {
+                    Global.CheckUpdate();
+                });
+                checkUpdate.IsBackground = true;
+                checkUpdate.Start();
+            }
+
+            //ReadLine字数上限
+            Stream steam = Console.OpenStandardInput();
+            Console.SetIn(new StreamReader(steam, Encoding.Default, false, 5000));
+
+            if (args.Length == 0)
+            {
+                Global.WriteInit();
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.Write("N_m3u8DL-CLI");
+                Console.ResetColor();
+                Console.Write(" > ");
+
+                args = Global.ParseArguments(Console.ReadLine()).ToArray();  //解析命令行
+                Console.Clear();
+            }
+            //如果只有URL，没有附加参数，则尝试解析配置文件
+            else if (args.Length == 1 || (args.Length == 3 && args[1].ToLower() == "--savename"))
+            {
+                if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt")))
+                {
+                    if (args.Length == 3)
+                    {
+                        args = Global.ParseArguments($"\"{args[0]}\" {args[1]} {args[2]} " + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
+                    }
+                    else
+                    {
+                        args = Global.ParseArguments($"\"{args[0]}\" " + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
+                    }
+                }
+            }
+
+            var cmdParser = new CommandLine.Parser(with => with.HelpWriter = null);
+            var parserResult = cmdParser.ParseArguments<MyOptions>(args);
+
+            //解析命令行
+            parserResult
+              .WithParsed(o => DoWork(o))
+              .WithNotParsed(errs => DisplayHelp(parserResult, errs));
+        }
+
+        private static void DoWork(MyOptions o)
+        {
+            try
+            {
+                //当前程序路径（末尾有\）
+                string CURRENT_PATH = Directory.GetCurrentDirectory();
+            string fileName = Global.GetValidFileName(o.SaveName);
+            string reqHeaders = o.Headers;
+            string muxSetJson = o.MuxSetJson ?? "MUXSETS.json";
+            string workDir = CURRENT_PATH + "\\Downloads";
+            string keyFile = "";
+            string keyBase64 = "";
+            string keyIV = "";
+            string baseUrl = "";
+            Global.STOP_SPEED = o.StopSpeed;
+            Global.MAX_SPEED = o.MaxSpeed;
+            if (!string.IsNullOrEmpty(o.UseKeyBase64)) keyBase64 = o.UseKeyBase64;
+            if (!string.IsNullOrEmpty(o.UseKeyIV)) keyIV = o.UseKeyIV;
+            if (!string.IsNullOrEmpty(o.BaseUrl)) baseUrl = o.BaseUrl;
+            if (o.EnableBinaryMerge) DownloadManager.BinaryMerge = true;
+            if (o.DisableDateInfo) FFmpeg.WriteDate = false;
+            if (o.NoProxy) Global.NoProxy = true;
+            if (o.DisableIntegrityCheck) DownloadManager.DisableIntegrityCheck = true;
+            if (o.EnableAudioOnly) Global.VIDEO_TYPE = "IGNORE";
+            if (!string.IsNullOrEmpty(o.WorkDir))
+            {
+                DownloadManager.HasSetDir = true;
+            }
+
+            //Proxy
+            if (!string.IsNullOrEmpty(o.ProxyAddress))
+            {
+                var proxy = o.ProxyAddress;
+                if (proxy.StartsWith("http://"))
+                    Global.UseProxyAddress = proxy;
+            }
+            //Key
+            if (!string.IsNullOrEmpty(o.UseKeyFile))
+            {
+                if (File.Exists(o.UseKeyFile))
+                    keyFile = o.UseKeyFile;
+            }
+
+
 
                 if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "headers.txt")))
                     reqHeaders = File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "headers.txt"));
 
-                //分析命令行参数
-                parseArgs:
-                var arguments = CommandLineArgumentParser.Parse(args);
-                if (args.Length == 1 && args[0] == "--help") 
-                {
-                    Console.WriteLine(strings.helpInfo);
-                    return;
-                }
-                if (arguments.Has("--enableDelAfterDone"))
-                {
-                    delAfterDone = true;
-                }
-                if (arguments.Has("--enableParseOnly"))
-                {
-                    parseOnly = true;
-                }
-                if (arguments.Has("--enableBinaryMerge"))
-                {
-                    DownloadManager.BinaryMerge = true;
-                }
-                if (arguments.Has("--disableDateInfo"))
-                {
-                    FFmpeg.WriteDate = false;
-                }
-                if (arguments.Has("--noMerge"))
-                {
-                    noMerge = true;
-                }
-                if (arguments.Has("--noProxy"))
-                {
-                    Global.NoProxy = true;
-                }
-                if (arguments.Has("--proxyAddress"))
-                {
-                    var proxy = arguments.Get("--proxyAddress").Next.ToString();
-                    if (proxy.StartsWith("http://"))
-                        Global.UseProxyAddress = proxy;
-                }
-                if (arguments.Has("--headers"))
-                {
-                    reqHeaders = arguments.Get("--headers").Next;
-                }
-                if (arguments.Has("--enableMuxFastStart"))
-                {
-                    muxFastStart = true;
-                }
-                if (arguments.Has("--disableIntegrityCheck"))
-                {
-                    DownloadManager.DisableIntegrityCheck = true;
-                }
-                if (arguments.Has("--enableAudioOnly"))
-                {
-                    Global.VIDEO_TYPE = "IGNORE";
-                }
-                if (arguments.Has("--muxSetJson"))
-                {
-                    muxSetJson = arguments.Get("--muxSetJson").Next;
-                }
-                if (arguments.Has("--workDir"))
-                {
-                    workDir = arguments.Get("--workDir").Next;
-                    DownloadManager.HasSetDir = true;
-                }
-                if (arguments.Has("--saveName"))
-                {
-                    fileName = Global.GetValidFileName(arguments.Get("--saveName").Next);
-                }
-                if (arguments.Has("--useKeyFile"))
-                {
-                    if (File.Exists(arguments.Get("--useKeyFile").Next))
-                        keyFile = arguments.Get("--useKeyFile").Next;
-                }
-                if (arguments.Has("--useKeyBase64"))
-                {
-                    keyBase64 = arguments.Get("--useKeyBase64").Next;
-                }
-                if (arguments.Has("--useKeyIV"))
-                {
-                    keyIV = arguments.Get("--useKeyIV").Next;
-                }
-                if (arguments.Has("--stopSpeed"))
-                {
-                    Global.STOP_SPEED = Convert.ToInt64(arguments.Get("--stopSpeed").Next);
-                }
-                if (arguments.Has("--maxSpeed"))
-                {
-                    Global.MAX_SPEED = Convert.ToInt64(arguments.Get("--maxSpeed").Next);
-                }
-                if (arguments.Has("--baseUrl"))
-                {
-                    baseUrl = arguments.Get("--baseUrl").Next;
-                }
-                if (arguments.Has("--maxThreads"))
-                {
-                    maxThreads = Convert.ToInt32(arguments.Get("--maxThreads").Next);
-                }
-                if (arguments.Has("--minThreads"))
-                {
-                    minThreads = Convert.ToInt32(arguments.Get("--minThreads").Next);
-                }
-                if (arguments.Has("--retryCount"))
-                {
-                    retryCount = Convert.ToInt32(arguments.Get("--retryCount").Next);
-                }
-                if (arguments.Has("--timeOut"))
-                {
-                    timeOut = Convert.ToInt32(arguments.Get("--timeOut").Next);
-                }
-                if (arguments.Has("--liveRecDur"))
+                if (!string.IsNullOrEmpty(o.LiveRecDur))
                 {
                     //时间码
                     Regex reg2 = new Regex(@"(\d+):(\d+):(\d+)");
-                    var t = arguments.Get("--liveRecDur").Next;
+                    var t = o.LiveRecDur;
                     if (reg2.IsMatch(t))
                     {
                         int HH = Convert.ToInt32(reg2.Match(t).Groups[1].Value);
@@ -263,9 +223,9 @@ namespace N_m3u8DL_CLI.NetCore
                         HLSLiveDownloader.REC_DUR_LIMIT = SS + MM * 60 + HH * 60 * 60;
                     }
                 }
-                if (arguments.Has("--downloadRange"))
+                if (!string.IsNullOrEmpty(o.DownloadRange))
                 {
-                    string p = arguments.Get("--downloadRange").Next;
+                    string p = o.DownloadRange;
 
                     if (p.Contains(":"))
                     {
@@ -299,49 +259,16 @@ namespace N_m3u8DL_CLI.NetCore
                     }
                 }
 
-                //如果只有URL，没有附加参数，则尝试解析配置文件
-                if (args.Length == 1 || (args.Length == 3 && args[1].ToLower() == "--savename"))
-                {
-                    if (File.Exists(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt")))
-                    {
-                        if (args.Length == 3)
-                        {
-                            args = Global.ParseArguments($"\"{args[0]}\" {args[1]} {args[2]} " + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
-                        }
-                        else
-                        {
-                            args = Global.ParseArguments($"\"{args[0]}\" " + File.ReadAllText(Path.Combine(Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName), "N_m3u8DL-CLI.args.txt"))).ToArray();  //解析命令行
-                        }
-                        goto parseArgs;
-                    }
-                }
 
-                //ReadLine字数上限
-                Stream steam = Console.OpenStandardInput();
-                Console.SetIn(new StreamReader(steam, Encoding.Default, false, 5000));
+
                 int inputRetryCount = 20;
             input:
-                string testurl = "";
+                string testurl = o.Input;
 
 
                 //重试太多次，退出
                 if (inputRetryCount == 0)
                     Environment.Exit(-1);
-
-                if (args.Length > 0)
-                    testurl = args[0];
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Cyan;
-                    Console.Write("N_m3u8DL-CLI");
-                    Console.ResetColor();
-                    Console.Write(" > ");
-
-                    args = Global.ParseArguments(Console.ReadLine()).ToArray();  //解析命令行
-                    Console.Clear();
-                    Global.WriteInit();
-                    goto parseArgs;
-                }
 
                 if (fileName == "")
                     fileName = Global.GetUrlFileName(testurl) + "_" + DateTime.Now.ToString("yyyyMMddHHmmss");
@@ -402,7 +329,7 @@ namespace N_m3u8DL_CLI.NetCore
                 }
 
                 //仅解析模式
-                if (parseOnly)
+                if (o.EnableParseOnly)
                 {
                     LOGGER.PrintLine(strings.parseExit);
                     Environment.Exit(0);
@@ -435,24 +362,24 @@ namespace N_m3u8DL_CLI.NetCore
                     md.DownDir = parser.DownDir;
                     md.Headers = reqHeaders;
                     md.Threads = Environment.ProcessorCount;
-                    if (md.Threads > maxThreads)
-                        md.Threads = maxThreads;
-                    if (md.Threads < minThreads)
-                        md.Threads = minThreads;
+                    if (md.Threads > o.MaxThreads)
+                        md.Threads = (int)o.MaxThreads;
+                    if (md.Threads < o.MinThreads)
+                        md.Threads = (int)o.MinThreads;
                     if (File.Exists("minT.txt"))
                     {
                         int t = Convert.ToInt32(File.ReadAllText("minT.txt"));
                         if (md.Threads <= t)
                             md.Threads = t;
                     }
-                    md.TimeOut = timeOut * 1000;
-                    md.NoMerge = noMerge;
+                    md.TimeOut = (int)(o.TimeOut * 1000);
+                    md.NoMerge = o.NoMerge;
                     md.DownName = fileName;
-                    md.DelAfterDone = delAfterDone;
+                    md.DelAfterDone = o.EnableDelAfterDone;
                     md.MuxFormat = "mp4";
-                    md.RetryCount = retryCount;
+                    md.RetryCount = (int)o.RetryCount;
                     md.MuxSetJson = muxSetJson;
-                    md.MuxFastStart = muxFastStart;
+                    md.MuxFastStart = o.EnableMuxFastStart;
                     md.DoDownload();
                 }
                 //直播
@@ -475,9 +402,6 @@ namespace N_m3u8DL_CLI.NetCore
                     Console.ReadKey();
                 }
 
-                //监听测试
-                /*httplitsen:
-                HTTPListener.StartListening();*/
                 LOGGER.WriteLineError(strings.downloadFailed);
                 LOGGER.PrintLine(strings.downloadFailed, LOGGER.Error);
                 Thread.Sleep(3000);
@@ -488,6 +412,17 @@ namespace N_m3u8DL_CLI.NetCore
             {
                 LOGGER.PrintLine(ex.Message, LOGGER.Error);
             }
+        }
+
+        private static void DisplayHelp(ParserResult<MyOptions> result, IEnumerable<Error> errs)
+        {
+            var helpText = HelpText.AutoBuild(result, h =>
+            {
+                h.AdditionalNewLineAfterOption = false;
+                h.Copyright = "\r\nUSAGE:\r\n\r\n  N_m3u8DL-CLI <URL|JSON|FILE> [OPTIONS]\r\n\r\nOPTIONS:";
+                return HelpText.DefaultParsingErrorsHandler(result, h);
+            }, e => e);
+            Console.WriteLine(helpText);
         }
     }
 }

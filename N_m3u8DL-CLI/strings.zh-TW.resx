@@ -183,36 +183,6 @@
   <data name="hasExternalSubtitleTrack" xml:space="preserve">
     <value>識別到外掛字幕軌道</value>
   </data>
-  <data name="helpInfo" xml:space="preserve">
-    <value>N_m3u8DL-CLI.exe &lt;URL|File|JSON&gt; [OPTIONS]  
-
-    --workDir    Directory      設定程序工作目錄
-    --saveName   Filename       設定存儲文件名(不包括後綴)
-    --baseUrl    BaseUrl        設定Baseurl
-    --headers    headers        設定請求頭，格式 key:value 使用|分割不同的key&amp;value
-    --maxThreads Thread         設定程序的最大線程數(默認為32)
-    --minThreads Thread         設定程序的最小線程數(默認為16)
-    --retryCount Count          設定程序的重試次數(默認為15)
-    --timeOut    Sec            設定程序網絡請求的超時時間(單位為秒，默認為10秒)
-    --muxSetJson File           使用外部json文件定義混流選項
-    --useKeyFile File           使用外部16字節文件定義AES-128解密KEY
-    --useKeyBase64 Base64String 使用Base64字符串定義AES-128解密KEY
-    --useKeyIV     HEXString    使用HEX字符串定義AES-128解密IV
-    --downloadRange Range       僅下載視頻的壹部分分片或長度
-    --liveRecDur HH:MM:SS       直播錄制時，達到此長度自動退出軟件
-    --stopSpeed  Number         當速度低於此值時，重試(單位為KB/s)
-    --maxSpeed   Number         設置下載速度上限(單位為KB/s)
-    --proxyAddress http://xx    設置HTTP代理, 如 http://127.0.0.1:8080
-    --enableDelAfterDone        開啟下載後刪除臨時文件夾的功能
-    --enableMuxFastStart        開啟混流mp4的FastStart特性
-    --enableBinaryMerge         開啟二進制合並分片
-    --enableParseOnly           開啟僅解析模式(程序只進行到meta.json)
-    --enableAudioOnly           合並時僅封裝音頻軌道
-    --disableDateInfo           關閉混流中的日期寫入
-    --noMerge                   禁用自動合並
-    --noProxy                   不自動使用系統代理
-    --disableIntegrityCheck     不檢測分片數量是否完整</value>
-  </data>
   <data name="invalidM3u8" xml:space="preserve">
     <value>無效的m3u8</value>
   </data>
@@ -305,5 +275,86 @@
   </data>
   <data name="checkingLast" xml:space="preserve">
     <value>正在判斷尾分片是否有效...</value>
+  </data>
+  <data name="Help_workDir" xml:space="preserve">
+    <value>設定程式工作目錄</value>
+  </data>
+  <data name="Help_saveName" xml:space="preserve">
+    <value>設定存儲文件名(不包括後綴)</value>
+  </data>
+  <data name="Help_input" xml:space="preserve">
+    <value>連結或檔案</value>
+  </data>
+  <data name="Help_baseUrl" xml:space="preserve">
+    <value>設定Baseurl</value>
+  </data>
+  <data name="Help_headers" xml:space="preserve">
+    <value>設定請求頭，格式 key:value 使用|分割不同的key&amp;value</value>
+  </data>
+  <data name="Help_maxThreads" xml:space="preserve">
+    <value>設定程式的最大線程數</value>
+  </data>
+  <data name="Help_minThreads" xml:space="preserve">
+    <value>設定程式的最小線程數</value>
+  </data>
+  <data name="Help_retryCount" xml:space="preserve">
+    <value>設定程式的重試次數</value>
+  </data>
+  <data name="Help_timeOut" xml:space="preserve">
+    <value>設定程式網絡請求的超時時間(單位為秒)</value>
+  </data>
+  <data name="Help_muxSetJson" xml:space="preserve">
+    <value>使用外部json文件定義混流選項</value>
+  </data>
+  <data name="Help_useKeyFile" xml:space="preserve">
+    <value>使用外部16字節文件定義AES-128解密KEY</value>
+  </data>
+  <data name="Help_useKeyBase64" xml:space="preserve">
+    <value>使用Base64字符串定義AES-128解密KEY</value>
+  </data>
+  <data name="Help_useKeyIV" xml:space="preserve">
+    <value>使用HEX字符串定義AES-128解密IV</value>
+  </data>
+  <data name="Help_downloadRange" xml:space="preserve">
+    <value>僅下載視頻的壹部分分片或長度</value>
+  </data>
+  <data name="Help_liveRecDur" xml:space="preserve">
+    <value>直播錄制時，達到此長度自動退出軟件(HH:MM:SS)</value>
+  </data>
+  <data name="Help_stopSpeed" xml:space="preserve">
+    <value>當速度低於此值時，重試(單位為KB/s)</value>
+  </data>
+  <data name="Help_maxSpeed" xml:space="preserve">
+    <value>設置下載速度上限(單位為KB/s)</value>
+  </data>
+  <data name="Help_proxyAddress" xml:space="preserve">
+    <value>設置HTTP代理, 如 http://127.0.0.1:8080</value>
+  </data>
+  <data name="Help_enableDelAfterDone" xml:space="preserve">
+    <value>開啟下載後刪除臨時文件夾的功能</value>
+  </data>
+  <data name="Help_enableMuxFastStart" xml:space="preserve">
+    <value>開啟混流mp4的FastStart特性</value>
+  </data>
+  <data name="Help_enableBinaryMerge" xml:space="preserve">
+    <value>開啟二進制合並分片</value>
+  </data>
+  <data name="Help_enableParseOnly" xml:space="preserve">
+    <value>開啟僅解析模式(程式只進行到meta.json)</value>
+  </data>
+  <data name="Help_enableAudioOnly" xml:space="preserve">
+    <value>合並時僅封裝音頻軌道</value>
+  </data>
+  <data name="Help_disableDateInfo" xml:space="preserve">
+    <value>關閉混流中的日期寫入</value>
+  </data>
+  <data name="Help_noMerge" xml:space="preserve">
+    <value>禁用自動合並</value>
+  </data>
+  <data name="Help_noProxy" xml:space="preserve">
+    <value>不自動使用系統代理</value>
+  </data>
+  <data name="Help_disableIntegrityCheck" xml:space="preserve">
+    <value>不檢測分片數量是否完整</value>
   </data>
 </root>

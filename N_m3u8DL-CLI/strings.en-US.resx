@@ -183,35 +183,6 @@
   <data name="hasExternalSubtitleTrack" xml:space="preserve">
     <value>Has External Subtitle Track</value>
   </data>
-  <data name="helpInfo" xml:space="preserve">
-    <value>N_m3u8DL-CLI.exe &lt;URL|JSON|FILE&gt; [OPTIONS]  
-
-    --workDir    Directory      Set work dir (Video will be here)
-    --saveName   Filename       Set save name(Exclude extention)
-    --baseUrl    BaseUrl        Set Baseurl
-    --headers    headers        Set HTTP headers，format: key:value user | split all key&amp;value
-    --maxThreads Thread         Set max thread(default: 32)
-    --minThreads Thread         Set min thread(default: 16)
-    --retryCount Count          Set retry times(default: 15)
-    --timeOut    Sec            Set timeout for http request(second，default: 10)
-    --muxSetJson File           Set a json file for mux
-    --useKeyFile File           Use 16 bytes file as KEY for AES-128 decryption
-    --useKeyBase64 Base64String Use Base64 String as KEY for AES-128 decryption
-    --useKeyIV     HEXString    Use HEX String as IV for AES-128 decryption
-    --downloadRange Range       Set range for a video
-    --stopSpeed  Number         Speed below this, retry(KB/s)
-    --maxSpeed   Number         Set max download speed(KB/s)
-    --proxyAddress http://xx    Set HTTP Proxy, like http://127.0.0.1:8080
-    --enableDelAfterDone        Enable delete clips after download completed
-    --enableMuxFastStart        Enable fast start for mp4
-    --enableBinaryMerge         Enable use binary merge instead ffmpeg
-    --enableParseOnly           Enable parse mode
-    --enableAudioOnly           Enable only audio track when mux use ffmpeg
-    --disableDateInfo           Disable write date info when mux use ffmpeg
-    --noMerge                   Disable auto merge
-    --noProxy                   Disable use system proxy
-    --disableIntegrityCheck     Disable integrity check</value>
-  </data>
   <data name="invalidM3u8" xml:space="preserve">
     <value>Invalid M3u8 (NOT Contain #EXTM3U)</value>
   </data>
@@ -304,5 +275,86 @@
   </data>
   <data name="checkingLast" xml:space="preserve">
     <value>Checking Whether The Last Fragment Is Valid...</value>
+  </data>
+  <data name="Help_workDir" xml:space="preserve">
+    <value>Set work dir (Video will be here)</value>
+  </data>
+  <data name="Help_saveName" xml:space="preserve">
+    <value>Set save name(Exclude extention)</value>
+  </data>
+  <data name="Help_input" xml:space="preserve">
+    <value>URL|File|JSON</value>
+  </data>
+  <data name="Help_baseUrl" xml:space="preserve">
+    <value>Set Baseurl</value>
+  </data>
+  <data name="Help_headers" xml:space="preserve">
+    <value>Set HTTP headers，format: key:value use | split all key&amp;value</value>
+  </data>
+  <data name="Help_maxThreads" xml:space="preserve">
+    <value>Set max thread</value>
+  </data>
+  <data name="Help_minThreads" xml:space="preserve">
+    <value>Set min thread</value>
+  </data>
+  <data name="Help_retryCount" xml:space="preserve">
+    <value>Set retry times</value>
+  </data>
+  <data name="Help_timeOut" xml:space="preserve">
+    <value>Set timeout for http request(second)</value>
+  </data>
+  <data name="Help_muxSetJson" xml:space="preserve">
+    <value>Set a json file for mux</value>
+  </data>
+  <data name="Help_useKeyFile" xml:space="preserve">
+    <value>Use 16 bytes file as KEY for AES-128 decryption</value>
+  </data>
+  <data name="Help_useKeyBase64" xml:space="preserve">
+    <value>Use Base64 String as KEY for AES-128 decryption</value>
+  </data>
+  <data name="Help_useKeyIV" xml:space="preserve">
+    <value>Use HEX String as IV for AES-128 decryption</value>
+  </data>
+  <data name="Help_downloadRange" xml:space="preserve">
+    <value>Set range for a video</value>
+  </data>
+  <data name="Help_liveRecDur" xml:space="preserve">
+    <value>When the live recording reaches this length, the software will exit automatically(HH:MM:SS)</value>
+  </data>
+  <data name="Help_stopSpeed" xml:space="preserve">
+    <value>Speed below this, retry(KB/s)</value>
+  </data>
+  <data name="Help_maxSpeed" xml:space="preserve">
+    <value>Set max download speed(KB/s)</value>
+  </data>
+  <data name="Help_proxyAddress" xml:space="preserve">
+    <value>Set HTTP Proxy, like http://127.0.0.1:8080</value>
+  </data>
+  <data name="Help_enableDelAfterDone" xml:space="preserve">
+    <value>Enable delete clips after download completed</value>
+  </data>
+  <data name="Help_enableMuxFastStart" xml:space="preserve">
+    <value>Enable fast start for mp4</value>
+  </data>
+  <data name="Help_enableBinaryMerge" xml:space="preserve">
+    <value>Enable use binary merge instead of ffmpeg</value>
+  </data>
+  <data name="Help_enableParseOnly" xml:space="preserve">
+    <value>Enable parse only mode</value>
+  </data>
+  <data name="Help_enableAudioOnly" xml:space="preserve">
+    <value>Enable only audio track when mux use ffmpeg</value>
+  </data>
+  <data name="Help_disableDateInfo" xml:space="preserve">
+    <value>Disable write date info when mux use ffmpeg</value>
+  </data>
+  <data name="Help_noMerge" xml:space="preserve">
+    <value>Disable auto merge</value>
+  </data>
+  <data name="Help_noProxy" xml:space="preserve">
+    <value>Disable use system proxy</value>
+  </data>
+  <data name="Help_disableIntegrityCheck" xml:space="preserve">
+    <value>Disable integrity check</value>
   </data>
 </root>
