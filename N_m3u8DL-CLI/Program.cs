@@ -158,6 +158,7 @@ namespace N_m3u8DL_CLI.NetCore
             var cmdParser = new CommandLine.Parser(with => with.HelpWriter = null);
             var parserResult = cmdParser.ParseArguments<MyOptions>(args);
 
+            Global.WriteInit();
             //解析命令行
             parserResult
               .WithParsed(o => DoWork(o))
