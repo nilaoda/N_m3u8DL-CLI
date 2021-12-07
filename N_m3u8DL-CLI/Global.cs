@@ -875,6 +875,10 @@ namespace N_m3u8DL_CLI
                     {
                         VIDEO_TYPE = "DV";
                     }
+                    else if (res.Contains("Video hevc (DOVI"))  //腾讯视频杜比视界
+                    {
+                        VIDEO_TYPE = "DV";
+                    }
                     else if (res.Contains("Video hevc (Main 10) (DOVI"))  //优酷视频杜比视界
                     {
                         VIDEO_TYPE = "DV";
