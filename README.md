@@ -71,6 +71,7 @@ N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]
     --stopSpeed  Number         当速度低于此值时，重试(单位为KB/s)
     --maxSpeed   Number         设置下载速度上限(单位为KB/s)
     --proxyAddress http://xx    设置HTTP代理, 如 http://127.0.0.1:8080
+                   socks5://xx  设置SOCKS5代理, 如 socks5://127.0.0.1:8080
     --enableDelAfterDone        开启下载后删除临时文件夹的功能
     --enableMuxFastStart        开启混流mp4的FastStart特性
     --enableBinaryMerge         开启二进制合并分片

@@ -201,6 +201,8 @@ namespace N_m3u8DL_CLI.NetCore
                     var proxy = o.ProxyAddress;
                     if (proxy.StartsWith("http://"))
                         Global.UseProxyAddress = proxy;
+                    if (proxy.StartsWith("socks5://"))
+                        Global.UseProxyAddress = proxy;
                 }
                 //Key
                 if (!string.IsNullOrEmpty(o.UseKeyFile))
