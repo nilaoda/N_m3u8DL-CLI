@@ -158,7 +158,6 @@ namespace N_m3u8DL_CLI.NetCore
             var cmdParser = new CommandLine.Parser(with => with.HelpWriter = null);
             var parserResult = cmdParser.ParseArguments<MyOptions>(args);
 
-            Global.WriteInit();
             //解析命令行
             parserResult
               .WithParsed(o => DoWork(o))
@@ -169,6 +168,7 @@ namespace N_m3u8DL_CLI.NetCore
         {
             try
             {
+                Global.WriteInit();
                 //当前程序路径（末尾有\）
                 string CURRENT_PATH = Directory.GetCurrentDirectory();
                 string fileName = Global.GetValidFileName(o.SaveName);
