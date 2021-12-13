@@ -328,7 +328,7 @@
     <value>设置下载速度上限(单位为KB/s)</value>
   </data>
   <data name="Help_proxyAddress" xml:space="preserve">
-    <value>设置HTTP代理, 如 http://127.0.0.1:8080</value>
+    <value>设置HTTP/SOCK5代理, 如 http://127.0.0.1:8080</value>
   </data>
   <data name="Help_enableDelAfterDone" xml:space="preserve">
     <value>开启下载后删除临时文件夹的功能</value>

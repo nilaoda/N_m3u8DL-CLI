@@ -328,7 +328,7 @@
     <value>Set max download speed(KB/s)</value>
   </data>
   <data name="Help_proxyAddress" xml:space="preserve">
-    <value>Set HTTP Proxy, like http://127.0.0.1:8080</value>
+    <value>Set HTTP/SOCKS5 Proxy, like http://127.0.0.1:8080</value>
   </data>
   <data name="Help_enableDelAfterDone" xml:space="preserve">
     <value>Enable delete clips after download completed</value>

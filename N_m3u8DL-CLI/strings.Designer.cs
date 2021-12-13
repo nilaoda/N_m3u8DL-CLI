@@ -430,7 +430,7 @@ namespace N_m3u8DL_CLI {
         }
         
         /// <summary>
-        ///   查找类似 设置HTTP代理, 如 http://127.0.0.1:8080 的本地化字符串。
+        ///   查找类似 设置HTTP/SOCK5代理, 如 http://127.0.0.1:8080 的本地化字符串。
         /// </summary>
         public static string Help_proxyAddress {
             get {
