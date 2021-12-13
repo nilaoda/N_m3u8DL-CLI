@@ -95,6 +95,49 @@ namespace N_m3u8DL_CLI
             return Convert.ToInt32(Microsoft.JScript.GlobalObject.parseInt(str, numBase)); 
         }
 
+        // 统一设置代理
+        // 替换 else if (UseProxyAddress != "") {
+        //      WebProxy proxy = new WebProxy(UseProxyAddress);
+        //      webRequest.Proxy = proxy;
+        // }
+        public static void SetProxy(WebRequest webRequest)
+        {
+            var g_ProxyAddress = UseProxyAddress;
+            if (g_ProxyAddress.StartsWith("http://"))
+            {
+                WebProxy proxy = new WebProxy(g_ProxyAddress);
+                //proxy.Credentials = new NetworkCredential(username, password);                     
+                webRequest.Proxy = proxy;
+            }
+
+            // socks5
+            if (g_ProxyAddress.StartsWith("socks5://"))
+            {
+                string input = g_ProxyAddress.Remove(0, 9);
+                if (input.EndsWith("/"))
+                {
+                    input = input.Remove(input.LastIndexOf('/'), 1);
+                }
+
+                string[] addr = input.Split(':');
+                //LOGGER.PrintLine("addr Length :" + addr.Length);
+                if (addr.Length == 2)
+                {
+                    int port = 0;
+                    if (int.TryParse(addr[1], out port))
+                    {
+                        var proxySocks5 = new MihaZupan.HttpToSocks5Proxy(addr[0], int.Parse(addr[1]));
+                        webRequest.Proxy = proxySocks5;
+                        //LOGGER.PrintLine("sock5 :" + addr[0] + ":" + addr[1]);
+                    }
+                }
+                else
+                {
+                    LOGGER.PrintLine("Socks5addr String Length : " + addr.Length);
+                }
+            }
+        }
+
         //获取网页源码
         public static string GetWebSource(String url, string headers = "", int TimeOut = 60000)
         {
@@ -112,9 +155,7 @@ namespace N_m3u8DL_CLI
                     }
                     else if (UseProxyAddress != "")
                     {
-                        WebProxy proxy = new WebProxy(UseProxyAddress);
-                        //proxy.Credentials = new NetworkCredential(username, password);
-                        webRequest.Proxy = proxy;
+                        SetProxy(webRequest);
                     }
                     webRequest.UserAgent = "Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36";
                     webRequest.Accept = "*/*";
@@ -397,9 +438,7 @@ namespace N_m3u8DL_CLI
                 }
                 else if (UseProxyAddress != "")
                 {
-                    WebProxy proxy = new WebProxy(UseProxyAddress);
-                    //proxy.Credentials = new NetworkCredential(username, password);
-                    myRequest.Proxy = proxy;
+                    SetProxy(myRequest);
                 }
                 //添加headers
                 if (headers != "")
@@ -460,9 +499,7 @@ namespace N_m3u8DL_CLI
             }
             else if (UseProxyAddress != "")
             {
-                WebProxy proxy = new WebProxy(UseProxyAddress);
-                //proxy.Credentials = new NetworkCredential(username, password);
-                req.Proxy = proxy;
+                SetProxy(req);
             }
             req.Headers.Add("Accept-Encoding", "gzip, deflate");
             req.Accept = "*/*";
@@ -576,9 +613,7 @@ namespace N_m3u8DL_CLI
                 }
                 else if (UseProxyAddress != "")
                 {
-                    WebProxy proxy = new WebProxy(UseProxyAddress);
-                    //proxy.Credentials = new NetworkCredential(username, password);
-                    request.Proxy = proxy;
+                    SetProxy(request);
                 }
                 if (url.Contains("data.video.iqiyi.com"))
                     request.UserAgent = "QYPlayer/Android/4.4.5;NetType/3G;QTP/1.1.4.3";
@@ -1176,9 +1211,7 @@ namespace N_m3u8DL_CLI
                 }
                 else if (UseProxyAddress != "")
                 {
-                    WebProxy proxy = new WebProxy(UseProxyAddress);
-                    //proxy.Credentials = new NetworkCredential(username, password);
-                    wr.Proxy = proxy;
+                    SetProxy(wr);
                 }
                 if (setRange)
                     wr.AddRange(this.from, this.to);
