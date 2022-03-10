@@ -203,6 +203,12 @@ namespace N_m3u8DL_CLI
                 }
             }
 
+            //修复#EXT-X-KEY与#EXTINF出现次序异常问题
+            if (Regex.IsMatch(m3u8Method, "(#EXTINF.*)(\\s+)(#EXT-X-KEY.*)"))
+            {
+                m3u8Content = Regex.Replace(m3u8Content, "(#EXTINF.*)(\\s+)(#EXT-X-KEY.*)", "$3$2$1");
+            }
+
             //如果BaseUrl为空则截取字符串充当
             if (BaseUrl == "")
             {
