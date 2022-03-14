@@ -62,26 +62,35 @@ namespace N_m3u8DL_CLI
 
         public static void PrintLine(string text, int printLevel = 1)
         {
+            int windowWith = 63;
+            try
+            {
+                windowWith = Console.WindowWidth;
+            }
+            catch (Exception e)
+            {
+               // empty
+            }
             switch (printLevel)
             {
                 case 0:
-                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
+                    Console.Write("\r" + new string(' ', windowWith - 1) + "\r");
                     Console.WriteLine(" ".PadRight(12) + " " + text);
                     break;
                 case 1:
-                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
+                    Console.Write("\r" + new string(' ', windowWith - 1) + "\r");
                     Console.Write(DateTime.Now.ToString("HH:mm:ss.fff") + " ");
                     Console.WriteLine(text);
                     break;
                 case 2:
-                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
+                    Console.Write("\r" + new string(' ', windowWith - 1) + "\r");
                     Console.Write(DateTime.Now.ToString("HH:mm:ss.fff") + " ");
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine(text);
                     Console.ResetColor();
                     break;
                 case 3:
-                    Console.Write("\r" + new string(' ', Console.WindowWidth - 1) + "\r");
+                    Console.Write("\r" + new string(' ', windowWith - 1) + "\r");
                     Console.Write(DateTime.Now.ToString("HH:mm:ss.fff") + " ");
                     Console.ForegroundColor = ConsoleColor.DarkYellow;
                     Console.WriteLine(text);
