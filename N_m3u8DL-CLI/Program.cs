@@ -10,11 +10,13 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Security;
+using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
+using Microsoft.Win32;
 
 namespace N_m3u8DL_CLI.NetCore
 {
@@ -69,6 +71,31 @@ namespace N_m3u8DL_CLI.NetCore
                 Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo(loc);
             }
             catch (Exception) {; }
+
+            // 处理m3u8dl URL协议
+            if (args.Length == 1)
+            {
+                if (args[0].ToLower().StartsWith("m3u8dl:"))
+                {
+                    var valueBytes = Convert.FromBase64String(args[0].Substring(7));
+                    var cmd = Encoding.UTF8.GetString(valueBytes);
+                    args = Global.ParseArguments(cmd).ToArray();  //解析命令行
+                }
+                else if (args[0] == "--registerUrlProtocol")
+                {
+                    RequireElevated(string.Join(" ", args));
+                    bool result = RegisterUriScheme("m3u8dl", Assembly.GetExecutingAssembly().Location);
+                    Console.WriteLine(result ? strings.registerUrlProtocolSuccessful : strings.registerUrlProtocolFailed);
+                    Environment.Exit(0);
+                }
+                else if (args[0] == "--unregisterUrlProtocol")
+                {
+                    RequireElevated(string.Join(" ", args));
+                    bool result = UnregisterUriScheme("m3u8dl");
+                    Console.WriteLine(result ? strings.unregisterUrlProtocolSuccessful : strings.unregisterUrlProtocolFailed);
+                    Environment.Exit(0);
+                }
+            }
 
             //寻找ffmpeg.exe
             if (File.Exists("ffmpeg.exe"))
@@ -191,7 +218,7 @@ namespace N_m3u8DL_CLI.NetCore
                 if (o.EnableAudioOnly) Global.VIDEO_TYPE = "IGNORE";
                 if (!string.IsNullOrEmpty(o.WorkDir))
                 {
-                    workDir = o.WorkDir;
+                    workDir = Environment.ExpandEnvironmentVariables(o.WorkDir);
                     DownloadManager.HasSetDir = true;
                 }
 
@@ -412,6 +439,62 @@ namespace N_m3u8DL_CLI.NetCore
             catch (Exception ex)
             {
                 LOGGER.PrintLine(ex.Message, LOGGER.Error);
+            }
+        }
+
+        public static bool RegisterUriScheme(string scheme, string applicationPath)
+        {
+            try
+            {
+                using (var schemeKey = Registry.ClassesRoot.CreateSubKey(scheme, writable: true))
+                {
+                    schemeKey.SetValue("", "URL:m3u8DL Protocol");
+                    schemeKey.SetValue("URL Protocol", "");
+                    using (var defaultIconKey = schemeKey.CreateSubKey("DefaultIcon"))
+                    {
+                        defaultIconKey.SetValue("", $"\"{applicationPath}\",1");
+                    }
+                    using (var shellKey = schemeKey.CreateSubKey("shell"))
+                    using (var openKey = shellKey.CreateSubKey("open"))
+                    using (var commandKey = openKey.CreateSubKey("command"))
+                    {
+                        commandKey.SetValue("", $"\"{applicationPath}\" \"%1\"");
+                        return true;
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return false;
+        }
+
+        public static bool UnregisterUriScheme(string scheme)
+        {
+            try
+            {
+                Registry.ClassesRoot.DeleteSubKeyTree(scheme);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return false;
+        }
+
+        public static void RequireElevated(string cmd)
+        {
+            if (!UACHelper.UACHelper.IsElevated)
+            {
+                string[] arguments = Environment.GetCommandLineArgs();
+                UACHelper.UACHelper.StartElevated(
+                    new ProcessStartInfo(Assembly.GetExecutingAssembly().Location, cmd)
+                );
+                Environment.Exit(0);
             }
         }
 

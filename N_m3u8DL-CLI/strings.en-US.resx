@@ -357,4 +357,22 @@
   <data name="Help_disableIntegrityCheck" xml:space="preserve">
     <value>Disable integrity check</value>
   </data>
+  <data name="Help_registerUrlProtocol" xml:space="preserve">
+    <value>Register m3u8dl URL protocol</value>
+  </data>
+  <data name="Help_unregisterUrlProtocol" xml:space="preserve">
+    <value>Unregister m3u8dl URL protocol</value>
+  </data>
+  <data name="registerUrlProtocolFailed" xml:space="preserve">
+    <value>Register m3u8dl URL protocol failed!</value>
+  </data>
+  <data name="registerUrlProtocolSuccessful" xml:space="preserve">
+    <value>Register m3u8dl URL protocol successfully!</value>
+  </data>
+  <data name="unregisterUrlProtocolFailed" xml:space="preserve">
+    <value>Unregister m3u8dl URL protocol failed!</value>
+  </data>
+  <data name="unregisterUrlProtocolSuccessful" xml:space="preserve">
+    <value>Unregister m3u8dl URL protocol successfully!</value>
+  </data>
 </root>
