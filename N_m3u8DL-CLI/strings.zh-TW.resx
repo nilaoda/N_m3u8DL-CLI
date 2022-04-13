@@ -357,4 +357,22 @@
   <data name="Help_disableIntegrityCheck" xml:space="preserve">
     <value>不檢測分片數量是否完整</value>
   </data>
+  <data name="Help_registerUrlProtocol" xml:space="preserve">
+    <value>注册m3u8dl連結協定</value>
+  </data>
+  <data name="Help_unregisterUrlProtocol" xml:space="preserve">
+    <value>取消注册m3u8dl連結協定</value>
+  </data>
+  <data name="registerUrlProtocolFailed" xml:space="preserve">
+    <value>注册m3u8dl連結協定失敗！</value>
+  </data>
+  <data name="registerUrlProtocolSuccessful" xml:space="preserve">
+    <value>注册m3u8dl連結協定成功！</value>
+  </data>
+  <data name="unregisterUrlProtocolFailed" xml:space="preserve">
+    <value>取消注册m3u8dl連結協定失敗！</value>
+  </data>
+  <data name="unregisterUrlProtocolSuccessful" xml:space="preserve">
+    <value>取消注册m3u8dl連結協定成功！</value>
+  </data>
 </root>

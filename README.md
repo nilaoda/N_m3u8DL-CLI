@@ -44,6 +44,7 @@
   * 支持仅合并为音频
   * 支持设置特定http代理
   * 支持自动使用系统代理（默认行为, 可禁止）
+  * 支持m3u8dl链接协议（通过web链接调用本机客户端）
   * 提供SimpleG简易的`GUI`生成常用参数
 
 
@@ -81,6 +82,8 @@ N_m3u8DL-CLI.exe <URL|File|JSON> [OPTIONS]
     --noMerge                   禁用自动合并
     --noProxy                   不自动使用系统代理
     --disableIntegrityCheck     不检测分片数量是否完整
+    --registerUrlProtocol       注册m3u8dl链接协议
+    --unregisterUrlProtocol     取消注册m3u8dl链接协议
 ```
 
 # 用户文档
