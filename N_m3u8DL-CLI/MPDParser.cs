@@ -15,6 +15,7 @@ namespace N_m3u8DL_CLI
     //code from https://github.com/ytdl-org/youtube-dl/blob/master/youtube_dl/extractor/common.py#L2076
     class MPDParser
     {
+        private static string MPD_URL;
         static Dictionary<string, dynamic> ExtractMultisegmentInfo(XmlElement Period, XmlNamespaceManager nsMgr, Dictionary<string, dynamic> info)
         {
             var MultisegmentInfo = new Dictionary<string, dynamic>(info);
@@ -128,6 +129,7 @@ namespace N_m3u8DL_CLI
         /// <returns></returns>
         public static string Parse(string downDir, string mpdUrl, string mpdContent, string defaultBase = "")
         {
+            MPD_URL = mpdUrl;
             //XiGua
             if (mpdContent.Contains("<mas:") && !mpdContent.Contains("xmlns:mas"))
                 mpdContent = mpdContent.Replace("<MPD ", "<MPD xmlns:mas=\"urn:marlin:mas:1-0:services:schemas:mpd\" ");
@@ -672,6 +674,10 @@ namespace N_m3u8DL_CLI
             if (f.ContainsKey("InitializationUrl"))
             {
                 string initUrl = f["InitializationUrl"];
+                if (MPD_URL.Contains("?") && MPD_URL.Contains(".kakao.com/"))
+                {
+                    initUrl += new Regex("\\?.*").Match(MPD_URL).Value;
+                }
                 if (Regex.IsMatch(initUrl, "\\$\\$Range=(\\d+)-(\\d+)"))
                 {
                     var match = Regex.Match(initUrl, "\\$\\$Range=(\\d+)-(\\d+)");
@@ -709,6 +715,11 @@ namespace N_m3u8DL_CLI
                 var secondToLast = fragments[fragments.Count - 2];
                 var urlLast = last.ContainsKey("url") ? last["url"] : last["path"];
                 var urlSecondToLast = secondToLast.ContainsKey("url") ? secondToLast["url"] : secondToLast["path"];
+                if (MPD_URL.Contains("?") && MPD_URL.Contains(".kakao.com/"))
+                {
+                    urlLast += new Regex("\\?.*").Match(MPD_URL).Value;
+                    urlSecondToLast += new Regex("\\?.*").Match(MPD_URL).Value;
+                }
                 //普通分段才判断
                 if (urlLast.StartsWith("http") && !Regex.IsMatch(urlLast, "\\$\\$Range=(\\d+)-(\\d+)"))
                 {
@@ -725,6 +736,10 @@ namespace N_m3u8DL_CLI
             {
                 var dur = seg.ContainsKey("duration") ? seg["duration"] : 0.0;
                 var url = seg.ContainsKey("url") ? seg["url"] : seg["path"];
+                if (MPD_URL.Contains("?") && MPD_URL.Contains(".kakao.com/"))
+                {
+                    url += new Regex("\\?.*").Match(MPD_URL).Value;
+                }
                 sb.AppendLine($"#EXTINF:{dur.ToString("0.00")}");
                 if (Regex.IsMatch(url, "\\$\\$Range=(\\d+)-(\\d+)"))
                 {
