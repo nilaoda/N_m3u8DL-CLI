@@ -155,6 +155,13 @@ namespace N_m3u8DL_CLI
 
             TimeSpan ts = XmlConvert.ToTimeSpan(mediaPresentationDuration); //时长
 
+            //读取在MPD开头定义的<BaseURL>，并替换本身的URL
+            var baseNode = xn.SelectSingleNode("ns:BaseURL", nsMgr);
+            if (baseNode != null)
+            {
+                MPD_URL = mpdUrl = baseNode.InnerText;
+            }
+
             var formatList = new List<Dictionary<string, dynamic>>(); //存放所有音视频清晰度
             var periodIndex = 0; //解决同一个period且同id导致被重复添加分片
 
