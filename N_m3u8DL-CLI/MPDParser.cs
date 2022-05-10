@@ -159,7 +159,16 @@ namespace N_m3u8DL_CLI
             var baseNode = xn.SelectSingleNode("ns:BaseURL", nsMgr);
             if (baseNode != null)
             {
-                MPD_URL = mpdUrl = baseNode.InnerText;
+                if (MPD_URL.Contains("kkbox.com.tw/"))
+                {
+                    var badUrl = baseNode.InnerText;
+                    var goodUrl = badUrl.Replace("//https:%2F%2F", "//");
+                    MPD_URL = mpdUrl = goodUrl;
+                }
+                else
+                {
+                    MPD_URL = mpdUrl = baseNode.InnerText;
+                }
             }
 
             var formatList = new List<Dictionary<string, dynamic>>(); //存放所有音视频清晰度
