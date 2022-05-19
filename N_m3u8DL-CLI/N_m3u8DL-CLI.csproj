@@ -91,6 +91,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Decode51CtoKey.cs" />
+    <Compile Include="DecodeCdeledu.cs" />
     <Compile Include="DecodeDdyun.cs" />
     <Compile Include="DecodeHuke88Key.cs" />
     <Compile Include="DecodeImooc.cs" />

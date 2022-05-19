@@ -844,6 +844,18 @@ namespace N_m3u8DL_CLI
                             }
                             key[1] = Convert.ToBase64String(tempKey);
                         }
+                        else if (key[1].Contains("elearning.cdeledu.com/hls/service/getKeyForHls"))
+                        {
+                            var keyBytes = Global.HttpDownloadFileToBytes(keyUrl, Headers);
+                            if (keyBytes.Length != 16)
+                            {
+                                key[1] = DecodeCdeledu.DecodeKey(Encoding.UTF8.GetString(keyBytes));
+                            }
+                            else
+                            {
+                                key[1] = Convert.ToBase64String(keyBytes);
+                            }
+                        }
                         else if (key[1].Contains("drm.vod2.myqcloud.com/getlicense"))
                         {
                             var temp = Global.HttpDownloadFileToBytes(keyUrl, Headers);
