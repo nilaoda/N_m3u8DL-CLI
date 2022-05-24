@@ -105,10 +105,10 @@ namespace N_m3u8DL_CLI
             //if (!LiveStream)
             //    LOGGER.PrintLine(strings.downloadingM3u8, LOGGER.Warning);
 
-            if (M3u8Url.Contains(".cntv."))
-            {
-                M3u8Url = M3u8Url.Replace("/h5e/", "/");
-            }
+            //if (M3u8Url.Contains(".cntv."))
+            //{
+            //    M3u8Url = M3u8Url.Replace("/h5e/", "/");
+            //}
 
             if (M3u8Url.StartsWith("http"))
             {
