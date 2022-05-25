@@ -102,17 +102,17 @@ OPTIONS:
 
 URI格式：
 ```
-m3u8dl:<base64编码的客户端命令行文本>
+m3u8dl://<base64编码的客户端命令行文本>
 ```
 
 URI示例：
 ```
-m3u8dl:Imh0dHBzOi8vZXhhbXBsZS5jb20vYWJjLm0zdTgiIC0td29ya0RpciAiJVVTRVJQUk9GSUxFJVxEb3dubG9hZHNcbTN1OGRsIiAtLXNhdmVOYW1lICJhYmMiIC0tZW5hYmxlRGVsQWZ0ZXJEb25lIC0tZGlzYWJsZURhdGVJbmZvIC0tbm9Qcm94eQ==
+m3u8dl://Imh0dHBzOi8vZXhhbXBsZS5jb20vYWJjLm0zdTgiIC0td29ya0RpciAiJVVTRVJQUk9GSUxFJVxEb3dubG9hZHNcbTN1OGRsIiAtLXNhdmVOYW1lICJhYmMiIC0tZW5hYmxlRGVsQWZ0ZXJEb25lIC0tZGlzYWJsZURhdGVJbmZvIC0tbm9Qcm94eQ==
 ```
 
 URI解码结果：
 ```
-m3u8dl:"https://example.com/abc.m3u8" --workDir "%USERPROFILE%\Downloads\m3u8dl" --saveName "abc" --enableDelAfterDone --disableDateInfo --noProxy
+"https://example.com/abc.m3u8" --workDir "%USERPROFILE%\Downloads\m3u8dl" --saveName "abc" --enableDelAfterDone --disableDateInfo --noProxy
 ```
 
 # 用户文档
