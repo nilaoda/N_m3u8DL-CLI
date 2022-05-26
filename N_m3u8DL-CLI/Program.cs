@@ -77,8 +77,12 @@ namespace N_m3u8DL_CLI.NetCore
             {
                 if (args[0].ToLower().StartsWith("m3u8dl:"))
                 {
-                    var valueBytes = Convert.FromBase64String(args[0].Substring(7));
-                    var cmd = Encoding.UTF8.GetString(valueBytes);
+                    var base64 = args[0].Replace("m3u8dl://", "").Replace("m3u8dl:", "");
+                    var cmd = "";
+                    try { cmd = Encoding.UTF8.GetString(Convert.FromBase64String(base64)); }
+                    catch (FormatException) { cmd = Encoding.UTF8.GetString(Convert.FromBase64String(base64.TrimEnd('/'))); }
+                    //修正工作目录
+                    Environment.CurrentDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
                     args = Global.ParseArguments(cmd).ToArray();  //解析命令行
                 }
                 else if (args[0] == "--registerUrlProtocol")
