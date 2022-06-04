@@ -271,6 +271,7 @@ namespace N_m3u8DL_CLI
                             {
                                 expectByte = Convert.ToInt64(t[0]);
                                 segInfo.Add("expectByte", expectByte);
+                                segInfo.Add("startByte", segments.Last["startByte"].Value<long>() + segments.Last["expectByte"].Value<long>());
                             }
                             if (t.Length == 2)
                             {
