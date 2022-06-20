@@ -90,6 +90,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CSChaCha20.cs" />
     <Compile Include="Decode51CtoKey.cs" />
     <Compile Include="DecodeCdeledu.cs" />
     <Compile Include="DecodeDdyun.cs" />

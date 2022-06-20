@@ -47,6 +47,10 @@ namespace N_m3u8DL_CLI
         public long ExpectByte { get => expectByte; set => expectByte = value; }
         public long StartByte { get => startByte; set => startByte = value; }
         public double SegDur { get => segDur; set => segDur = value; }
+        
+        public static bool EnableChaCha20 { get; set; } = false;
+        public static string ChaCha20KeyBase64 { get; set; }
+        public static string ChaCha20NonceBase64 { get; set; }
 
         //重写WebClinet
         //private class WebClient : System.Net.WebClient
@@ -179,9 +183,18 @@ namespace N_m3u8DL_CLI
                 if (File.Exists(savePath) && Global.ShouldStop == false) 
                 {
                     FileInfo fi = new FileInfo(savePath);
-                    if (Method == "NONE" || method.Contains("NOTSUPPORTED"))
+                    if (File.Exists(fi.FullName) && EnableChaCha20)
                     {
-                        fi.MoveTo(Path.GetDirectoryName(savePath) + "\\" + Path.GetFileNameWithoutExtension(savePath) + ".ts");
+                        byte[] decryptBuff = Decrypter.CHACHA20Decrypt(File.ReadAllBytes(fi.FullName), Convert.FromBase64String(ChaCha20KeyBase64), Convert.FromBase64String(ChaCha20NonceBase64));
+                        FileStream fs = new FileStream(Path.GetDirectoryName(SavePath) + "\\" + Path.GetFileNameWithoutExtension(SavePath) + ".ts", FileMode.Create);
+                        fs.Write(decryptBuff, 0, decryptBuff.Length);
+                        fs.Close();
+                        DownloadManager.DownloadedSize += fi.Length;
+                        fi.Delete();
+                    }
+                    else if (Method == "NONE" || Method.Contains("NOTSUPPORTED"))
+                    {
+                        fi.MoveTo(Path.GetDirectoryName(SavePath) + "\\" + Path.GetFileNameWithoutExtension(SavePath) + ".ts");
                         DownloadManager.DownloadedSize += fi.Length;
                         //Console.WriteLine(Path.GetFileNameWithoutExtension(savePath) + " Completed.");
                     }

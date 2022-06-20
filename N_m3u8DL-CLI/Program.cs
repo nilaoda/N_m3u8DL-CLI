@@ -225,6 +225,13 @@ namespace N_m3u8DL_CLI.NetCore
                     workDir = Environment.ExpandEnvironmentVariables(o.WorkDir);
                     DownloadManager.HasSetDir = true;
                 }
+                //CHACHA20
+                if (o.EnableChaCha20 && !string.IsNullOrEmpty(o.ChaCha20KeyBase64) && !string.IsNullOrEmpty(o.ChaCha20NonceBase64))
+                {
+                    Downloader.EnableChaCha20 = true;
+                    Downloader.ChaCha20KeyBase64 = o.ChaCha20KeyBase64;
+                    Downloader.ChaCha20NonceBase64 = o.ChaCha20NonceBase64;
+                }
 
                 //Proxy
                 if (!string.IsNullOrEmpty(o.ProxyAddress))
