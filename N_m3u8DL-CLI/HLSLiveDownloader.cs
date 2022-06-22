@@ -128,6 +128,7 @@ namespace N_m3u8DL_CLI
                     sd.Iv = info["iv"].Value<string>();
                 }
                 sd.TimeOut = (int)timer.Interval - 1000;//超时时间不超过下次执行时间
+                if (sd.TimeOut <= 0) sd.TimeOut = (int)timer.Interval;
                 sd.SegIndex = index;
                 sd.Headers = Headers;
                 sd.SegDur = info["duration"].Value<double>();
