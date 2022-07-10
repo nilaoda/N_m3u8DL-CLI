@@ -81,6 +81,8 @@ namespace N_m3u8DL_CLI.NetCore
                     var cmd = "";
                     try { cmd = Encoding.UTF8.GetString(Convert.FromBase64String(base64)); }
                     catch (FormatException) { cmd = Encoding.UTF8.GetString(Convert.FromBase64String(base64.TrimEnd('/'))); }
+                    //修正参数转义符
+                    cmd = cmd.Replace("\\\"", "\"");
                     //修正工作目录
                     Environment.CurrentDirectory = Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName);
                     args = Global.ParseArguments(cmd).ToArray();  //解析命令行
