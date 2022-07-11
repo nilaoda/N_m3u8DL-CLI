@@ -35,7 +35,7 @@ namespace N_m3u8DL_CLI
         /*===============================================================================*/
         static Version ver = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
         static string nowVer = $"{ver.Major}.{ver.Minor}.{ver.Build}";
-        static string nowDate = "20220526";
+        static string nowDate = "20220711";
         public static void WriteInit()
         {
             Console.WriteLine($"N_m3u8DL-CLI version {nowVer} 2018-2022");
