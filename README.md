@@ -89,6 +89,9 @@ OPTIONS:
   --noProxy                  不自动使用系统代理
   --registerUrlProtocol      注册m3u8dl链接协议
   --unregisterUrlProtocol    取消注册m3u8dl链接协议
+  --enableChaCha20           enableChaCha20
+  --chaCha20KeyBase64        ChaCha20KeyBase64
+  --chaCha20NonceBase64      ChaCha20NonceBase64
   --help                     Display this help screen.
   --version                  Display version information.
 ```

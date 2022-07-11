@@ -68,6 +68,9 @@ OPTIONS:
   --noProxy                  Disable use system proxy
   --registerUrlProtocol      Register m3u8dl URL protocol
   --unregisterUrlProtocol    Unregister m3u8dl URL protocol
+  --enableChaCha20           enableChaCha20
+  --chaCha20KeyBase64        ChaCha20KeyBase64
+  --chaCha20NonceBase64      ChaCha20NonceBase64
   --help                     Display this help screen.
   --version                  Display version information.
 ```
