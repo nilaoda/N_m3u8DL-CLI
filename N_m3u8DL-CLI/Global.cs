@@ -185,7 +185,7 @@ namespace N_m3u8DL_CLI
                                     webRequest.AddRange(Convert.ToInt32(att.Substring(att.IndexOf(":") + 1).Split('-')[0], Convert.ToInt32(att.Substring(att.IndexOf(":") + 1).Split('-')[1])));
                                 else if (att.Split(':')[0].ToLower() == "accept")
                                     webRequest.Accept = att.Substring(att.IndexOf(":") + 1);
-                                else if(att.Split(':')[0].ToLower() != "accept-encoding")
+                                else if (att.Split(':')[0].ToLower() != "accept-encoding")
                                     webRequest.Headers.Add(att);
                             }
                             catch (Exception e)
