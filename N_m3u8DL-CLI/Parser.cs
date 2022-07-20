@@ -636,12 +636,19 @@ namespace N_m3u8DL_CLI
                     Console.Write("".PadRight(13) + "Enter Number: ");
                     var input = Console.ReadLine();
                     cursorIndex += 2;
-                    for (int i = startCursorIndex; i < cursorIndex; i++)
+                    try
                     {
-                        Console.SetCursorPosition(0, i);
-                        Console.Write("".PadRight(300));
+                        for (int i = startCursorIndex; i < cursorIndex; i++)
+                        {
+                            Console.SetCursorPosition(0, i);
+                            Console.Write("".PadRight(300));
+                        }
+                        Console.SetCursorPosition(0, startCursorIndex);
                     }
-                    Console.SetCursorPosition(0, startCursorIndex);
+                    catch (Exception)
+                    {
+                        ;
+                    }
                     audioUrl = MEDIA_AUDIO_GROUP[bestUrlAudio][int.Parse(input)].Uri;
                 }
             }
@@ -666,12 +673,19 @@ namespace N_m3u8DL_CLI
                     Console.Write("".PadRight(13) + "Enter Number: ");
                     var input = Console.ReadLine();
                     cursorIndex += 2;
-                    for (int i = startCursorIndex; i < cursorIndex; i++)
+                    try
                     {
-                        Console.SetCursorPosition(0, i);
-                        Console.Write("".PadRight(300));
+                        for (int i = startCursorIndex; i < cursorIndex; i++)
+                        {
+                            Console.SetCursorPosition(0, i);
+                            Console.Write("".PadRight(300));
+                        }
+                        Console.SetCursorPosition(0, startCursorIndex);
                     }
-                    Console.SetCursorPosition(0, startCursorIndex);
+                    catch (Exception)
+                    {
+                        ;
+                    }
                     subUrl = MEDIA_SUB_GROUP[bestUrlSub][int.Parse(input)].Uri;
                 }
             }
