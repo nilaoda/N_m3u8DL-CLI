@@ -79,6 +79,7 @@ namespace N_m3u8DL_CLI
             }
 
             Parser parser = new Parser();
+            parser.Headers = Headers;
             parser.DownDir = Path.GetDirectoryName(jsonFile);
             parser.M3u8Url = m3u8Url;
             parser.LiveStream = true;
