@@ -101,4 +101,4 @@ URI Decode Result：
 https://nilaoda.github.io/N_m3u8DL-CLI/
 
 ## Chit-chat
-https://discord.gg/W5tvcRJDPs
+https://discord.gg/RscAJZv3Yq
