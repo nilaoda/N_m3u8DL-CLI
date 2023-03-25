@@ -327,7 +327,7 @@ namespace N_m3u8DL_CLI
                             continue;
                         }
                         //常规情况的#EXT-X-DISCONTINUITY标记，新建part
-                        if (!hasAd && segments.Count > 1)
+                        if (!hasAd && segments.Count >= 1)
                         {
                             parts.Add(segments);
                             segments = new JArray();
