@@ -362,20 +362,20 @@ namespace N_m3u8DL_CLI
                     {
                         string[] tmp = line.Replace(HLSTags.extinf + ":", "").Split(',');
                         segDuration = Convert.ToDouble(tmp[0]);
-                        segInfo.Add("index", segIndex);
-                        segInfo.Add("method", m3u8CurrentKey[0]);
+                        segInfo["index"] = segIndex;
+                        segInfo["method"] = m3u8CurrentKey[0];
                         //是否有加密，有的话写入KEY和IV
                         if (m3u8CurrentKey[0] != "NONE")
                         {
-                            segInfo.Add("key", m3u8CurrentKey[1]);
+                            segInfo["key"] = m3u8CurrentKey[1];
                             //没有读取到IV，自己生成
                             if (m3u8CurrentKey[2] == "")
-                                segInfo.Add("iv", "0x" + Convert.ToString(segIndex, 16).PadLeft(32, '0'));
+                                segInfo["iv"] = "0x" + Convert.ToString(segIndex, 16).PadLeft(32, '0');
                             else
-                                segInfo.Add("iv", m3u8CurrentKey[2]);
+                                segInfo["iv"] = m3u8CurrentKey[2];
                         }
                         totalDuration += segDuration;
-                        segInfo.Add("duration", segDuration);
+                        segInfo["duration"] = segDuration;
                         expectSegment = true;
                         segIndex++;
                     }
